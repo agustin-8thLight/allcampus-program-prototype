@@ -155,7 +155,7 @@ function Choose({ school, allyEnabled, onInfo, onAlly, onAdvisor, onSchool }) {
       </div>
 
       {/* External: the only path that reaches the school. */}
-      <GroupLabel icon={ExternalIcon} tone="amber" className="mt-5">
+      <GroupLabel icon={ExternalIcon} tone="blue" className="mt-5">
         With the school, this leaves AllCampus
       </GroupLabel>
       <div className="space-y-2.5">
@@ -177,7 +177,7 @@ function Choose({ school, allyEnabled, onInfo, onAlly, onAdvisor, onSchool }) {
 }
 
 function GroupLabel({ icon: Icon, tone = 'brand', className = '', children }) {
-  const color = tone === 'amber' ? 'text-amber-700' : 'text-ink-500'
+  const color = tone === 'blue' ? 'text-blue-700' : 'text-ink-500'
   return (
     <div className={`mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide ${color} ${className}`}>
       <Icon className="text-sm" />
@@ -193,13 +193,13 @@ function OptionRow({ icon: Icon, title, sub, channel = 'internal', onClick }) {
       onClick={onClick}
       className={`flex w-full items-center gap-3.5 rounded-xl border px-4 py-3.5 text-left transition ${
         external
-          ? 'border-amber-200 bg-amber-50/40 hover:border-amber-300'
+          ? 'border-blue-200 bg-blue-50/50 hover:border-blue-300'
           : 'border-surface-200 bg-surface-0 hover:border-brand-300 hover:bg-brand-50/40'
       }`}
     >
       <span
         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xl ${
-          external ? 'bg-amber-100 text-amber-700' : 'bg-brand-50 text-brand-600'
+          external ? 'bg-blue-100 text-blue-700' : 'bg-brand-50 text-brand-600'
         }`}
       >
         <Icon />
@@ -208,7 +208,7 @@ function OptionRow({ icon: Icon, title, sub, channel = 'internal', onClick }) {
         <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="text-[15px] font-bold text-ink-900">{title}</span>
           {external && (
-            <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+            <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700">
               Leaves AllCampus
             </span>
           )}

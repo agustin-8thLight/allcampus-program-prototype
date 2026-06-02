@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/*
+  Design tokens, isolated and forkable (build plan §10.1).
+  Lato baseline, neutral palette to match the current AllCampus app.
+  Change values here only; nothing downstream hardcodes hex.
+*/
+@theme {
+  --font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand. Teal primary sampled to match the live app's CTAs/logo. */
+  --color-brand-50: #eef9f9;
+  --color-brand-100: #d3eded;
+  --color-brand-200: #a7dcdc;
+  --color-brand-300: #6bc2c4;
+  --color-brand-400: #36a3a6;
+  --color-brand-500: #1a888b;
+  --color-brand-600: #136e72;
+  --color-brand-700: #14595d;
+  --color-brand-800: #16484c;
+  --color-brand-900: #163c40;
+
+  /* Accent blue, used by secondary affordances (search, links). */
+  --color-accent-500: #2563eb;
+  --color-accent-600: #1d4ed8;
+
+  /* Neutral ink/surface ramp. */
+  --color-ink-900: #1a1d21;
+  --color-ink-700: #3a4047;
+  --color-ink-500: #5d656e;
+  --color-ink-400: #828c96;
+  --color-surface-0: #ffffff;
+  --color-surface-50: #f7f8fa;
+  --color-surface-100: #eef1f4;
+  --color-surface-200: #e2e6eb;
+
+  /* Value-card surface (dark, mirrors current cost card). */
+  --color-value-bg: #2b3138;
+  --color-value-bg-strong: #1f242a;
+
+  /* Semantic badge tints. */
+  --color-good-50: #e9f7ee;
+  --color-good-600: #1f9d57;
+  --color-good-700: #157a43;
+  --color-info-50: #eaf2fe;
+  --color-info-700: #1d4ed8;
+
+  --radius-card: 14px;
+}
+
+html {
+  font-family: var(--font-sans);
+  color: var(--color-ink-900);
+  background: var(--color-surface-50);
+}
+
+html,
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Drawer scroll containment helper. */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Drawer view-swap transition (program detail <-> Ally). */
+@keyframes viewInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes viewInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.view-enter-right { animation: viewInRight 0.24s ease-out; }
+.view-enter-left { animation: viewInLeft 0.24s ease-out; }

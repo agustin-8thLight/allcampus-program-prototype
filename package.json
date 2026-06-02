@@ -1,0 +1,22 @@
+{
+  "name": "allcampus-program-prototype",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Throwaway design prototype for the AllCampus program-experience redesign. Spec, not production. Rebuilt in Bubble.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.10",
+    "@vitejs/plugin-react": "^4.5.0",
+    "tailwindcss": "^4.1.10",
+    "vite": "^6.3.5"
+  }
+}

@@ -1,0 +1,3 @@
+# No path-based routing in this app (it uses query params on the root), so this
+# is just SPA-safe insurance: any deep link resolves to the app shell.
+/*    /index.html   200

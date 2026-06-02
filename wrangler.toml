@@ -1,0 +1,6 @@
+# Cloudflare Pages config for the AllCampus program-experience prototype.
+# Static Vite build, no Functions. Used by `wrangler pages deploy` and read by
+# the dashboard's Git integration.
+name = "allcampus-program-prototype"
+compatibility_date = "2026-06-02"
+pages_build_output_dir = "dist"

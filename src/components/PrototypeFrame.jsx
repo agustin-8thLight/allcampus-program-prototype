@@ -95,7 +95,7 @@ export default function PrototypeFrame() {
         <div
           key={toast.k}
           role="status"
-          className="toast pointer-events-none fixed bottom-6 left-1/2 z-[80] -translate-x-1/2"
+          className="toast pointer-events-none fixed left-3 top-14 z-[80] sm:left-4"
         >
           <div className="flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2 text-[13px] font-bold text-white shadow-lg">
             <span className="h-2 w-2 rounded-full bg-brand-400" />

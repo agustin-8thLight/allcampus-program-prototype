@@ -81,11 +81,11 @@ body {
 .view-enter-right { animation: viewInRight 0.24s ease-out; }
 .view-enter-left { animation: viewInLeft 0.24s ease-out; }
 
-/* Concept-switch toast: fade in, hold, fade out over its lifetime. */
+/* Concept-switch toast (top-left, under the switcher): fade in, hold, fade out. */
 @keyframes toastInOut {
-  0% { opacity: 0; transform: translate(-50%, 8px); }
-  12% { opacity: 1; transform: translate(-50%, 0); }
-  82% { opacity: 1; transform: translate(-50%, 0); }
-  100% { opacity: 0; transform: translate(-50%, 4px); }
+  0% { opacity: 0; transform: translateY(-6px); }
+  12% { opacity: 1; transform: translateY(0); }
+  82% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
 }
 .toast { animation: toastInOut 1.8s ease-in-out forwards; }

@@ -14,12 +14,13 @@ const SHARED = [
   'Ally is a program-scoped AI that lives as a view inside the same drawer (with a back control and program context), never contacts the school on its own, and routes its "Request information" into the same chooser. Cost/eligibility answers carry a verify note; outcome questions admit missing data rather than invent it.',
 ]
 
-// Technical prerequisites every concept needs before it can ship (mostly
-// engineering + data, outside design's control). Surfaced for stakeholders.
+// Prerequisites to confirm together before a concept ships. Phrased as neutral
+// starting points to align on, not assumptions about what exists today.
 const SHARED_DEPS = [
-  'Field mapping reconciled 1:1 with the developer’s content-types doc. The field names in this prototype are best-guess.',
-  'Request-information backend: create the program interest, set "Information Requested", track origin (Search / Ally), send to HubSpot, and route logged-out users to sign up / log in, then resume.',
-  'School routing config: the direct-handoff school IDs and each program’s application URL.',
+  'Structured program content. These screens populate from program-level data (descriptions, costs, dates, requirements, and so on) held in a structured, queryable form. A useful first step is confirming together what content exists today, where it lives, and how it stays current, rather than assuming any given field is in place.',
+  'Field names aligned with the build’s content types. The names in this prototype are a best guess and should be matched up before build.',
+  'Request-information backend: create the program interest, mark it Information Requested, track origin (Search / Ally), send to HubSpot, and route logged-out users to sign up / log in, then resume.',
+  'Routing config: which schools hand off directly to their own funnel, and each program’s application URL.',
   'Benefits-specialist scheduling integration (the booking calendar).',
   'Final copy for CTAs and flow steps (placeholders today).',
 ]
@@ -37,7 +38,7 @@ const CONCEPTS = [
     ],
     bestFor: 'Fastest to ship and maintain; the safe default.',
     tradeoff: 'Beyond reordering, it does not address the under-served questions (outcomes, fit, trust).',
-    deps: ['Uses existing data fields only. Nothing beyond the shared foundations above.'],
+    deps: ['Works with the program content already shown today; nothing beyond the shared prerequisites above.'],
   },
   {
     code: '2B',
@@ -52,10 +53,10 @@ const CONCEPTS = [
     bestFor: 'Users who want to read and verify. Serves the New Learner and Career Changer trust needs.',
     tradeoff: 'More to build and maintain, and it is still fundamentally a reading task.',
     deps: [
-      'Normalized value model so out-of-pocket / discount / deferred resolve consistently across schools.',
-      'Sourced and verified school data (accreditation, completion rate, location). Values in this prototype are MOCK.',
-      'Ally answering about ONE program is new functionality. There is no assistant today that is scoped to a single program, so it requires agentic work: retrieval limited to that program’s data, tools, and guardrails, not just a chat box.',
-      'Ally also needs a human-review guardrail on any cost / eligibility answer, and its escalation wired to the same chooser and gate.',
+      'A normalized cost model so out-of-pocket, discount, and deferred figures resolve the same way across schools.',
+      'School-level details (accreditation, completion rate, location) sourced and confirmed with each school. The values shown here are placeholder.',
+      'Answering questions about a single program is a new capability to build (scoped retrieval, supporting tools, and guardrails). It can only draw on program content that is available in a structured form, and where something isn’t available it should say so plainly rather than infer.',
+      'Cost and eligibility answers need a human-review step, and Ally’s next step routes into the same chooser and gate.',
     ],
   },
   {
@@ -71,9 +72,9 @@ const CONCEPTS = [
     bestFor: 'The Explorer and anyone who would rather ask than read. Tests the "ask vs read" hypothesis.',
     tradeoff: 'The biggest departure; leans hardest on Ally answer quality and the human-review guardrail for cost, eligibility, and outcomes.',
     deps: [
-      'Everything 2B needs, plus a higher bar on Ally answer quality (it is the spine, not a helper).',
-      'Outcome / ROI data (job placement, salary) sourced and normalized, otherwise the "what jobs" question can only answer with an honest "not available yet".',
-      'The up-front Q&A content generated or curated from normalized data and human-reviewed before publish.',
+      'Everything Guided needs, with a higher bar on answer quality since the assistant carries the page rather than assisting it.',
+      'Up-front answers about outcomes (like where a program can lead) depend on that information being available and agreed accurate. Where it isn’t, the answer should say so plainly rather than estimate.',
+      'The up-front Q&A is drawn from available program content and human-reviewed before it goes live.',
     ],
   },
 ]
@@ -161,11 +162,11 @@ export default function ConceptNotes({ activeCode, onSelect, onClose }) {
           {/* Technical dependencies common to all concepts */}
           <section className="mb-6 rounded-xl border border-amber-200 bg-amber-50/50 p-4">
             <h3 className="mb-2 text-[13px] font-bold uppercase tracking-wide text-amber-700">
-              Technical dependencies, every concept
+              Dependencies to confirm together, every concept
             </h3>
             <p className="mb-2 text-[13px] text-ink-500">
-              What has to happen before any concept can ship. Mostly engineering and data, outside
-              design’s control.
+              Starting points to align on before a concept ships, not assumptions about the current
+              state of any system or content. Worth confirming with the build team first.
             </p>
             <ul className="space-y-2">
               {SHARED_DEPS.map((d, i) => (

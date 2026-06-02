@@ -128,6 +128,9 @@ function Choose({ school, allyEnabled, onInfo, onAlly, onAdvisor, onSchool }) {
   return (
     <div>
       <p className="mb-4 text-[15px] text-ink-700">How would you like to move forward?</p>
+
+      {/* Internal: stays with AllCampus, the school is not contacted. */}
+      <GroupLabel icon={ShieldIcon} tone="brand">On AllCampus, the school isn’t contacted</GroupLabel>
       <div className="space-y-2.5">
         <OptionRow
           icon={DocIcon}
@@ -138,24 +141,33 @@ function Choose({ school, allyEnabled, onInfo, onAlly, onAdvisor, onSchool }) {
         {allyEnabled && (
           <OptionRow
             icon={SparkleIcon}
-            title="Chat with Ally about this program"
-            sub="Ask questions and get instant answers. No call to book, nothing leaves AllCampus."
+            title="Chat with Ally, the AllCampus assistant"
+            sub="Ask questions and get instant answers. Nothing leaves AllCampus."
             onClick={onAlly}
           />
         )}
         <OptionRow
           icon={HeadsetIcon}
-          title="Talk to a benefits specialist"
-          sub="Book a 20-30 min call on tuition savings, employer benefits, and next steps."
+          title="Talk to an AllCampus benefits specialist"
+          sub="Book a 20-30 minute call with an AllCampus specialist on tuition savings and next steps."
           onClick={onAdvisor}
         />
+      </div>
+
+      {/* External: the only path that reaches the school. */}
+      <GroupLabel icon={ExternalIcon} tone="amber" className="mt-5">
+        With the school, this leaves AllCampus
+      </GroupLabel>
+      <div className="space-y-2.5">
         <OptionRow
           icon={BuildingIcon}
           title="Contact the school directly"
-          sub={`Connect with ${school} about applying. We'll confirm before sharing anything.`}
+          sub={`Connect with ${school} about applying. This is the only step that shares your details with them, and we'll confirm first.`}
+          channel="external"
           onClick={onSchool}
         />
       </div>
+
       <p className="mt-4 flex items-start gap-1.5 text-xs text-ink-400">
         <ShieldIcon className="mt-0.5 shrink-0 text-sm text-brand-500" />
         Nothing reaches the school until you confirm in the last step.
@@ -164,18 +176,44 @@ function Choose({ school, allyEnabled, onInfo, onAlly, onAdvisor, onSchool }) {
   )
 }
 
-function OptionRow({ icon: Icon, title, sub, onClick }) {
+function GroupLabel({ icon: Icon, tone = 'brand', className = '', children }) {
+  const color = tone === 'amber' ? 'text-amber-700' : 'text-ink-500'
+  return (
+    <div className={`mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide ${color} ${className}`}>
+      <Icon className="text-sm" />
+      {children}
+    </div>
+  )
+}
+
+function OptionRow({ icon: Icon, title, sub, channel = 'internal', onClick }) {
+  const external = channel === 'external'
   return (
     <button
       onClick={onClick}
-      className="flex w-full items-center gap-3.5 rounded-xl border border-surface-200 bg-surface-0 px-4 py-3.5 text-left transition hover:border-brand-300 hover:bg-brand-50/40"
+      className={`flex w-full items-center gap-3.5 rounded-xl border px-4 py-3.5 text-left transition ${
+        external
+          ? 'border-amber-200 bg-amber-50/40 hover:border-amber-300'
+          : 'border-surface-200 bg-surface-0 hover:border-brand-300 hover:bg-brand-50/40'
+      }`}
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xl text-brand-600">
+      <span
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xl ${
+          external ? 'bg-amber-100 text-amber-700' : 'bg-brand-50 text-brand-600'
+        }`}
+      >
         <Icon />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[15px] font-bold text-ink-900">{title}</span>
-        <span className="block text-[13px] leading-snug text-ink-500">{sub}</span>
+        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="text-[15px] font-bold text-ink-900">{title}</span>
+          {external && (
+            <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+              Leaves AllCampus
+            </span>
+          )}
+        </span>
+        <span className="mt-0.5 block text-[13px] leading-snug text-ink-500">{sub}</span>
       </span>
       <ArrowRightIcon className="shrink-0 text-base text-ink-400" />
     </button>

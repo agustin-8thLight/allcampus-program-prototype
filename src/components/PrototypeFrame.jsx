@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import App from '../App.jsx'
 import ConceptNotes from './ConceptNotes.jsx'
+import CtaCompare from './CtaCompare.jsx'
 
 /*
  * Prototype review frame. This is NOT part of the AllCampus product UI, it is
@@ -23,6 +24,9 @@ export default function PrototypeFrame() {
   const [variant, setVariant] = useState(initialVariant)
   const [notesOpen, setNotesOpen] = useState(
     () => new URLSearchParams(window.location.search).get('notes') === '1',
+  )
+  const [compareOpen, setCompareOpen] = useState(
+    () => new URLSearchParams(window.location.search).get('compare') === '1',
   )
   const active = VARIANTS.find((v) => v.code === variant)
 
@@ -69,12 +73,20 @@ export default function PrototypeFrame() {
 
         <span className="hidden flex-1 truncate text-[12px] text-white/55 lg:block">{active?.tagline}</span>
 
-        <button
-          onClick={() => setNotesOpen(true)}
-          className="ml-auto rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10"
-        >
-          Concept notes
-        </button>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={() => setCompareOpen(true)}
+            className="rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10"
+          >
+            Compare next step
+          </button>
+          <button
+            onClick={() => setNotesOpen(true)}
+            className="rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10"
+          >
+            Concept notes
+          </button>
+        </div>
       </div>
 
       {/* The real product, offset below the bar */}
@@ -89,6 +101,8 @@ export default function PrototypeFrame() {
           onClose={() => setNotesOpen(false)}
         />
       )}
+
+      {compareOpen && <CtaCompare onClose={() => setCompareOpen(false)} />}
 
       {/* Concept-switch confirmation toast (auto-clears). */}
       {toast && (

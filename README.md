@@ -52,6 +52,7 @@ base path.
 
 - `?variant=1A|2B|2C` — open a concept directly
 - `?notes=1` — open the concept-notes panel
+- `?compare=1` — open the "next step: today vs proposed" comparison
 - `?program=<id>` — deep-open a program drawer (ids in `src/data/programs.json`)
 - `&ally=1` — open the Ally view; `&allyq=fit|cost|employer|admission|outcomes` pre-asks a question
 - `&flow=choose|gate` — open the request-information flow at a step

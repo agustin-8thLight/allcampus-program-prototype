@@ -124,7 +124,7 @@ export default function CtaFlow({
 
 /* ------------------------------------------------------------------ */
 
-function Choose({ school, allyEnabled, onInfo, onAlly, onAdvisor, onSchool }) {
+export function Choose({ school, allyEnabled, onInfo, onAlly, onAdvisor, onSchool }) {
   return (
     <div>
       <p className="mb-4 text-[15px] text-ink-700">How would you like to move forward?</p>
@@ -220,7 +220,7 @@ function OptionRow({ icon: Icon, title, sub, channel = 'internal', onClick }) {
   )
 }
 
-function Gate({ school, onBack, onConfirm }) {
+export function Gate({ school, onBack, onConfirm }) {
   return (
     <div className="text-center">
       <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-2xl text-brand-600">

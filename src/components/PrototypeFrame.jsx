@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import App from '../App.jsx'
 import ConceptNotes from './ConceptNotes.jsx'
 
@@ -25,6 +25,21 @@ export default function PrototypeFrame() {
     () => new URLSearchParams(window.location.search).get('notes') === '1',
   )
   const active = VARIANTS.find((v) => v.code === variant)
+
+  // Concepts only differ inside the program drawer, so a switch is invisible on
+  // the list. A brief toast confirms the change took. Keyed so re-selecting the
+  // same concept still re-triggers it; skipped on initial load.
+  const [toast, setToast] = useState(null)
+  const firstRun = useRef(true)
+  useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false
+      return
+    }
+    setToast({ ...active, k: Date.now() })
+    const t = setTimeout(() => setToast(null), 1800)
+    return () => clearTimeout(t)
+  }, [variant])
 
   return (
     <>
@@ -73,6 +88,22 @@ export default function PrototypeFrame() {
           onSelect={setVariant}
           onClose={() => setNotesOpen(false)}
         />
+      )}
+
+      {/* Concept-switch confirmation toast (auto-clears). */}
+      {toast && (
+        <div
+          key={toast.k}
+          role="status"
+          className="toast pointer-events-none fixed bottom-6 left-1/2 z-[80] -translate-x-1/2"
+        >
+          <div className="flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2 text-[13px] font-bold text-white shadow-lg">
+            <span className="h-2 w-2 rounded-full bg-brand-400" />
+            Showing: {toast.name}
+            <span className="text-white/50">{toast.code}</span>
+            <span className="font-normal text-white/60">, open a program to see it</span>
+          </div>
+        </div>
       )}
     </>
   )

@@ -10,14 +10,13 @@ import CtaCompare from './CtaCompare.jsx'
  * so the product chrome stays clean.
  */
 const VARIANTS = [
-  { code: '1A', name: 'Baseline', tagline: "Today's content, reordered cost-first. Lowest effort." },
-  { code: '2B', name: 'Guided', tagline: 'Structured page with school trust signals and Ally as a helper.' },
-  { code: '2C', name: 'Ask-First', tagline: 'Questions answered up front, with Ally as the spine.' },
+  { code: '2B', name: 'Guided', tagline: 'Cost clarity, who-it’s-for, school highlights, advisor. Favored direction.' },
+  { code: '1A', name: 'Baseline', tagline: "Today's content, reordered cost-first. The lighter, no-Ally fallback." },
 ]
 
 function initialVariant() {
   const v = new URLSearchParams(window.location.search).get('variant')
-  return VARIANTS.some((x) => x.code === v) ? v : '1A'
+  return VARIANTS.some((x) => x.code === v) ? v : '2B'
 }
 
 export default function PrototypeFrame() {

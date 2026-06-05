@@ -1,16 +1,15 @@
 import Badge from './Badge.jsx'
 import { ProgramImage, SchoolMark } from './ProgramDetail.jsx'
-import { startDateDisplay, deadlineDisplay } from '../data/model.js'
-import { CalendarIcon, LayersIcon, ArrowRightIcon } from './icons.jsx'
+import { startDateDisplay } from '../data/model.js'
+import { CalendarIcon, ArrowRightIcon, InfoIcon } from './icons.jsx'
 
 /*
- * Program list card (§10.7). Compare removed. Main action "Explore program"
- * opens the detail drawer.
+ * Program list card. Compare removed. Deferred tuition is a card tag with an
+ * info tooltip (not the discount badge, not a sort-only feature).
  */
 export default function ProgramCard({ program, onExplore }) {
   const p = program
   const start = startDateDisplay(p)
-  const deadline = deadlineDisplay(p)
   const tags = [p.degreeLevel, p.duration, p.courseModality].filter(Boolean)
 
   return (
@@ -19,9 +18,18 @@ export default function ProgramCard({ program, onExplore }) {
       onClick={() => onExplore?.(p)}
       className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 text-left transition hover:border-brand-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
     >
-      {/* Badge rail */}
-      <div className="px-4 pt-4">
+      {/* Badge rail: discount badge + deferred tag (with tooltip) */}
+      <div className="flex flex-wrap items-center gap-2 px-4 pt-4">
         <Badge program={p} />
+        {p.deferredPaymentAvailable && (
+          <span
+            title="Deferred payment: start now and pay over time, rather than all upfront."
+            className="inline-flex items-center gap-1 rounded-full bg-info-50 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-info-700"
+          >
+            Deferred tuition
+            <InfoIcon className="text-[12px]" />
+          </span>
+        )}
       </div>
 
       {/* Title + school */}
@@ -44,12 +52,6 @@ export default function ProgramCard({ program, onExplore }) {
           <div className="flex items-center gap-2">
             <CalendarIcon className="text-sm text-brand-500" />
             <span>Start date: {start}</span>
-          </div>
-        )}
-        {deadline && (
-          <div className="flex items-center gap-2">
-            <LayersIcon className="text-sm text-brand-500" />
-            <span>Apply by: {deadline}</span>
           </div>
         )}
       </div>

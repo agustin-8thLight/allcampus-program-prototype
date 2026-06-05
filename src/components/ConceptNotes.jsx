@@ -8,10 +8,9 @@ import { CloseIcon, ArrowRightIcon } from './icons.jsx'
  */
 
 const SHARED = [
-  'Single CTA opens a chooser (request info / talk to a specialist / contact the school). A confirmation gate guards ONLY the contact-school path, so a lead never reaches the school until the user confirms. Direct-handoff schools skip the chooser and link straight out.',
-  'Value card states one "what this costs you" line from the three levers (discount, deferred payment, employer benefit) with a fallback hierarchy. An always-visible estimate caveat (AAA contrast) sits on it; detailed assumptions live behind "See full terms".',
-  'Normalized data: one value model, standardized start dates, and a school entity (accreditation, completion rate, location) surfaced consistently. No off-site links, the page is meant to convert.',
-  'Ally is a program-scoped AI that lives as a view inside the same drawer (with a back control and program context), never contacts the school on its own, and routes its "Request information" into the same chooser. Cost/eligibility answers carry a verify note; outcome questions admit missing data rather than invent it.',
+  'One primary CTA, "Get Program Details", opens a three-way choice: talk to the school, compare your options with an AllCampus advisor, or apply now. Talking to the school is gated, nothing is shared until the user confirms.',
+  'Cost is shown simply: an estimated cost per term (total cost for certificates), the discount with the original struck through, and plain-language benefit handling. No calculator and no out-of-pocket math; anyone who needs help estimating is routed to an advisor.',
+  'Affordability-first search: visible quick filters (most affordable, lowest cost per credit, deferred tuition, fastest). Deferred is also a card tag with an info tooltip.',
 ]
 
 // Prerequisites to confirm together before a concept ships. Phrased as neutral
@@ -19,63 +18,43 @@ const SHARED = [
 const SHARED_DEPS = [
   'Structured program content. These screens populate from program-level data (descriptions, costs, dates, requirements, and so on) held in a structured, queryable form. A useful first step is confirming together what content exists today, where it lives, and how it stays current, rather than assuming any given field is in place.',
   'Field names aligned with the build’s content types. The names in this prototype are a best guess and should be matched up before build.',
-  'Request-information backend: create the program interest, mark it Information Requested, track origin (Search / Ally), send to HubSpot, and route logged-out users to sign up / log in, then resume.',
-  'Routing config: which schools hand off directly to their own funnel, and each program’s application URL.',
-  'Benefits-specialist scheduling integration (the booking calendar).',
+  'On "Get Program Details", create the deal/record in HubSpot, and route logged-out users to sign up / log in, then resume.',
+  'Routing + contact config: each program’s application URL, the advisor scheduling link, and AllCampus contact details.',
   'Final copy for CTAs and flow steps (placeholders today).',
 ]
 
 const CONCEPTS = [
   {
-    code: '1A',
-    name: 'Baseline',
-    tagline: "Today's content, reordered cost-first. Lowest effort.",
-    idea: 'The smallest meaningful change from the current app: reorder existing content cost-first, collapse the competing CTAs into one, and rebuild the cost display as the value card.',
-    decisions: [
-      'Keeps the discount badge in the drawer bar.',
-      'Cost leads, directly under the title.',
-      'Traditional sections (About, Benefits, Admission, Curriculum). No Ally.',
-    ],
-    bestFor: 'Fastest to ship and maintain; the safe default.',
-    tradeoff: 'Beyond reordering, it does not address the under-served questions (outcomes, fit, trust).',
-    deps: ['Works with the program content already shown today; nothing beyond the shared prerequisites above.'],
-  },
-  {
     code: '2B',
     name: 'Guided',
-    tagline: 'Structured page with school trust signals and Ally as a helper.',
-    idea: 'The full structured page, done completely. Adds the normalized school trust panel and an inline "Ask Ally" prompt, ordered around the decision the user is making.',
+    tagline: 'Cost clarity, who-it’s-for, school highlights, and an advisor route. Favored direction.',
+    idea: 'The fuller program page: the simplified cost card, a "Who this program is for" section so users self-select early, School Highlights, and a "Talk to an advisor" prompt for anyone who needs guidance.',
     decisions: [
-      'Drops the badge; the value card carries the affordability story.',
-      'School panel surfaces accreditation + completion rate to answer "is this legit and worth it".',
-      'Ally is present but optional, a helper alongside the content.',
+      'Cost card is the primary affordability story (per-term / total, discount, simple language).',
+      'Adds "Who this program is for" and up to three School Highlights.',
+      'v1 routes "have questions" to an advisor; an in-page assistant (Ally) is a later phase.',
     ],
-    bestFor: 'Users who want to read and verify. Serves the New Learner and Career Changer trust needs.',
-    tradeoff: 'More to build and maintain, and it is still fundamentally a reading task.',
+    bestFor: 'Users who want enough context to feel confident, then a clear next step.',
+    tradeoff: 'A bit more to build and maintain than Baseline.',
     deps: [
-      'A normalized cost model so out-of-pocket, discount, and deferred figures resolve the same way across schools.',
-      'School-level details (accreditation, completion rate, location) sourced and confirmed with each school. The values shown here are placeholder.',
-      'Answering questions about a single program is a new capability to build (scoped retrieval, supporting tools, and guardrails). It can only draw on program content that is available in a structured form, and where something isn’t available it should say so plainly rather than infer.',
-      'Cost and eligibility answers need a human-review step, and Ally’s next step routes into the same chooser and gate.',
+      'Up to three school highlights per school (the fields AllCampus can populate). The ones shown here are placeholder.',
+      '"Who this program is for" content per program.',
+      'Advisor scheduling link + AllCampus contact details.',
     ],
   },
   {
-    code: '2C',
-    name: 'Ask-First',
-    tagline: 'The questions people ask, answered up front, with Ally as the spine.',
-    idea: 'A departure. Instead of sections to read and interpret, the page leads with the questions people actually ask, answered up front from program data, with Ally as the primary way to go deeper.',
+    code: '1A',
+    name: 'Baseline',
+    tagline: "Today's content, reordered cost-first. The lighter, no-Ally fallback.",
+    idea: 'The smallest meaningful change: reorder existing content cost-first, collapse the competing CTAs into "Get Program Details", and use the same simplified cost card. No advisor section, no school highlights, no Ally, so it can ship without any of that work.',
     decisions: [
-      'Replaces sectioned reading with a question accordion (fit, employer benefit, admission, outcomes).',
-      'Ally is the spine, not a side prompt.',
-      'No persona model required, it just answers the common questions for everyone.',
+      'Cost leads, directly under the title.',
+      'Traditional sections (About, Benefits, Admission, Curriculum).',
+      'No dependency on Ally or new school content.',
     ],
-    bestFor: 'The Explorer and anyone who would rather ask than read. Tests the "ask vs read" hypothesis.',
-    tradeoff: 'The biggest departure; leans hardest on Ally answer quality and the human-review guardrail for cost, eligibility, and outcomes.',
-    deps: [
-      'Everything Guided needs, with a higher bar on answer quality since the assistant carries the page rather than assisting it.',
-      'Up-front answers about outcomes (like where a program can lead) depend on that information being available and agreed accurate. Where it isn’t, the answer should say so plainly rather than estimate.',
-      'The up-front Q&A is drawn from available program content and human-reviewed before it goes live.',
-    ],
+    bestFor: 'Fastest to ship and maintain; a safe next step that needs no Ally work.',
+    tradeoff: 'Does less to build confidence than Guided (no who-it’s-for or school highlights).',
+    deps: ['Works with the program content already shown today; nothing beyond the shared prerequisites above.'],
   },
 ]
 

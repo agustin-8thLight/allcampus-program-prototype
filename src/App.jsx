@@ -32,9 +32,11 @@ export default function App({ variant = '1A' }) {
   const [flowReturnView, setFlowReturnView] = useState('detail') // where the flow's back goes
   const [flowStep, setFlowStep] = useState('choose')
 
-  const openFlow = (from) => {
+  // "Get Program Details" opens the chooser; the advisor links open it at the
+  // advisor step. (On click, the real build also creates the HubSpot deal.)
+  const openFlow = (from, step = 'choose') => {
     setFlowReturnView(from)
-    setFlowStep('choose')
+    setFlowStep(step)
     setDrawerView('flow')
   }
 
@@ -175,8 +177,8 @@ export default function App({ variant = '1A' }) {
         )}
       </main>
 
-      {/* One Side Drawer hosting three swappable views: program detail, Ally,
-          and the request-information flow. No stacked modals. */}
+      {/* One Side Drawer hosting swappable views: program detail, the
+          Get-Program-Details flow, and (phase 2) Ally. No stacked modals. */}
       <Drawer
         open={!!selected}
         onClose={() => {
@@ -191,16 +193,13 @@ export default function App({ variant = '1A' }) {
             program={selected}
             initialAsk={new URLSearchParams(window.location.search).get('allyq')}
             onBack={() => setDrawerView('detail')}
-            onRequestInfo={() => openFlow('ally')}
+            onRequestInfo={() => openFlow('detail')}
           />
         ) : selected && drawerView === 'flow' ? (
           <CtaFlow
             program={selected}
-            origin="Search"
             initialStep={flowStep}
-            backLabel={flowReturnView === 'ally' ? 'Ally' : 'Program'}
-            allyEnabled={variant.startsWith('2') && flowReturnView !== 'ally'}
-            onOpenAlly={() => setDrawerView('ally')}
+            backLabel="Program"
             onClose={() => setDrawerView(flowReturnView)}
           />
         ) : selected ? (
@@ -211,7 +210,7 @@ export default function App({ variant = '1A' }) {
               setSelected(null)
               setDrawerView('detail')
             }}
-            onOpenAlly={() => setDrawerView('ally')}
+            onAdvisor={() => openFlow('detail', 'advisor')}
             onPrimaryCta={() => openFlow('detail')}
           />
         ) : null}

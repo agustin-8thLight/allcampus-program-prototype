@@ -34,6 +34,7 @@ export const SCHOOLS = {
     completionRate: 0.62,
     about: 'Private university known for small classes and programs built for working adults.',
     website: 'https://example.com/txwes',
+    highlights: ['Small class sizes', 'Faculty who are working professionals', 'Career coaching included'],
   },
   'abilene': {
     id: 'abilene',
@@ -47,6 +48,7 @@ export const SCHOOLS = {
     completionRate: 0.58,
     about: 'Faith-based private university with a growing online catalog.',
     website: 'https://example.com/abilene',
+    highlights: ['Faith-based community', 'Flexible online scheduling', 'Dedicated student support'],
   },
   'nursing-u': {
     id: 'nursing-u',
@@ -60,6 +62,7 @@ export const SCHOOLS = {
     completionRate: 0.71,
     about: 'Health-focused institution specializing in nursing and allied health.',
     website: 'https://example.com/nursing-u',
+    highlights: ['Specialized in healthcare', 'Clinically experienced faculty', 'Strong employer connections'],
   },
   'state-online': {
     id: 'state-online',
@@ -73,6 +76,7 @@ export const SCHOOLS = {
     completionRate: 0.55,
     about: 'Public online university focused on flexible, career-aligned degrees.',
     website: 'https://example.com/state-online',
+    highlights: ['Public-university affordability', 'Fully online and flexible', 'Credit for prior learning'],
   },
   'snhu': {
     id: 'snhu',
@@ -87,6 +91,7 @@ export const SCHOOLS = {
     completionRate: 0.51,
     about: 'One of the largest nonprofit online universities in the US.',
     website: 'https://example.com/snhu',
+    highlights: ['Large nonprofit online university', '8-week terms', '24/7 student support'],
   },
   'metro-tech': {
     id: 'metro-tech',
@@ -102,6 +107,7 @@ export const SCHOOLS = {
     completionRate: null,
     about: 'Career-focused technical institute.',
     website: 'https://example.com/metro-tech',
+    highlights: ['Project-based learning', 'Industry-aligned curriculum', 'Career services'],
   },
 }
 

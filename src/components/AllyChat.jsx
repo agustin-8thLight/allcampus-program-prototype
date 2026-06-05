@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { resolveValueCard, money } from '../data/model.js'
+import { resolveCost, money } from '../data/model.js'
 import {
   SparkleIcon,
   SendIcon,
@@ -34,7 +34,7 @@ export const SUGGESTED = [
 ]
 
 export function allyAnswer(p, key) {
-  const v = resolveValueCard(p)
+  const v = resolveCost(p)
   switch (key) {
     case 'fit': {
       const start = p.rollingEnrollment ? 'You can start on a rolling basis' : 'New cohorts start on a set date'
@@ -44,7 +44,7 @@ export function allyAnswer(p, key) {
     }
     case 'cost':
       return {
-        text: `The ${v.label.toLowerCase()} is ${v.value}${v.struck ? `, down from ${v.struck}` : ''}.${
+        text: `The ${v.primaryLabel.toLowerCase()} is ${v.primaryValue}${v.struck ? `, down from ${v.struck}` : ''}.${
           v.deferred ? ' You can also defer payment and pay over time.' : ''
         } Your actual cost depends on transfer credits and any employer benefit.`,
         needsReview: true,
@@ -104,7 +104,7 @@ export default function AllyChat({ program, initialAsk, onBack, onRequestInfo })
   const [asked, setAsked] = useState([])
   const [costOpen, setCostOpen] = useState(false)
   const scrollRef = useRef(null)
-  const v = resolveValueCard(program)
+  const v = resolveCost(program)
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
@@ -200,7 +200,7 @@ export default function AllyChat({ program, initialAsk, onBack, onRequestInfo })
           )}
 
           {/* Collapsed cost */}
-          {v.value && (
+          {v.primaryValue && (
             <div className="mt-2">
               <button
                 onClick={() => setCostOpen((o) => !o)}
@@ -209,9 +209,9 @@ export default function AllyChat({ program, initialAsk, onBack, onRequestInfo })
               >
                 <span className="flex min-w-0 items-baseline gap-2">
                   <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-ink-400">
-                    {v.label}
+                    {v.primaryLabel}
                   </span>
-                  <span className="text-[15px] font-black text-ink-900">{v.value}</span>
+                  <span className="text-[15px] font-black text-ink-900">{v.primaryValue}</span>
                   {v.struck && <span className="text-[12px] text-ink-400 line-through">{v.struck}</span>}
                 </span>
                 <ChevronDownIcon

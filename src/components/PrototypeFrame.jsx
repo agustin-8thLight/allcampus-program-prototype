@@ -10,8 +10,8 @@ import CtaCompare from './CtaCompare.jsx'
  * so the product chrome stays clean.
  */
 const VARIANTS = [
-  { code: '2B', name: 'Guided', tagline: 'Cost clarity, who-it’s-for, school highlights, advisor. Favored direction.' },
   { code: '1A', name: 'Baseline', tagline: "Today's content, reordered cost-first. The lighter, no-Ally fallback." },
+  { code: '2B', name: 'Guided', tagline: 'Cost clarity, who-it’s-for, school highlights, advisor. Favored direction.' },
 ]
 
 function initialVariant() {

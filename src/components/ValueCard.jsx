@@ -13,12 +13,12 @@ export default function ValueCard({ program, onAdvisor }) {
 
   return (
     <section
-      className="rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 p-5 text-center sm:p-6"
+      className="rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 p-5 sm:p-6"
       aria-label="Cost"
     >
       {/* Pills */}
       {c.pills.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-2.5">
+        <div className="flex flex-wrap gap-2.5">
           {c.pills.map((pill, i) => (
             <div key={i} className="rounded-full border border-surface-200 px-4 py-1.5 leading-tight">
               <div className="text-[15px] font-black text-ink-900">{pill.big}</div>
@@ -33,7 +33,7 @@ export default function ValueCard({ program, onAdvisor }) {
       {/* Primary number */}
       <div className="mt-5">
         <div className="text-[12px] font-bold uppercase tracking-wide text-ink-500">{c.primaryLabel}</div>
-        <div className="mt-1 flex flex-wrap items-end justify-center gap-3">
+        <div className="mt-1 flex flex-wrap items-end gap-3">
           <span className="text-4xl font-black leading-none text-ink-900">{c.primaryValue}</span>
           {c.struck && (
             <span className="pb-1 text-xl font-semibold text-ink-400 line-through">{c.struck}</span>
@@ -52,12 +52,12 @@ export default function ValueCard({ program, onAdvisor }) {
 
       {/* Plain-language benefit handling */}
       {c.benefitsLine && (
-        <p className="mx-auto mt-3 max-w-md text-[13px] italic leading-relaxed text-ink-500">{c.benefitsLine}</p>
+        <p className="mt-3 max-w-prose text-[13px] italic leading-relaxed text-ink-500">{c.benefitsLine}</p>
       )}
 
       {/* Deferred secondary line */}
       {c.deferred && (
-        <p className="mx-auto mt-3 inline-flex items-center gap-2 rounded-lg bg-surface-100 px-3 py-1.5 text-[13px] font-semibold text-ink-700">
+        <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-surface-100 px-3 py-1.5 text-[13px] font-semibold text-ink-700">
           <span aria-hidden>↻</span> Deferred payment available, start now and pay over time
         </p>
       )}

@@ -10,23 +10,23 @@ export default function SchoolPanel({ school }) {
   const highlights = (school.highlights || []).slice(0, 3)
 
   return (
-    <div className="rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 p-5">
+    <section>
       <div className="flex items-center gap-3">
         <span
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-sm font-black text-white"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-black text-white"
           style={{ background: school.logoColor }}
           aria-hidden
         >
           {school.logoMonogram}
         </span>
         <div className="min-w-0">
-          <div className="text-[17px] font-bold leading-tight text-ink-900">{school.name}</div>
+          <div className="text-[16px] font-bold leading-tight text-ink-900">{school.name}</div>
           {school.about && <p className="mt-0.5 text-[14px] leading-snug text-ink-500">{school.about}</p>}
         </div>
       </div>
 
       {highlights.length > 0 && (
-        <ul className="mt-4 grid gap-2.5 sm:grid-cols-3">
+        <ul className="mt-3 grid gap-2.5 sm:grid-cols-3">
           {highlights.map((h) => (
             <li key={h} className="flex items-start gap-2 text-[14px] text-ink-700">
               <CheckCircleIcon className="mt-0.5 shrink-0 text-lg text-brand-500" />
@@ -35,6 +35,6 @@ export default function SchoolPanel({ school }) {
           ))}
         </ul>
       )}
-    </div>
+    </section>
   )
 }

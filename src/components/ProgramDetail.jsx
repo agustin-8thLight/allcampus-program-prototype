@@ -70,9 +70,9 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, varian
     <button
       type="button"
       onClick={() => onAdvisor?.(p)}
-      className="flex w-full items-center gap-3 rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 px-4 py-3.5 text-left transition hover:border-brand-300 hover:bg-brand-50/40"
+      className="flex w-full items-center gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3.5 text-left transition hover:bg-brand-100"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xl text-brand-600">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-0 text-xl text-brand-600">
         <HeadsetIcon />
       </span>
       <span className="min-w-0 flex-1">
@@ -192,7 +192,7 @@ function AtAGlance({ program: p, start }) {
   if (items.length === 0) return null
 
   return (
-    <div className="grid grid-cols-2 gap-3 rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 p-4 sm:grid-cols-3">
+    <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-y border-surface-200 py-4 sm:grid-cols-3">
       {items.map((it) => {
         const Icon = it.icon
         return (

@@ -24,12 +24,13 @@ import {
 const ALLCAMPUS_EMAIL = 'hello@allcampus.com'
 const ALLCAMPUS_PHONE = '312.237.2051'
 
-export default function CtaFlow({ program, initialStep = 'choose', backLabel = 'Program', onClose }) {
+export default function CtaFlow({ program, initialStep = 'choose', backLabel = 'Program', onRequested, onClose }) {
   const [step, setStep] = useState(initialStep)
   const school = program.school?.name || 'the school'
   const schoolShort = school.split(' ')[0]
 
   const applyNow = () => {
+    onRequested?.(program)
     window.open(program.applicationUrl, '_blank', 'noopener')
     setStep('applied')
   }
@@ -93,7 +94,10 @@ export default function CtaFlow({ program, initialStep = 'choose', backLabel = '
               </p>
               <div className="mt-5 flex flex-col gap-2">
                 <button
-                  onClick={() => setStep('sentSchool')}
+                  onClick={() => {
+                    onRequested?.(program)
+                    setStep('sentSchool')
+                  }}
                   className="w-full rounded-xl bg-brand-600 px-5 py-3 text-sm font-bold text-white hover:bg-brand-700"
                 >
                   Yes
@@ -117,7 +121,13 @@ export default function CtaFlow({ program, initialStep = 'choose', backLabel = '
                 </span>
                 <h3 className="text-lg font-black text-ink-900">Talk with an AllCampus Specialist</h3>
               </div>
-              <button className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-sm font-bold text-white hover:bg-brand-700">
+              <button
+                onClick={() => {
+                  onRequested?.(program)
+                  setStep('booked')
+                }}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-sm font-bold text-white hover:bg-brand-700"
+              >
                 <CalendarIcon className="text-base" /> Choose a time that works for you
                 <ArrowRightIcon className="text-base" />
               </button>
@@ -145,6 +155,14 @@ export default function CtaFlow({ program, initialStep = 'choose', backLabel = '
               tone="blue"
               title={`${schoolShort} application opened`}
               body={`${school}'s application opened in a new tab. You'll hear from their admissions team about next steps.`}
+              onClose={onClose}
+            />
+          )}
+
+          {step === 'booked' && (
+            <Success
+              title="Request received"
+              body="An AllCampus advisor will reach out to schedule your call and help with programs, tuition savings, and next steps."
               onClose={onClose}
             />
           )}

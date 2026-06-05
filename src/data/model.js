@@ -45,7 +45,7 @@ export function badgeLabel(p) {
   switch (p.badgeType) {
     case 'discountCap':
       return p.discount?.dollarAmount != null
-        ? `Capped at ${money(p.discount.dollarAmount)}`
+        ? `${money(p.discount.dollarAmount)}/yr cap`
         : 'Tuition capped'
     case 'discountPercent':
       return p.discount?.percentUsed != null ? `${p.discount.percentUsed}% off` : 'Discounted tuition'
@@ -166,11 +166,8 @@ export function resolveCost(p) {
   let state, capLine, benefitsLine
   if (capped) {
     state = 'capped'
-    capLine = cert
-      ? `Your tuition is capped at ${money(cap)} for the full certificate.`
-      : `Never pay more than ${money(cap)} per year.`
-    benefitsLine =
-      'You pay the discounted rate shown above. Costs may be lower with transfer credits or employer benefits.'
+    capLine = `Tuition capped at ${money(cap)} a year. Many employers cover up to this amount, so your cost may be lower.`
+    benefitsLine = null
   } else if (hasDiscount) {
     state = 'discount'
     benefitsLine =

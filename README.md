@@ -56,6 +56,7 @@ base path.
 - `?program=<id>` — deep-open a program drawer (ids in `src/data/programs.json`)
 - `&ally=1` — open the Ally view; `&allyq=fit|cost|employer|admission|outcomes` pre-asks a question
 - `&flow=choose|gate` — open the request-information flow at a step
+- `&requested=1` — preview the returning-user state (details already requested)
 
 ## Structure
 

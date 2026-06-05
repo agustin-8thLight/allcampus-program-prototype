@@ -51,7 +51,9 @@ export default function ValueCard({ program, onAdvisor }) {
       )}
 
       {/* Plain-language benefit handling */}
-      <p className="mx-auto mt-3 max-w-md text-[13px] italic leading-relaxed text-ink-500">{c.benefitsLine}</p>
+      {c.benefitsLine && (
+        <p className="mx-auto mt-3 max-w-md text-[13px] italic leading-relaxed text-ink-500">{c.benefitsLine}</p>
+      )}
 
       {/* Deferred secondary line */}
       {c.deferred && (

@@ -31,6 +31,13 @@ export default function App({ variant = '1A' }) {
   const [drawerView, setDrawerView] = useState('detail') // 'detail' | 'ally' | 'flow'
   const [flowReturnView, setFlowReturnView] = useState('detail') // where the flow's back goes
   const [flowStep, setFlowStep] = useState('choose')
+  const [requested, setRequested] = useState(() => new Set()) // program ids the user has acted on
+
+  const markRequested = (p) => setRequested((s) => new Set(s).add(p.id))
+  const applyToSchool = (p) => {
+    markRequested(p)
+    window.open(p.applicationUrl, '_blank', 'noopener')
+  }
 
   // "Get Program Details" opens the chooser; the advisor links open it at the
   // advisor step. (On click, the real build also creates the HubSpot deal.)
@@ -56,6 +63,7 @@ export default function App({ variant = '1A' }) {
           setDrawerView('flow')
         }
         if (params.get('ally')) setDrawerView('ally')
+        if (params.get('requested')) setRequested(new Set([p.id]))
       }
     }
   }, [])
@@ -200,17 +208,20 @@ export default function App({ variant = '1A' }) {
             program={selected}
             initialStep={flowStep}
             backLabel="Program"
+            onRequested={markRequested}
             onClose={() => setDrawerView(flowReturnView)}
           />
         ) : selected ? (
           <ProgramDrawerView
             program={selected}
             variant={variant}
+            requested={requested.has(selected.id)}
             onClose={() => {
               setSelected(null)
               setDrawerView('detail')
             }}
             onAdvisor={() => openFlow('detail', 'advisor')}
+            onApply={() => applyToSchool(selected)}
             onPrimaryCta={() => openFlow('detail')}
           />
         ) : null}

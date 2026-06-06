@@ -7,7 +7,7 @@ import { resolveCost } from '../data/model.js'
  * plain-language benefit handling, and a "Talk to an advisor" link for anyone
  * who needs help estimating out-of-pocket. No calculator, no TR math.
  */
-export default function ValueCard({ program, onAdvisor }) {
+export default function ValueCard({ program }) {
   const c = resolveCost(program)
   if (!c.primaryValue) return null
 
@@ -62,20 +62,8 @@ export default function ValueCard({ program, onAdvisor }) {
         </p>
       )}
 
-      {/* Advisor route for complex cases */}
-      <div className="mt-4 border-t border-surface-100 pt-3 text-[14px] text-ink-700">
-        Want help estimating your out-of-pocket cost?{' '}
-        <button
-          type="button"
-          onClick={onAdvisor}
-          className="font-bold text-accent-600 underline-offset-2 hover:text-accent-500 hover:underline"
-        >
-          Talk to an advisor
-        </button>
-      </div>
-
       {c.perTerm && (
-        <p className="mt-2 text-[11px] text-ink-400">Estimates are based on a typical course load and may vary.</p>
+        <p className="mt-3 text-[11px] text-ink-400">Estimates are based on a typical course load and may vary.</p>
       )}
     </section>
   )

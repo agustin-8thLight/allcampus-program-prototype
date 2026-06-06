@@ -34,7 +34,7 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, varian
     </header>
   )
 
-  const valueCard = <ValueCard program={p} onAdvisor={onAdvisor} />
+  const valueCard = <ValueCard program={p} />
   const glance = <AtAGlance program={p} start={start} />
 
   const whoFor = p.whoFor?.length > 0 && (

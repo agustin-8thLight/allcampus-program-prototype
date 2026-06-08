@@ -80,7 +80,7 @@ export default function PrototypeFrame() {
             onClick={() => setNotesOpen(true)}
             className="rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10"
           >
-            Concept notes
+            Phase notes
           </button>
         </div>
       </div>

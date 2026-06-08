@@ -105,13 +105,13 @@ export default function ConceptNotes({ activeCode, onSelect, onClose }) {
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Concept notes"
+        aria-label="Phase notes"
         className="my-auto w-full max-w-3xl rounded-2xl bg-surface-0 shadow-2xl"
       >
         <div className="flex items-center justify-between border-b border-surface-200 px-6 py-4">
           <div>
-            <h2 className="text-lg font-black text-ink-900">Concept notes</h2>
-            <p className="text-[13px] text-ink-500">Design rationale and what makes each concept different.</p>
+            <h2 className="text-lg font-black text-ink-900">Phase notes</h2>
+            <p className="text-[13px] text-ink-500">Design rationale and what makes each phase different.</p>
           </div>
           <button
             onClick={onClose}
@@ -126,7 +126,7 @@ export default function ConceptNotes({ activeCode, onSelect, onClose }) {
           {/* Shared foundations */}
           <section className="mb-6">
             <h3 className="mb-2 text-[13px] font-bold uppercase tracking-wide text-ink-500">
-              Shared across all concepts
+              Shared across both phases
             </h3>
             <ul className="space-y-2">
               {SHARED.map((s, i) => (
@@ -141,10 +141,10 @@ export default function ConceptNotes({ activeCode, onSelect, onClose }) {
           {/* Technical dependencies common to all concepts */}
           <section className="mb-6 rounded-xl border border-amber-200 bg-amber-50/50 p-4">
             <h3 className="mb-2 text-[13px] font-bold uppercase tracking-wide text-amber-700">
-              Dependencies to confirm together, every concept
+              Dependencies to confirm together, every phase
             </h3>
             <p className="mb-2 text-[13px] text-ink-500">
-              Starting points to align on before a concept ships, not assumptions about the current
+              Starting points to align on before a phase ships, not assumptions about the current
               state of any system or content. Worth confirming with the build team first.
             </p>
             <ul className="space-y-2">

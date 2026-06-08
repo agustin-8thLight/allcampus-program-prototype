@@ -153,7 +153,7 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, varian
   const blocks =
     variant === '2B'
       ? [header, valueCard, glance, whoFor, schoolPanel, advisorPrompt, about, admission, curriculum, concentrations, terms]
-      : [header, valueCard, glance, about, benefits, admission, curriculum, concentrations, terms]
+      : [header, valueCard, glance, advisorPrompt, about, benefits, admission, curriculum, concentrations, terms]
 
   return (
     <article className="flex flex-col gap-6 text-ink-900">

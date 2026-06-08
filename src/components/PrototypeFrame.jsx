@@ -10,8 +10,8 @@ import CtaCompare from './CtaCompare.jsx'
  * so the product chrome stays clean.
  */
 const VARIANTS = [
-  { code: '1A', name: 'Baseline', tagline: "Today's content, reordered cost-first. The lighter, no-Ally fallback." },
-  { code: '2B', name: 'Guided', tagline: 'Cost clarity, who-it’s-for, school highlights, advisor. Favored direction.' },
+  { code: '1A', name: 'Phase 1', tagline: 'Ships first: cost-first program detail and an advisor. No Ally.' },
+  { code: '2B', name: 'Phase 2', tagline: 'Adds Ally, “who it’s for”, and school highlights. The fuller experience.' },
 ]
 
 function initialVariant() {
@@ -63,9 +63,6 @@ export default function PrototypeFrame() {
               }`}
             >
               {v.name}
-              <span className={`ml-1 text-[10px] ${variant === v.code ? 'text-ink-400' : 'text-white/40'}`}>
-                {v.code}
-              </span>
             </button>
           ))}
         </div>
@@ -113,7 +110,6 @@ export default function PrototypeFrame() {
           <div className="flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2 text-[13px] font-bold text-white shadow-lg">
             <span className="h-2 w-2 rounded-full bg-brand-400" />
             Showing: {toast.name}
-            <span className="text-white/50">{toast.code}</span>
             <span className="font-normal text-white/60">, open a program to see it</span>
           </div>
         </div>

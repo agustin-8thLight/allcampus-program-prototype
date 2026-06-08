@@ -26,8 +26,8 @@ const SHARED_DEPS = [
 const CONCEPTS = [
   {
     code: '2B',
-    name: 'Guided',
-    tagline: 'Cost clarity, who-it’s-for, school highlights, and an advisor route. Favored direction.',
+    name: 'Phase 2',
+    tagline: 'The fuller experience: adds Ally, who-it’s-for, and school highlights. (Guided)',
     idea: 'The fuller program page: the simplified cost card, a "Who this program is for" section so users self-select early, School Highlights, and a "Talk to an advisor" prompt for anyone who needs guidance.',
     decisions: [
       'Cost card is the primary affordability story (per-term / total, discount, simple language).',
@@ -44,8 +44,8 @@ const CONCEPTS = [
   },
   {
     code: '1A',
-    name: 'Baseline',
-    tagline: "Today's content, reordered cost-first. The lighter, no-Ally fallback.",
+    name: 'Phase 1',
+    tagline: "Ships first: today's content reordered cost-first, advisor, no Ally. (Baseline)",
     idea: 'The smallest meaningful change: reorder existing content cost-first, collapse the competing CTAs into "Get Program Details", and use the same simplified cost card. No advisor section, no school highlights, no Ally, so it can ship without any of that work.',
     decisions: [
       'Cost leads, directly under the title.',
@@ -169,7 +169,6 @@ export default function ConceptNotes({ activeCode, onSelect, onClose }) {
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-baseline gap-2">
                       <h3 className="text-[17px] font-black text-ink-900">{c.name}</h3>
-                      <span className="text-[12px] font-semibold text-ink-400">{c.code}</span>
                       {active && (
                         <span className="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
                           Viewing

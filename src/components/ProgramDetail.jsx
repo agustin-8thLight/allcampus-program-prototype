@@ -11,6 +11,7 @@ import {
   CheckCircleIcon,
   ArrowRightIcon,
   HeadsetIcon,
+  SparkleIcon,
 } from './icons.jsx'
 
 /*
@@ -20,7 +21,7 @@ import {
  *                    "Talk to an advisor" prompt. Favored direction.
  * Cost follows Brigid's spec (see ValueCard). Empty sections are hidden.
  */
-export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, variant = '1A' }) {
+export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, onOpenAlly, variant = '1A' }) {
   const p = program
   const start = startDateDisplay(p)
 
@@ -65,24 +66,34 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, varian
 
   const schoolPanel = <SchoolPanel school={p.school} />
 
-  // v1 "Have questions?" routes to an advisor (Ally chat is phase 2).
-  const advisorPrompt = (
-    <button
-      type="button"
+  // Guided: both Ask Ally (the with-AI experience) and an advisor.
+  const askBlock = (
+    <Section title="Have questions?">
+      <div className="grid gap-2.5 sm:grid-cols-2">
+        <ActionTile
+          icon={SparkleIcon}
+          title="Ask Ally"
+          sub="Instant answers about this program, no call needed."
+          onClick={() => onOpenAlly?.(p)}
+        />
+        <ActionTile
+          icon={HeadsetIcon}
+          title="Talk to an advisor"
+          sub="Personalized guidance on tuition savings and next steps."
+          onClick={() => onAdvisor?.(p)}
+        />
+      </div>
+    </Section>
+  )
+
+  // Baseline: advisor only, the immediate step without Ally.
+  const advisorOnly = (
+    <ActionTile
+      icon={HeadsetIcon}
+      title="Have questions? Talk to an advisor"
+      sub="Personalized guidance on the program, tuition savings, and next steps. No commitment."
       onClick={() => onAdvisor?.(p)}
-      className="flex w-full items-center gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3.5 text-left transition hover:bg-brand-100"
-    >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-0 text-xl text-brand-600">
-        <HeadsetIcon />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-[16px] font-bold text-ink-900">Have questions? Talk to an advisor</span>
-        <span className="block text-[14px] leading-snug text-ink-500">
-          Get personalized guidance on the program, tuition savings, and next steps. No commitment.
-        </span>
-      </span>
-      <ArrowRightIcon className="shrink-0 text-lg text-brand-600" />
-    </button>
+    />
   )
 
   const about = (
@@ -152,8 +163,8 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, varian
 
   const blocks =
     variant === '2B'
-      ? [header, valueCard, glance, whoFor, schoolPanel, advisorPrompt, about, admission, curriculum, concentrations, terms]
-      : [header, valueCard, glance, advisorPrompt, about, benefits, admission, curriculum, concentrations, terms]
+      ? [header, valueCard, glance, whoFor, schoolPanel, askBlock, about, admission, curriculum, concentrations, terms]
+      : [header, valueCard, glance, advisorOnly, about, benefits, admission, curriculum, concentrations, terms]
 
   return (
     <article className="flex flex-col gap-6 text-ink-900">
@@ -216,6 +227,26 @@ function Section({ title, children }) {
       <h2 className="mb-3 text-[15px] font-bold uppercase tracking-wide text-ink-500">{title}</h2>
       {children}
     </section>
+  )
+}
+
+/* A distinct, brand-tinted action (vs. the plain content sections). */
+function ActionTile({ icon: Icon, title, sub, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3.5 text-left transition hover:bg-brand-100"
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-0 text-xl text-brand-600">
+        <Icon />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[15px] font-bold text-ink-900">{title}</span>
+        <span className="block text-[13px] leading-snug text-ink-500">{sub}</span>
+      </span>
+      <ArrowRightIcon className="shrink-0 text-lg text-brand-600" />
+    </button>
   )
 }
 

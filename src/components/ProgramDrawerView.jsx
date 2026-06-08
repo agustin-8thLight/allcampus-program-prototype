@@ -13,6 +13,7 @@ export default function ProgramDrawerView({
   requested,
   onClose,
   onAdvisor,
+  onOpenAlly,
   onApply,
   onPrimaryCta,
 }) {
@@ -33,7 +34,7 @@ export default function ProgramDrawerView({
       </div>
 
       <div className="no-scrollbar flex-1 overflow-y-auto px-5 py-7 sm:px-9">
-        <ProgramDetail program={program} onAdvisor={onAdvisor} variant={variant} />
+        <ProgramDetail program={program} onAdvisor={onAdvisor} onOpenAlly={onOpenAlly} variant={variant} />
       </div>
 
       <div className="border-t border-surface-100 bg-surface-0 px-5 py-3.5 sm:px-9">

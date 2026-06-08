@@ -221,6 +221,7 @@ export default function App({ variant = '1A' }) {
               setDrawerView('detail')
             }}
             onAdvisor={() => openFlow('detail', 'advisor')}
+            onOpenAlly={() => setDrawerView('ally')}
             onApply={() => applyToSchool(selected)}
             onPrimaryCta={() => openFlow('detail')}
           />

@@ -3,6 +3,7 @@ import {
   BuildingIcon,
   HeadsetIcon,
   ShieldIcon,
+  SparkleIcon,
   CheckCircleIcon,
   ArrowRightIcon,
   ArrowLeftIcon,
@@ -24,7 +25,15 @@ import {
 const ALLCAMPUS_EMAIL = 'hello@allcampus.com'
 const ALLCAMPUS_PHONE = '312.237.2051'
 
-export default function CtaFlow({ program, initialStep = 'choose', backLabel = 'Program', onRequested, onClose }) {
+export default function CtaFlow({
+  program,
+  initialStep = 'choose',
+  backLabel = 'Program',
+  allyEnabled = false,
+  onOpenAlly,
+  onRequested,
+  onClose,
+}) {
   const [step, setStep] = useState(initialStep)
   const school = program.school?.name || 'the school'
   const schoolShort = school.split(' ')[0]
@@ -58,6 +67,14 @@ export default function CtaFlow({ program, initialStep = 'choose', backLabel = '
             <div>
               <p className="mb-4 text-[15px] text-ink-700">How would you like to gather more information?</p>
               <div className="space-y-2.5">
+                {allyEnabled && (
+                  <OptionRow
+                    icon={SparkleIcon}
+                    title="Ask Ally"
+                    sub="Get instant answers about this program. No call to book, nothing leaves AllCampus."
+                    onClick={() => onOpenAlly?.(program)}
+                  />
+                )}
                 <OptionRow
                   icon={BuildingIcon}
                   channel="school"

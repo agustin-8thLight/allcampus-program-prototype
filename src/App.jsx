@@ -201,13 +201,15 @@ export default function App({ variant = '1A' }) {
             program={selected}
             initialAsk={new URLSearchParams(window.location.search).get('allyq')}
             onBack={() => setDrawerView('detail')}
-            onRequestInfo={() => openFlow('detail')}
+            onRequestInfo={() => openFlow('ally')}
           />
         ) : selected && drawerView === 'flow' ? (
           <CtaFlow
             program={selected}
             initialStep={flowStep}
-            backLabel="Program"
+            backLabel={flowReturnView === 'ally' ? 'Ally' : 'Program'}
+            allyEnabled={variant === '2B' && flowReturnView !== 'ally'}
+            onOpenAlly={() => setDrawerView('ally')}
             onRequested={markRequested}
             onClose={() => setDrawerView(flowReturnView)}
           />

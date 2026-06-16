@@ -220,8 +220,9 @@ export default function AllyChat({ program, initialAsk, onBack, onRequestInfo })
               </button>
               {costOpen && (
                 <div className="mt-1.5 space-y-1 px-1 text-[12px] leading-relaxed text-ink-600">
-                  {v.benefitLabel && <p className="capitalize">{v.benefitLabel}</p>}
-                  {v.perCreditNote && <p>{v.perCreditNote}</p>}
+                  {v.capLine && <p>{v.capLine}</p>}
+                  {v.benefitsLine && <p>{v.benefitsLine}</p>}
+                  {v.perClassLine && <p>{v.perClassLine}</p>}
                   {v.deferred && <p>Deferred payment available, start now and pay over time.</p>}
                   <p className="text-ink-400">Estimate. Confirm your full cost with a specialist.</p>
                 </div>

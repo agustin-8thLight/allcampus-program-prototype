@@ -161,16 +161,31 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, onOpen
     </footer>
   )
 
-  const blocks =
+  // Body sections, grouped by zone so the layout has rhythm instead of one
+  // flat list: intro (header) -> snapshot (cost + at-a-glance) -> body content.
+  const body =
     variant === '2B'
-      ? [header, valueCard, glance, whoFor, schoolPanel, askBlock, about, admission, curriculum, concentrations, terms]
-      : [header, valueCard, glance, advisorOnly, about, benefits, admission, curriculum, concentrations, terms]
+      ? [whoFor, schoolPanel, askBlock, about, admission, curriculum, concentrations]
+      : [advisorOnly, about, benefits, admission, curriculum, concentrations]
 
   return (
-    <article className="flex flex-col gap-6 text-ink-900">
-      {blocks.filter(Boolean).map((block, i) => (
-        <div key={i}>{block}</div>
-      ))}
+    <article className="flex flex-col gap-10 text-ink-900">
+      {header}
+
+      {/* Snapshot: the numbers and the facts read as one unit. */}
+      <div className="flex flex-col gap-5">
+        {valueCard}
+        {glance}
+      </div>
+
+      {/* Body content, with generous separation between sections. */}
+      <div className="flex flex-col gap-8">
+        {body.filter(Boolean).map((block, i) => (
+          <div key={i}>{block}</div>
+        ))}
+      </div>
+
+      {terms}
     </article>
   )
 }
@@ -203,7 +218,7 @@ function AtAGlance({ program: p, start }) {
   if (items.length === 0) return null
 
   return (
-    <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-y border-surface-200 py-4 sm:grid-cols-3">
+    <div className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3">
       {items.map((it) => {
         const Icon = it.icon
         return (
@@ -224,7 +239,7 @@ function AtAGlance({ program: p, start }) {
 function Section({ title, children }) {
   return (
     <section>
-      <h2 className="mb-3 text-[15px] font-bold uppercase tracking-wide text-ink-500">{title}</h2>
+      <h2 className="mb-4 text-[15px] font-bold uppercase tracking-wide text-ink-500">{title}</h2>
       {children}
     </section>
   )

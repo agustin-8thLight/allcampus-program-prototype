@@ -113,83 +113,113 @@ export function programTypeLabel(p) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Cost card (Brigid's spec): per-term primary, simple language.       */
+/* Cost card. James's 06.13 feedback: lead with the most motivating,    */
+/* controllable, comparable number.                                     */
+/*   - degrees + credit-bearing certs -> PER-CREDIT hero, with a small   */
+/*     "per class" estimate lower down (NOT "per term": term means       */
+/*     different things across the catalog).                            */
+/*   - flat-upfront certs -> TOTAL program price hero + a one-time       */
+/*     payment indicator.                                                */
+/*   - capped programs keep the cap hero with a value-forward caption.   */
+/* Per-class basis (creditsPerClass) varies by program and must come     */
+/* from each school's real course structure; when absent we omit the     */
+/* per-class line rather than invent one. Values are MOCK / FPO.         */
 /* ------------------------------------------------------------------ */
+
+const CREDIT_TOOLTIP =
+  'Total credits needed to complete the program. Your actual requirement may be lower depending on transfer credits accepted.'
 
 export function resolveCost(p) {
   const credits = p.requiredCredits
   const perCredit = p.tuitionPerCredit
   const stdPerCredit = p.standardTuitionPerCredit
-  const termCredits = p.creditsPerSession || 6
   const cert = isCertificate(p)
-  const hasDiscount = stdPerCredit != null && perCredit != null && perCredit < stdPerCredit
   const capped = p.discount?.type === 'flatCap'
   const cap = p.discount?.dollarAmount ?? null
+  // Flat-upfront certs bill a single program fee (no per-credit rate).
+  const flatCert = cert && p.certBilling === 'upfront'
+
+  // Discount: per-credit programs compare per-credit rates; flat certs
+  // compare total fees.
+  const hasDiscount = flatCert
+    ? p.standardTotalTuitionCost != null && p.totalTuitionCost < p.standardTotalTuitionCost
+    : stdPerCredit != null && perCredit != null && perCredit < stdPerCredit
   const pct =
-    p.discount?.percentUsed ?? (hasDiscount ? Math.round((1 - perCredit / stdPerCredit) * 100) : null)
+    p.discount?.percentUsed ??
+    (!flatCert && hasDiscount ? Math.round((1 - perCredit / stdPerCredit) * 100) : null)
 
-  const termCost = perCredit != null ? perCredit * termCredits : null
-  const stdTermCost = stdPerCredit != null ? stdPerCredit * termCredits : null
-  const programCost = perCredit != null && credits != null ? perCredit * credits : p.totalTuitionCost ?? null
-  const stdProgramCost = stdPerCredit != null && credits != null ? stdPerCredit * credits : null
+  // Per-class estimate (one course), only when we know credits-per-class.
+  // Suppressed for capped programs, where the annual cap is the whole story.
+  const perClassCost =
+    !capped && perCredit != null && p.creditsPerClass != null ? perCredit * p.creditsPerClass : null
 
-  // Pills across the top.
+  // Pills across the top, each a single-line label for consistent chip height.
+  // Per-credit is now the hero for non-flat programs, so it's dropped here.
   const pills = []
-  if (capped && cap != null) pills.push({ big: money(cap), small: 'Tuition cap' })
-  else if (pct) pills.push({ big: `${pct}% off` })
-  if (perCredit != null) pills.push({ big: money(perCredit), small: 'Per credit' })
-  if (credits != null) pills.push({ big: `${credits}`, small: 'Credits' })
+  if (capped && cap != null) pills.push({ label: `${money(cap)}/yr cap` })
+  else if (pct) pills.push({ label: `${pct}% off` })
+  if (credits != null)
+    pills.push({
+      label: `${credits} credits`,
+      tooltip: p.degreeLevel === 'Associate' || p.degreeLevel === "Bachelor's" ? CREDIT_TOOLTIP : null,
+    })
 
-  // Primary number.
+  // Hero number. Flat certs lead with the total fee; everything else
+  // (degrees, credit-bearing certs, AND capped credit programs) leads with the
+  // per-credit rate so the comparable unit stays the hero. For capped programs
+  // the cap is carried by the pill + caption, not the hero, so "$5,250" isn't
+  // repeated three times and the per-credit lead is preserved.
   let primaryLabel, primaryValue, struck
-  if (capped) {
-    if (cert) {
-      primaryLabel = 'Total program cost'
-      primaryValue = money(cap)
-      struck = null
-    } else {
-      primaryLabel = 'Estimated cost per term'
-      primaryValue = money(termCost)
-      struck = null
-    }
-  } else if (cert) {
+  if (flatCert) {
     primaryLabel = 'Total program cost'
-    primaryValue = money(programCost)
-    struck = hasDiscount ? money(stdProgramCost) : null
+    primaryValue = money(p.totalTuitionCost)
+    struck = hasDiscount ? money(p.standardTotalTuitionCost) : null
   } else {
-    primaryLabel = 'Estimated cost per term'
-    primaryValue = money(termCost)
-    struck = hasDiscount ? money(stdTermCost) : null
+    primaryLabel = 'Per credit'
+    primaryValue = money(perCredit)
+    // Capped programs show the listed per-credit rate plainly; the savings
+    // story is the cap (pill + caption), not a per-credit strikethrough.
+    struck = !capped && hasDiscount ? money(stdPerCredit) : null
   }
 
-  // State + benefit language.
-  let state, capLine, benefitsLine
+  // Supporting copy.
+  let capLine, benefitsLine
   if (capped) {
-    state = 'capped'
-    capLine = `Tuition capped at ${money(cap)} a year. Many employers cover up to this amount, so your cost may be lower.`
+    // --- Capped caption: DRAFT options for the Tuesday review (not locked). ---
+    // The $5,250 figure = the annual tax-free employer education benefit
+    // (IRS Section 127). VERIFY the current figure/wording before any
+    // student-facing use. Default = option A; B/C kept for the discussion.
+    // A — employer-match framing (default):
+    capLine = `Tuition is capped at ${money(cap)} a year, the maximum most employers can reimburse tax-free, so many students pay little to nothing out of pocket.`
+    // B — value-forward:
+    //   `This program's tuition is set to the ${money(cap)} annual limit many employers cover tax-free. Talk to an advisor to see what your benefit covers.`
+    // C — plain / conservative:
+    //   `Tuition won't exceed ${money(cap)} in a year. Because that's the standard annual employer tuition benefit, your out-of-pocket cost may be much lower.`
     benefitsLine = null
   } else if (hasDiscount) {
-    state = 'discount'
-    benefitsLine =
-      'Most students pay the discounted rate shown above. Costs may be lower with transfer credits or employer benefits.'
+    // Certificates rarely accept transfer credits, so don't imply transfer savings.
+    benefitsLine = cert
+      ? 'Most students pay the discounted rate shown above. Your employer benefit may lower it further.'
+      : 'Most students pay the discounted rate shown above. Costs may be lower with transfer credits or employer benefits.'
   } else {
-    state = 'none'
-    benefitsLine =
-      'This is the standard tuition rate for this program. Costs may be lower with transfer credits or employer benefits.'
+    benefitsLine = cert
+      ? 'This is the standard rate for this program. Your employer benefit may lower it.'
+      : 'This is the standard tuition rate for this program. Costs may be lower with transfer credits or employer benefits.'
   }
 
   return {
-    state,
-    cert,
     pills,
     primaryLabel,
     primaryValue,
     struck,
-    perCreditLine: perCredit != null ? `${money(perCredit)} per credit` : null,
-    standardRateLine: hasDiscount && stdPerCredit != null ? `${money(stdPerCredit)} standard rate` : null,
+    // Per-class estimate sits low on the card (context, not the selling point).
+    perClassLine: perClassCost != null ? `About ${money(perClassCost)} per class` : null,
+    // One-time payment indicator for flat-fee certs.
+    paymentNote: flatCert ? 'One-time payment at enrollment' : null,
     capLine: capped ? capLine : null,
     benefitsLine,
-    perTerm: !cert,
+    // Show the per-class variability disclaimer only when a per-class line renders.
+    perClassNote: perClassCost != null,
     deferred: !!p.deferredPaymentAvailable,
   }
 }
@@ -200,6 +230,10 @@ export function resolveCost(p) {
 
 /** Lower is more affordable. Ranked by post-discount total tuition. */
 export function affordabilityScore(p) {
+  // Capped programs: the capped total is what students actually pay, so use it
+  // rather than per-credit × credits (which ignores the ceiling and overstates).
+  if (p.discount?.type === 'flatCap')
+    return p.totalTuitionCost ?? p.discount?.dollarAmount ?? Number.MAX_SAFE_INTEGER
   if (p.tuitionPerCredit != null && p.requiredCredits != null) return p.tuitionPerCredit * p.requiredCredits
   return p.totalTuitionCost ?? Number.MAX_SAFE_INTEGER
 }

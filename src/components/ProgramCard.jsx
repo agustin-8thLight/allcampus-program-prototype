@@ -1,6 +1,6 @@
 import Badge from './Badge.jsx'
 import { ProgramImage, SchoolMark } from './ProgramDetail.jsx'
-import { startDateDisplay } from '../data/model.js'
+import { startDateDisplay, resolveCost } from '../data/model.js'
 import { CalendarIcon, ArrowRightIcon, InfoIcon } from './icons.jsx'
 
 /*
@@ -11,6 +11,11 @@ export default function ProgramCard({ program, onExplore }) {
   const p = program
   const start = startDateDisplay(p)
   const tags = [p.degreeLevel, p.duration, p.courseModality].filter(Boolean)
+  // Mirror the drawer's hero on the list card: per-credit (degrees + credit
+  // certs), total (flat certs). Same source of truth as ValueCard.
+  const cost = resolveCost(p)
+  const priceUnit =
+    cost.primaryLabel === 'Per credit' ? 'per credit' : cost.primaryLabel === 'Total program cost' ? 'total' : null
 
   return (
     <button
@@ -46,10 +51,21 @@ export default function ProgramCard({ program, onExplore }) {
         <ProgramImage src={p.programImageUrl} alt={p.name} hue={p.programImageHue} className="h-32 w-full" />
       </div>
 
-      {/* Facts */}
-      <div className="space-y-1.5 px-4 pt-3 text-[13px] text-ink-500">
+      {/* Price + facts */}
+      <div className="px-4 pt-3">
+        {cost.primaryValue && (
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+            <span className="text-[22px] font-black leading-none text-ink-900">{cost.primaryValue}</span>
+            {cost.struck && (
+              <span className="text-[14px] font-semibold text-ink-400 line-through">{cost.struck}</span>
+            )}
+            {priceUnit && (
+              <span className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">{priceUnit}</span>
+            )}
+          </div>
+        )}
         {start && (
-          <div className="flex items-center gap-2">
+          <div className="mt-2 flex items-center gap-2 text-[13px] text-ink-500">
             <CalendarIcon className="text-sm text-brand-500" />
             <span>Start date: {start}</span>
           </div>

@@ -17,7 +17,7 @@ import {
  * (backend, noted in the spec). The chooser, "How would you like to gather
  * more information?", has three options:
  *   1. Talk to [School]        -> confirmation gate, the school then reaches out.
- *   2. Need more information first? -> schedule with an Education Specialist (+ contact).
+ *   2. Need more information first? -> schedule with an Education Benefits Specialist (+ contact).
  *   3. Apply now               -> opens the school's application.
  *
  * Can also open directly at the advisor step (from "Talk to an advisor" links).
@@ -85,7 +85,7 @@ export default function CtaFlow({
                 <OptionRow
                   icon={HeadsetIcon}
                   title="Need more information first?"
-                  sub="Talk with an Education Specialist about costs, benefits, school options, and next steps. We won't share your information with the school unless you decide to move forward."
+                  sub="Talk with an Education Benefits Specialist about costs, benefits, school options, and next steps. We won't share your information with the school unless you decide to move forward."
                   onClick={() => setStep('advisor')}
                 />
                 <OptionRow
@@ -136,7 +136,7 @@ export default function CtaFlow({
                 <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-2xl text-brand-600">
                   <HeadsetIcon />
                 </span>
-                <h3 className="text-lg font-black text-ink-900">Talk with an Education Specialist</h3>
+                <h3 className="text-lg font-black text-ink-900">Talk with an Education Benefits Specialist</h3>
               </div>
               <button
                 onClick={() => {

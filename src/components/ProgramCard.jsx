@@ -28,7 +28,7 @@ export default function ProgramCard({ program, onExplore }) {
         <Badge program={p} />
         {p.deferredPaymentAvailable && (
           <span
-            title="Deferred payment: start now and pay over time, rather than all upfront."
+            title="Available for eligible tuition reimbursement users. Delay tuition payments until employer reimbursement is received. Terms and eligibility vary."
             className="inline-flex items-center gap-1 rounded-full bg-info-50 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-info-700"
           >
             Deferred tuition

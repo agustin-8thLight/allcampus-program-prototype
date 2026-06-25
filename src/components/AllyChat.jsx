@@ -45,7 +45,7 @@ export function allyAnswer(p, key) {
     case 'cost':
       return {
         text: `The ${v.primaryLabel.toLowerCase()} is ${v.primaryValue}${v.struck ? `, down from ${v.struck}` : ''}.${
-          v.deferred ? ' You can also defer payment and pay over time.' : ''
+          p.deferredPaymentAvailable ? ' If you have employer tuition reimbursement, you may be able to defer payment until your reimbursement comes through.' : ''
         } Your actual cost depends on transfer credits and any employer benefit.`,
         needsReview: true,
       }
@@ -222,8 +222,9 @@ export default function AllyChat({ program, initialAsk, onBack, onRequestInfo })
                 <div className="mt-1.5 space-y-1 px-1 text-[12px] leading-relaxed text-ink-600">
                   {v.capLine && <p>{v.capLine}</p>}
                   {v.benefitsLine && <p>{v.benefitsLine}</p>}
-                  {v.perClassLine && <p>{v.perClassLine}</p>}
-                  {v.deferred && <p>Deferred payment available, start now and pay over time.</p>}
+                  {program.deferredPaymentAvailable && (
+                    <p>Deferred tuition available for eligible tuition reimbursement users.</p>
+                  )}
                   <p className="text-ink-400">Estimate. Confirm your full cost with a specialist.</p>
                 </div>
               )}

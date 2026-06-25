@@ -38,6 +38,18 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, onOpen
   const valueCard = <ValueCard program={p} />
   const glance = <AtAGlance program={p} start={start} />
 
+  // The cost-questions action rides directly under the cost card — the cost is
+  // the hesitation moment (Brigid, 06-17). Shown in BOTH phases; the wording
+  // routes to an Education Benefits Specialist, not a generic advisor.
+  const costEbs = (
+    <ActionTile
+      icon={HeadsetIcon}
+      title="Questions about cost or tuition benefits?"
+      sub="Talk with an Education Benefits Specialist. No commitment and your information won't be shared with the school."
+      onClick={() => onAdvisor?.(p)}
+    />
+  )
+
   const whoFor = p.whoFor?.length > 0 && (
     <Section title="Who this program is for">
       <ul className="space-y-2.5">
@@ -66,34 +78,17 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, onOpen
 
   const schoolPanel = <SchoolPanel school={p.school} />
 
-  // Guided: both Ask Ally (the with-AI experience) and an advisor.
+  // Guided: Ask Ally only. The advisor/EBS now lives under the cost card (costEbs),
+  // so this block keeps the AI path that differentiates Phase 2.
   const askBlock = (
     <Section title="Have questions?">
-      <div className="grid gap-2.5 sm:grid-cols-2">
-        <ActionTile
-          icon={SparkleIcon}
-          title="Ask Ally"
-          sub="Instant answers about this program, no call needed."
-          onClick={() => onOpenAlly?.(p)}
-        />
-        <ActionTile
-          icon={HeadsetIcon}
-          title="Talk to an advisor"
-          sub="Personalized guidance on tuition savings and next steps."
-          onClick={() => onAdvisor?.(p)}
-        />
-      </div>
+      <ActionTile
+        icon={SparkleIcon}
+        title="Ask Ally"
+        sub="Instant answers about this program, no call needed."
+        onClick={() => onOpenAlly?.(p)}
+      />
     </Section>
-  )
-
-  // Baseline: advisor only, the immediate step without Ally.
-  const advisorOnly = (
-    <ActionTile
-      icon={HeadsetIcon}
-      title="Have questions? Talk to an advisor"
-      sub="Personalized guidance on the program, tuition savings, and next steps. No commitment."
-      onClick={() => onAdvisor?.(p)}
-    />
   )
 
   const about = (
@@ -166,15 +161,18 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, onOpen
   const body =
     variant === '2B'
       ? [whoFor, schoolPanel, askBlock, about, admission, curriculum, concentrations]
-      : [advisorOnly, about, benefits, admission, curriculum, concentrations]
+      : [about, benefits, admission, curriculum, concentrations]
 
   return (
     <article className="flex flex-col gap-10 text-ink-900">
       {header}
 
-      {/* Snapshot: the numbers and the facts read as one unit. */}
+      {/* Snapshot: the numbers, the cost-questions action, and the facts read as
+          one unit. The EBS action sits right under the cost card (the hesitation
+          moment) in both phases. */}
       <div className="flex flex-col gap-5">
         {valueCard}
+        {costEbs}
         {glance}
       </div>
 
@@ -209,7 +207,9 @@ function AtAGlance({ program: p, start }) {
   const dur = durationDisplay(p)
   const items = [
     start && { icon: CalendarIcon, label: 'Start', value: start },
-    p.degreeLevel && { icon: CapIcon, label: 'Level', value: p.degreeLevel },
+    // Certificates carry their own academic level (Undergraduate / Master's-level),
+    // distinct from "Certificate" as the program type. Fall back to degreeLevel.
+    (p.certLevel || p.degreeLevel) && { icon: CapIcon, label: 'Level', value: p.certLevel || p.degreeLevel },
     p.duration && { icon: ClockIcon, label: 'Duration', value: dur.value, note: dur.note },
     p.courseModality && { icon: MonitorIcon, label: 'Format', value: p.courseModality },
     { icon: LayersIcon, label: 'Program type', value: programTypeLabel(p) },

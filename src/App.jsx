@@ -14,11 +14,13 @@ import {
   BuildingIcon,
 } from './components/icons.jsx'
 
+// Order = usefulness for narrowing (06-17 review): area of study, degree, and
+// university first; course modality last (least useful — nearly all online).
 const FILTER_DROPDOWNS = [
-  { label: 'Degree Level', icon: CapIcon },
-  { label: 'Course Modality', icon: MonitorIcon },
   { label: 'Areas of Study', icon: BookIcon },
+  { label: 'Degree Level', icon: CapIcon },
   { label: 'Universities', icon: BuildingIcon },
+  { label: 'Course Modality', icon: MonitorIcon },
 ]
 
 // `variant` is supplied by the prototype review frame (PrototypeFrame), which

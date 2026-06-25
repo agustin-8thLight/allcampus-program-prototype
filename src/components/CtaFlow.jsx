@@ -16,9 +16,9 @@ import {
  * program drawer, not a stacked modal. Opening it creates the HubSpot deal
  * (backend, noted in the spec). The chooser, "How would you like to gather
  * more information?", has three options:
- *   1. Talk to [School]   -> confirmation gate, the school then reaches out.
- *   2. Compare your options -> schedule with an AllCampus advisor (+ contact).
- *   3. Apply now           -> opens the school's application.
+ *   1. Talk to [School]        -> confirmation gate, the school then reaches out.
+ *   2. Need more information first? -> schedule with an Education Specialist (+ contact).
+ *   3. Apply now               -> opens the school's application.
  *
  * Can also open directly at the advisor step (from "Talk to an advisor" links).
  */
@@ -79,13 +79,13 @@ export default function CtaFlow({
                   icon={BuildingIcon}
                   channel="school"
                   title={`Talk to ${school}`}
-                  sub="Gather information directly from the school to see if this program is right for you."
+                  sub="Learn more about the program, admissions requirements, costs, and next steps directly from the school."
                   onClick={() => setStep('gate')}
                 />
                 <OptionRow
                   icon={HeadsetIcon}
-                  title="Compare your options"
-                  sub="Get personalized guidance on programs, schools, tuition savings, and the best path to achieve your goals."
+                  title="Need more information first?"
+                  sub="Talk with an Education Specialist about costs, benefits, school options, and next steps. We won't share your information with the school unless you decide to move forward."
                   onClick={() => setStep('advisor')}
                 />
                 <OptionRow
@@ -136,7 +136,7 @@ export default function CtaFlow({
                 <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-2xl text-brand-600">
                   <HeadsetIcon />
                 </span>
-                <h3 className="text-lg font-black text-ink-900">Talk with an AllCampus Specialist</h3>
+                <h3 className="text-lg font-black text-ink-900">Talk with an Education Specialist</h3>
               </div>
               <button
                 onClick={() => {

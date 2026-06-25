@@ -2,15 +2,17 @@ import { resolveCost } from '../data/model.js'
 import { InfoIcon } from './icons.jsx'
 
 /*
- * Cost card. James's 06.13 feedback drives the hierarchy:
+ * Cost card. Hierarchy (James 06.13, refined 06.17 review):
  *   - degrees + credit-bearing certs lead with the PER-CREDIT rate (hero),
- *     with the standard rate struck through and a small "per class" estimate
- *     lower on the card (context, not the selling point).
+ *     with the standard rate struck through. The per-class estimate rides up top
+ *     as an estimate pill (above the hero), not a small line below.
  *   - flat-upfront certs lead with the TOTAL program price + a one-time
  *     payment indicator.
- *   - capped programs lead with the annual cap + a value-forward caption.
- * Pills carry the discount and credit count (with a transfer-credit tooltip
- * on Associate / Bachelor's). No calculator, no TR math.
+ *   - capped programs lead with the per-credit rate + a cap pill + caption, and
+ *     keep the per-class estimate pill (so "3 classes ≈ the cap" reads clearly).
+ * Pills carry: per-class estimate, savings (cap/discount), credit count (with a
+ * transfer-credit tooltip on Associate / Bachelor's), and deferred tuition.
+ * No calculator, no TR math.
  */
 export default function ValueCard({ program }) {
   const c = resolveCost(program)
@@ -21,13 +23,21 @@ export default function ValueCard({ program }) {
       className="rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 p-5 sm:p-6"
       aria-label="Cost"
     >
-      {/* Pills: single-line labels for consistent chip height */}
+      {/* Pills: single-line labels for consistent chip height. Tones: bordered
+          (attributes), filled-muted (estimate, e.g. per-class), filled-info
+          (deferred tuition). */}
       {c.pills.length > 0 && (
         <div className="flex flex-wrap gap-2.5">
           {c.pills.map((pill, i) => (
             <div
               key={i}
-              className="inline-flex items-center gap-1.5 rounded-full border border-surface-200 px-4 py-2 text-[14px] font-bold leading-none text-ink-900"
+              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[14px] font-bold leading-none ${
+                pill.tone === 'estimate'
+                  ? 'bg-surface-100 text-ink-700'
+                  : pill.tone === 'info'
+                    ? 'bg-info-50 text-info-700'
+                    : 'border border-surface-200 text-ink-900'
+              }`}
             >
               {pill.label}
               {pill.tooltip && (
@@ -74,22 +84,6 @@ export default function ValueCard({ program }) {
       {/* Plain-language benefit handling (employer note) */}
       {c.benefitsLine && (
         <p className="mt-3 max-w-prose text-[13px] italic leading-relaxed text-ink-500">{c.benefitsLine}</p>
-      )}
-
-      {/* Per-class estimate: secondary context, lower on the card */}
-      {c.perClassLine && <p className="mt-3 text-[13px] font-semibold text-ink-700">{c.perClassLine}</p>}
-
-      {/* Deferred secondary line */}
-      {c.deferred && (
-        <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-surface-100 px-3 py-1.5 text-[13px] font-semibold text-ink-700">
-          <span aria-hidden>↻</span> Deferred payment available, start now and pay over time
-        </p>
-      )}
-
-      {c.perClassNote && (
-        <p className="mt-3 text-[11px] text-ink-400">
-          Per-class estimate based on a typical single course; credits per class vary by program.
-        </p>
       )}
     </section>
   )

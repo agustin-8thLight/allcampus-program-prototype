@@ -148,20 +148,39 @@ export function resolveCost(p) {
     p.discount?.percentUsed ??
     (!flatCert && hasDiscount ? Math.round((1 - perCredit / stdPerCredit) * 100) : null)
 
-  // Per-class estimate (one course), only when we know credits-per-class.
-  // Suppressed for capped programs, where the annual cap is the whole story.
+  // Per-class estimate (one ~3-credit course), when we know credits-per-class.
+  // Shown on capped programs too (06-17 review): students read it as "3 classes
+  // ≈ the cap", so the per-class figure stays up top even when capped.
   const perClassCost =
-    !capped && perCredit != null && p.creditsPerClass != null ? perCredit * p.creditsPerClass : null
+    perCredit != null && p.creditsPerClass != null ? perCredit * p.creditsPerClass : null
 
   // Pills across the top, each a single-line label for consistent chip height.
-  // Per-credit is now the hero for non-flat programs, so it's dropped here.
+  // Per-credit is the hero for non-flat programs, so it's dropped here. Order:
+  // per-class estimate, savings (cap/discount), credit count, deferred.
   const pills = []
+  // Estimated per-class cost, framed as an estimate (tone) above the hero.
+  if (perClassCost != null)
+    pills.push({
+      label: `≈ ${money(perClassCost)}/class`,
+      tooltip: 'Estimated for a typical 3-credit course; credits per class vary by program.',
+      tone: 'estimate',
+    })
   if (capped && cap != null) pills.push({ label: `${money(cap)}/yr cap` })
   else if (pct) pills.push({ label: `${pct}% off` })
   if (credits != null)
     pills.push({
       label: `${credits} credits`,
       tooltip: p.degreeLevel === 'Associate' || p.degreeLevel === "Bachelor's" ? CREDIT_TOOLTIP : null,
+    })
+  // Deferred tuition: present but not prominent — a pill + tooltip. Only renders
+  // where deferment is available (and the student has tuition reimbursement);
+  // the partner-level "known TR" rule is documented for Terrence, not modeled here.
+  if (p.deferredPaymentAvailable)
+    pills.push({
+      label: 'Deferred tuition',
+      tooltip:
+        'Available for eligible tuition reimbursement users. Delay tuition payments until employer reimbursement is received. Terms and eligibility vary.',
+      tone: 'info',
     })
 
   // Hero number. Flat certs lead with the total fee; everything else
@@ -185,16 +204,10 @@ export function resolveCost(p) {
   // Supporting copy.
   let capLine, benefitsLine
   if (capped) {
-    // --- Capped caption: DRAFT options for the Tuesday review (not locked). ---
-    // The $5,250 figure = the annual tax-free employer education benefit
-    // (IRS Section 127). VERIFY the current figure/wording before any
-    // student-facing use. Default = option A; B/C kept for the discussion.
-    // A — employer-match framing (default):
+    // Capped caption (locked at the 06-17 review). The $5,250 figure = the annual
+    // tax-free employer education benefit (IRS Section 127). VERIFY the current
+    // figure/wording with a benefits source before any student-facing use.
     capLine = `Tuition is capped at ${money(cap)} a year, the maximum most employers can reimburse tax-free, so many students pay little to nothing out of pocket.`
-    // B — value-forward:
-    //   `This program's tuition is set to the ${money(cap)} annual limit many employers cover tax-free. Talk to an advisor to see what your benefit covers.`
-    // C — plain / conservative:
-    //   `Tuition won't exceed ${money(cap)} in a year. Because that's the standard annual employer tuition benefit, your out-of-pocket cost may be much lower.`
     benefitsLine = null
   } else if (hasDiscount) {
     // Certificates rarely accept transfer credits, so don't imply transfer savings.
@@ -212,15 +225,10 @@ export function resolveCost(p) {
     primaryLabel,
     primaryValue,
     struck,
-    // Per-class estimate sits low on the card (context, not the selling point).
-    perClassLine: perClassCost != null ? `About ${money(perClassCost)} per class` : null,
     // One-time payment indicator for flat-fee certs.
     paymentNote: flatCert ? 'One-time payment at enrollment' : null,
     capLine: capped ? capLine : null,
     benefitsLine,
-    // Show the per-class variability disclaimer only when a per-class line renders.
-    perClassNote: perClassCost != null,
-    deferred: !!p.deferredPaymentAvailable,
   }
 }
 

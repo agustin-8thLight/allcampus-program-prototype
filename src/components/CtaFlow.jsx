@@ -1,10 +1,10 @@
 import { useState } from 'react'
+import { useToast } from './Toast.jsx'
 import {
   BuildingIcon,
   HeadsetIcon,
   ShieldIcon,
   SparkleIcon,
-  CheckCircleIcon,
   ArrowRightIcon,
   ArrowLeftIcon,
   ExternalIcon,
@@ -21,6 +21,10 @@ import {
  *   3. Apply now               -> opens the school's application.
  *
  * Can also open directly at the advisor step (from "Talk to an advisor" links).
+ *
+ * Terminal confirmations no longer render as in-drawer success screens (06-29
+ * review): each completing action fires a top-of-page toast and returns to the
+ * program detail, so the confirmation is consistent and hard to miss.
  */
 const ALLCAMPUS_EMAIL = 'hello@allcampus.com'
 const ALLCAMPUS_PHONE = '312.237.2051'
@@ -35,13 +39,25 @@ export default function CtaFlow({
   onClose,
 }) {
   const [step, setStep] = useState(initialStep)
+  const { showToast } = useToast()
   const school = program.school?.name || 'the school'
   const schoolShort = school.split(' ')[0]
 
-  const applyNow = () => {
+  // Each terminal action marks the program requested, fires a toast, and closes
+  // the flow back to the program detail.
+  const complete = (toast) => {
     onRequested?.(program)
+    showToast(toast)
+    onClose?.()
+  }
+
+  const applyNow = () => {
     window.open(program.applicationUrl, '_blank', 'noopener')
-    setStep('applied')
+    complete({
+      tone: 'info',
+      title: `${schoolShort} application opened`,
+      body: `${school}'s application opened in a new tab. You'll hear from their admissions team about next steps.`,
+    })
   }
 
   return (
@@ -111,10 +127,13 @@ export default function CtaFlow({
               </p>
               <div className="mt-5 flex flex-col gap-2">
                 <button
-                  onClick={() => {
-                    onRequested?.(program)
-                    setStep('sentSchool')
-                  }}
+                  onClick={() =>
+                    complete({
+                      tone: 'info',
+                      title: `Your details were shared with ${school}`,
+                      body: 'They will reach out to help you gather information about the program.',
+                    })
+                  }
                   className="w-full rounded-xl bg-brand-600 px-5 py-3 text-sm font-bold text-white hover:bg-brand-700"
                 >
                   Yes
@@ -139,10 +158,13 @@ export default function CtaFlow({
                 <h3 className="text-lg font-black text-ink-900">Talk with an Education Benefits Specialist</h3>
               </div>
               <button
-                onClick={() => {
-                  onRequested?.(program)
-                  setStep('booked')
-                }}
+                onClick={() =>
+                  complete({
+                    tone: 'good',
+                    title: 'Request received',
+                    body: 'An AllCampus Education Benefits Specialist will reach out to schedule your call and help with programs, tuition savings, and next steps.',
+                  })
+                }
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-sm font-bold text-white hover:bg-brand-700"
               >
                 <CalendarIcon className="text-base" /> Choose a time that works for you
@@ -156,32 +178,6 @@ export default function CtaFlow({
                 <span>📞 {ALLCAMPUS_PHONE}</span>
               </div>
             </div>
-          )}
-
-          {step === 'sentSchool' && (
-            <Success
-              tone="blue"
-              title={`Connected with ${school}`}
-              body={`${school} will reach out to help you gather information about the program.`}
-              onClose={onClose}
-            />
-          )}
-
-          {step === 'applied' && (
-            <Success
-              tone="blue"
-              title={`${schoolShort} application opened`}
-              body={`${school}'s application opened in a new tab. You'll hear from their admissions team about next steps.`}
-              onClose={onClose}
-            />
-          )}
-
-          {step === 'booked' && (
-            <Success
-              title="Request received"
-              body="An AllCampus advisor will reach out to schedule your call and help with programs, tuition savings, and next steps."
-              onClose={onClose}
-            />
           )}
         </div>
       </div>
@@ -213,28 +209,6 @@ function OptionRow({ icon: Icon, title, sub, channel = 'internal', onClick }) {
       </span>
       <ArrowRightIcon className="shrink-0 text-base text-ink-400" />
     </button>
-  )
-}
-
-function Success({ title, body, tone, onClose }) {
-  return (
-    <div className="text-center">
-      <span
-        className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full text-2xl ${
-          tone === 'blue' ? 'bg-blue-100 text-blue-700' : 'bg-good-50 text-good-600'
-        }`}
-      >
-        <CheckCircleIcon />
-      </span>
-      <h3 className="text-lg font-black text-ink-900">{title}</h3>
-      <p className="mx-auto mt-2 max-w-sm text-[14px] leading-relaxed text-ink-600">{body}</p>
-      <button
-        onClick={onClose}
-        className="mt-5 w-full rounded-xl bg-brand-600 px-5 py-3 text-sm font-bold text-white hover:bg-brand-700"
-      >
-        Done
-      </button>
-    </div>
   )
 }
 

@@ -5,6 +5,7 @@ import Drawer from './components/Drawer.jsx'
 import ProgramDrawerView from './components/ProgramDrawerView.jsx'
 import CtaFlow from './components/CtaFlow.jsx'
 import AllyChat from './components/AllyChat.jsx'
+import { useToast } from './components/Toast.jsx'
 import {
   SearchIcon,
   ChevronDownIcon,
@@ -34,11 +35,17 @@ export default function App({ variant = '1A' }) {
   const [flowReturnView, setFlowReturnView] = useState('detail') // where the flow's back goes
   const [flowStep, setFlowStep] = useState('choose')
   const [requested, setRequested] = useState(() => new Set()) // program ids the user has acted on
+  const { showToast } = useToast()
 
   const markRequested = (p) => setRequested((s) => new Set(s).add(p.id))
   const applyToSchool = (p) => {
     markRequested(p)
     window.open(p.applicationUrl, '_blank', 'noopener')
+    showToast({
+      tone: 'info',
+      title: `${p.school?.name || 'The school'}'s application opened`,
+      body: "It opened in a new tab. You'll hear from their admissions team about next steps.",
+    })
   }
 
   // "Get Program Details" opens the chooser; the advisor links open it at the

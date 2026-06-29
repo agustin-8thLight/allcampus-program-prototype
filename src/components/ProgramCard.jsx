@@ -1,6 +1,6 @@
 import Badge from './Badge.jsx'
 import { ProgramImage, SchoolMark } from './ProgramDetail.jsx'
-import { startDateDisplay, resolveCost } from '../data/model.js'
+import { startDateDisplay, resolveCost, badgeLabel } from '../data/model.js'
 import { CalendarIcon, ArrowRightIcon, InfoIcon } from './icons.jsx'
 
 /*
@@ -23,22 +23,16 @@ export default function ProgramCard({ program, onExplore }) {
       onClick={() => onExplore?.(p)}
       className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 text-left transition hover:border-brand-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
     >
-      {/* Badge rail: discount badge + deferred tag (with tooltip) */}
-      <div className="flex flex-wrap items-center gap-2 px-4 pt-4">
-        <Badge program={p} />
-        {p.deferredPaymentAvailable && (
-          <span
-            title="Available for eligible tuition reimbursement users. Delay tuition payments until employer reimbursement is received. Terms and eligibility vary."
-            className="inline-flex items-center gap-1 rounded-full bg-info-50 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-info-700"
-          >
-            Deferred tuition
-            <InfoIcon className="text-[12px]" />
-          </span>
-        )}
-      </div>
+      {/* Badge rail: discount badge only. Deferred moved to the bottom tag row
+          (06-29 review). Rail is hidden entirely when there's no badge. */}
+      {badgeLabel(p) && (
+        <div className="flex flex-wrap items-center gap-2 px-4 pt-4">
+          <Badge program={p} />
+        </div>
+      )}
 
       {/* Title + school */}
-      <div className="px-4 pt-3">
+      <div className="px-4 pt-4">
         <h3 className="text-[21px] font-bold leading-snug text-ink-900 line-clamp-2">{p.name}</h3>
         <div className="mt-2 flex items-center gap-2 text-[13px] font-semibold text-ink-500">
           <SchoolMark school={p.school} />
@@ -72,13 +66,23 @@ export default function ProgramCard({ program, onExplore }) {
         )}
       </div>
 
-      {/* Tags */}
-      <div className="mt-auto flex flex-wrap gap-1.5 px-4 pb-4 pt-3">
+      {/* Tags: program facts plus the deferred-tuition tag (moved here from the
+          top rail, 06-29 review). Deferred keeps its info color + tooltip. */}
+      <div className="mt-auto flex flex-wrap items-center gap-1.5 px-4 pb-4 pt-3">
         {tags.map((t) => (
           <span key={t} className="rounded bg-surface-100 px-2 py-0.5 text-[11px] font-medium text-ink-500">
             {t}
           </span>
         ))}
+        {p.deferredPaymentAvailable && (
+          <span
+            title="Eligible students can delay paying tuition until after employer tuition benefits are processed, reducing upfront costs."
+            className="inline-flex items-center gap-1 rounded bg-info-50 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-info-700"
+          >
+            Deferred tuition
+            <InfoIcon className="text-[12px]" />
+          </span>
+        )}
       </div>
 
       {/* Action */}

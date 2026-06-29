@@ -44,8 +44,8 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, onOpen
   const costEbs = (
     <ActionTile
       icon={HeadsetIcon}
-      title="Questions about cost or tuition benefits?"
-      sub="Talk with an Education Benefits Specialist. No commitment and your information won't be shared with the school."
+      title="Not sure if this is the right fit?"
+      sub="Talk with an Education Benefits Specialist about costs, tuition savings, school options, and your next steps. No commitment and your information won't be shared with the school."
       onClick={() => onAdvisor?.(p)}
     />
   )

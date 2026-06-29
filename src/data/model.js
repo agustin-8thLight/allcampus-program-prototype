@@ -165,7 +165,12 @@ export function resolveCost(p) {
       tooltip: 'Estimated for a typical 3-credit course; credits per class vary by program.',
       tone: 'estimate',
     })
-  if (capped && cap != null) pills.push({ label: `${money(cap)}/yr cap` })
+  if (capped && cap != null)
+    pills.push({
+      label: `${money(cap)}/yr cap`,
+      tooltip:
+        "You'll pay tuition until you reach the annual cap. After that, additional courses (up to 12 per year) are covered at no additional tuition cost.",
+    })
   else if (pct) pills.push({ label: `${pct}% off` })
   if (credits != null)
     pills.push({
@@ -179,7 +184,7 @@ export function resolveCost(p) {
     pills.push({
       label: 'Deferred tuition',
       tooltip:
-        'Available for eligible tuition reimbursement users. Delay tuition payments until employer reimbursement is received. Terms and eligibility vary.',
+        'Eligible students can delay paying tuition until after employer tuition benefits are processed, reducing upfront costs.',
       tone: 'info',
     })
 
@@ -204,20 +209,22 @@ export function resolveCost(p) {
   // Supporting copy.
   let capLine, benefitsLine
   if (capped) {
-    // Capped caption (locked at the 06-17 review). The $5,250 figure = the annual
-    // tax-free employer education benefit (IRS Section 127). VERIFY the current
-    // figure/wording with a benefits source before any student-facing use.
-    capLine = `Tuition is capped at ${money(cap)} a year, the maximum most employers can reimburse tax-free, so many students pay little to nothing out of pocket.`
-    benefitsLine = null
+    // Capped caption (reworked 06-29 review). Dropped the "maximum most employers
+    // can reimburse tax-free" framing — only ACU carries this and they don't use
+    // tuition reimbursement. VERIFY the cap figure with a benefits source before
+    // any student-facing use; the value is MOCK / FPO.
+    capLine = `Never pay more than ${money(cap)} per year in tuition.`
+    benefitsLine =
+      "If you're eligible for employer education benefits, they may help cover some or all of this amount."
   } else if (hasDiscount) {
     // Certificates rarely accept transfer credits, so don't imply transfer savings.
     benefitsLine = cert
       ? 'Most students pay the discounted rate shown above. Your employer benefit may lower it further.'
-      : 'Most students pay the discounted rate shown above. Costs may be lower with transfer credits or employer benefits.'
+      : 'Most students pay the discounted rate shown above. Total costs may be lower with transfer credits or employer benefits.'
   } else {
     benefitsLine = cert
       ? 'This is the standard rate for this program. Your employer benefit may lower it.'
-      : 'This is the standard tuition rate for this program. Costs may be lower with transfer credits or employer benefits.'
+      : 'This is the standard tuition rate for this program. Total costs may be lower with transfer credits or employer benefits.'
   }
 
   return {

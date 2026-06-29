@@ -6,6 +6,57 @@ no-code/Bubble app). Goal: fastest path to high-fidelity, iterable screens that 
 as a precise spec for the developer. Reusability is explicitly low priority since
 everything gets rebuilt in Bubble.
 
+## 0. Decisions since v2 (current source of truth)
+
+> This section records decisions made after the v2 plan below was written. **Where it
+> conflicts with sections 4, 6, 7, 9, and 10, this section wins.** The live prototype
+> and `README.md` reflect the current build; the sections below are kept for history.
+
+**Concept convergence.** Three exploratory concepts collapsed to two, selectable in the
+review bar: **Phase 1 (`1A`, Baseline)** — cost-first program detail, no Ally; and
+**Phase 2 (`2B`, Guided)** — adds Ally, "Who this program is for", and school
+highlights. The old `1B` decision-path and `2C` Ask-First concepts are dropped.
+
+**Cost model (James, 06-13 / 06-17), supersedes §4 and §6.** No tuition-reimbursement
+math, no out-of-pocket calculator, and no "fully covered / $0 out of pocket" badge. The
+cost card leads with the most comparable number:
+- Degrees and credit-bearing certs: **per-credit rate** is the hero (standard rate
+  struck through when discounted).
+- Flat-fee certs: **total program cost** hero + a one-time-payment indicator.
+- Capped programs: per-credit hero + a cap pill + a caption (the cap is not repeated as
+  the hero).
+- Pills across the top: per-class estimate, savings (cap or % off), credit count (with a
+  transfer-credit tooltip on Associate / Bachelor's), and deferred tuition.
+
+**Cost questions route to an Education Benefits Specialist (EBS), not a generic
+advisor.** An EBS action sits directly under the cost card in **both** phases (the cost
+is the hesitation moment). Phase 2 adds a separate "Ask Ally" action.
+
+**06-29 review round (latest):**
+1. Requested-details footer no longer shows "Talk to an advisor" (it read as scheduling
+   directly with the school, which is not yet operational). It now confirms
+   "You've requested details from [School]" and keeps Apply now.
+2. Capped-program cost line is now "Never pay more than $X per year in tuition." plus
+   "If you're eligible for employer education benefits, they may help cover some or all
+   of this amount." (Replaces the "maximum most employers can reimburse tax-free"
+   wording. Only the capped program carries this, and it does not use TR.)
+3. Deferred-tuition pill moved from the top card rail to the **bottom tag row** on
+   program cards (keeps its info color + tooltip).
+4. Pricing disclaimer now reads "**Total** costs may be lower with transfer credits or
+   employer benefits."
+5. EBS CTA copy: heading "Not sure if this is the right fit?", body "Talk with an
+   Education Benefits Specialist about costs, tuition savings, school options, and your
+   next steps." The reassurance line ("No commitment and your information won't be
+   shared with the school.") was kept.
+6. Tuition-cap tooltip (on the cost-card cap pill): "You'll pay tuition until you reach
+   the annual cap. After that, additional courses (up to 12 per year) are covered at no
+   additional tuition cost."
+7. Deferred-tuition tooltip: "Eligible students can delay paying tuition until after
+   employer tuition benefits are processed, reducing upfront costs."
+
+**Data caveat.** All dollar figures (the $5,250 cap, per-credit rates) are mock / FPO
+and must be verified against a real benefits source before any external use.
+
 ## 1. Goal
 
 Help a user make an informed choice, step through the experience correctly, and not

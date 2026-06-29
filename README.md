@@ -15,12 +15,12 @@ Switch between them in the dark **prototype review bar** at the top (or `?varian
 review chrome and is not part of the AllCampus product UI. Open **Concept notes** in the bar for
 the full design rationale, differences, and technical dependencies.
 
-- **Baseline (1A)** — today's content, reordered cost-first, one CTA, cost rebuilt as a value
-  card. Lowest effort; ships on existing data.
-- **Guided (2B)** — the full structured page: normalized school trust panel (accreditation,
-  completion rate) plus Ally as an optional helper, ordered around the decision.
-- **Ask-First (2C)** — a departure: the questions people actually ask, answered up front, with
-  Ally as the spine. No persona model required.
+- **Phase 1 / Baseline (`1A`)** — today's content, reordered cost-first, one CTA, cost rebuilt as
+  a value card, with an Education Benefits Specialist action under the cost card. Ships first; no
+  Ally.
+- **Phase 2 / Guided (`2B`)** — the fuller page: a "Who this program is for" section, a normalized
+  school trust panel (accreditation, completion rate), and Ally as an optional helper, ordered
+  around the decision.
 
 ## Shared foundations (all concepts)
 
@@ -50,7 +50,7 @@ base path.
 
 ## Review / dev URL params
 
-- `?variant=1A|2B|2C` — open a concept directly
+- `?variant=1A|2B` — open a concept directly (`1A` Phase 1, `2B` Phase 2)
 - `?notes=1` — open the concept-notes panel
 - `?compare=1` — open the "next step: today vs proposed" comparison
 - `?program=<id>` — deep-open a program drawer (ids in `src/data/programs.json`)

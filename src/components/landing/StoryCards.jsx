@@ -1,0 +1,57 @@
+import { Eyebrow, Heading, Body } from './Section.jsx'
+import { storiesForPartner } from '../../data/stories.js'
+
+/*
+ * Learner stories (2026-08-11 meeting): real photos, relatable narratives,
+ * swappable by channel partner or employer. Stories are keyed by partner id
+ * in data/stories.js; photos are FPO gradients until real learner
+ * photography is licensed. People and quotes are FICTIONAL placeholders.
+ */
+
+export default function StoryCards({ partner }) {
+  const stories = storiesForPartner(partner?.id)
+  const partnerSpecific = partner?.benefitKnown && storiesForPartner(partner.id) !== storiesForPartner(null)
+
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-16">
+      <Eyebrow>Learner stories</Eyebrow>
+      <Heading className="mt-2">People like you, already using their benefit</Heading>
+      {partnerSpecific && (
+        <Body className="mt-2">Stories from {partner.name} team members.</Body>
+      )}
+      <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
+        {stories.map((s) => (
+          <figure
+            key={s.id}
+            className="overflow-hidden rounded-xl border border-mk-line bg-white"
+          >
+            {/* FPO portrait block */}
+            <div
+              className="flex h-40 items-end p-4"
+              style={{
+                background: `linear-gradient(135deg, hsl(${s.hue} 45% 42%), hsl(${(s.hue + 30) % 360} 50% 28%))`,
+              }}
+            >
+              <figcaption className="font-display text-white">
+                <span className="block text-[15px] font-extrabold">{s.name}</span>
+                <span className="block text-[12.5px] text-white/80">{s.role}</span>
+              </figcaption>
+            </div>
+            <blockquote className="p-5">
+              <p className="font-display text-[14px] leading-relaxed text-mk-slate">
+                &ldquo;{s.quote}&rdquo;
+              </p>
+              <p className="mt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
+                {s.program}
+              </p>
+            </blockquote>
+          </figure>
+        ))}
+      </div>
+      <p className="mt-3 font-display text-[11.5px] text-mk-body/70">
+        Placeholder people and quotes (FPO). Real learner photography and verified stories
+        required before launch.
+      </p>
+    </section>
+  )
+}

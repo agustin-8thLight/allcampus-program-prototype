@@ -1,13 +1,26 @@
 import { useEffect, useRef, useState } from 'react'
 import App from '../App.jsx'
+import LandingPage from '../pages/LandingPage.jsx'
+import SchoolPage from '../pages/SchoolPage.jsx'
 import ConceptNotes from './ConceptNotes.jsx'
 import CtaCompare from './CtaCompare.jsx'
+import { CORPORATE_PARTNERS, EMPLOYER_STATES } from '../data/corporatePartners.js'
 
 /*
  * Prototype review frame. This is NOT part of the AllCampus product UI, it is
  * the harness reviewers use to switch concepts and read the design rationale.
- * It owns the active variant and renders the real App beneath a slim dark bar
- * so the product chrome stays clean.
+ * It owns the active variant, the demo employer state, and the hash router,
+ * and renders the real pages beneath a slim dark bar.
+ *
+ * Routes (hash-based so GitHub Pages needs no redirect rules):
+ *   #/                     redesigned landing page (2026-08-11 direction)
+ *   #/browse?...           the program search/browse surface (original App)
+ *   #/school/<id>          school page scoped to one partner school
+ *
+ * Employer demo states (?employer= override): duncan-avn (known benefit,
+ * engineering-skewed), acme-edu (known benefit, default mix), global-default
+ * (unknown benefit fallback). In production this comes from the learner
+ * record or partner-branded URL, never a switcher.
  */
 const VARIANTS = [
   { code: '1A', name: 'Phase 1', tagline: 'Ships first: cost-first program detail and an advisor. No Ally.' },
@@ -19,8 +32,21 @@ function initialVariant() {
   return VARIANTS.some((x) => x.code === v) ? v : '2B'
 }
 
+function initialEmployer() {
+  const e = new URLSearchParams(window.location.search).get('employer')
+  return CORPORATE_PARTNERS[e] ? e : 'duncan-avn'
+}
+
+function parseHash() {
+  const raw = window.location.hash.replace(/^#/, '') || '/'
+  const [path, qs] = raw.split('?')
+  return { path: path || '/', params: new URLSearchParams(qs || ''), raw }
+}
+
 export default function PrototypeFrame() {
   const [variant, setVariant] = useState(initialVariant)
+  const [employerId, setEmployerId] = useState(initialEmployer)
+  const [route, setRoute] = useState(parseHash)
   const [notesOpen, setNotesOpen] = useState(
     () => new URLSearchParams(window.location.search).get('notes') === '1',
   )
@@ -28,6 +54,17 @@ export default function PrototypeFrame() {
     () => new URLSearchParams(window.location.search).get('compare') === '1',
   )
   const active = VARIANTS.find((v) => v.code === variant)
+  const partner = CORPORATE_PARTNERS[employerId]
+
+  useEffect(() => {
+    const onHash = () => setRoute(parseHash())
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
+
+  const navigate = (path) => {
+    window.location.hash = `#${path}`
+  }
 
   // Concepts only differ inside the program drawer, so a switch is invisible on
   // the list. A brief toast confirms the change took. Keyed so re-selecting the
@@ -43,6 +80,17 @@ export default function PrototypeFrame() {
     const t = setTimeout(() => setToast(null), 1800)
     return () => clearTimeout(t)
   }, [variant])
+
+  let page
+  if (route.path.startsWith('/school/')) {
+    const schoolId = route.path.split('/')[2]
+    page = <SchoolPage schoolId={schoolId} partner={partner} onNavigate={navigate} />
+  } else if (route.path === '/browse') {
+    // Keyed by the raw hash so a new search from the landing page re-seeds filters.
+    page = <App key={route.raw} variant={variant} partner={partner} initialParams={route.params} />
+  } else {
+    page = <LandingPage partner={partner} onNavigate={navigate} />
+  }
 
   return (
     <>
@@ -67,12 +115,30 @@ export default function PrototypeFrame() {
           ))}
         </div>
 
-        <span className="hidden flex-1 truncate text-[12px] text-white/55 lg:block">{active?.tagline}</span>
+        {/* Employer demo state (review-only; production reads the learner record) */}
+        <div className="flex items-center gap-1 rounded-full bg-white/10 p-0.5">
+          {EMPLOYER_STATES.map((e) => (
+            <button
+              key={e.id}
+              onClick={() => setEmployerId(e.id)}
+              title={e.tagline}
+              className={`rounded-full px-3 py-1 text-[12px] font-bold transition ${
+                employerId === e.id ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              {e.label}
+            </button>
+          ))}
+        </div>
+
+        <span className="hidden flex-1 truncate text-[12px] text-white/55 xl:block">
+          {active?.tagline}
+        </span>
 
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={() => setCompareOpen(true)}
-            className="rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10"
+            className="hidden rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10 md:block"
           >
             Compare next step
           </button>
@@ -86,9 +152,7 @@ export default function PrototypeFrame() {
       </div>
 
       {/* The real product, offset below the bar */}
-      <div className="pt-12">
-        <App variant={variant} />
-      </div>
+      <div className="pt-12">{page}</div>
 
       {notesOpen && (
         <ConceptNotes

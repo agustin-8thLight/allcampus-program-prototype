@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PROGRAMS, QUICK_FILTERS, applyQuickFilter } from './data/model.js'
+import { AREAS, getArea, getSkill } from './data/taxonomy.js'
+import { isFullyCoveredEstimate } from './data/benefit.js'
+import { getSchool } from './data/schools.js'
 import ProgramCard from './components/ProgramCard.jsx'
 import Drawer from './components/Drawer.jsx'
 import ProgramDrawerView from './components/ProgramDrawerView.jsx'
@@ -17,18 +20,30 @@ import {
 
 // Order = usefulness for narrowing (06-17 review): area of study, degree, and
 // university first; course modality last (least useful — nearly all online).
+// Areas of Study is functional (taxonomy.js); the others remain UI stubs.
 const FILTER_DROPDOWNS = [
-  { label: 'Areas of Study', icon: BookIcon },
   { label: 'Degree Level', icon: CapIcon },
   { label: 'Universities', icon: BuildingIcon },
   { label: 'Course Modality', icon: MonitorIcon },
 ]
 
 // `variant` is supplied by the prototype review frame (PrototypeFrame), which
-// owns the concept switcher. App is the real product UI; it just reads it.
-export default function App({ variant = '1A' }) {
-  const [query, setQuery] = useState('')
+// owns the concept switcher and the hash router. `partner` is the demo
+// employer state; `initialParams` seeds filters when arriving from the
+// landing/school pages (q, area, skill, school, degree, modality, covered).
+export default function App({ variant = '1A', partner = null, initialParams = null }) {
+  const [query, setQuery] = useState(() => initialParams?.get('q') || '')
   const [activeFilter, setActiveFilter] = useState('mostAffordable')
+  const [areaId, setAreaId] = useState(() => {
+    const fromSkill = initialParams?.get('skill') ? getSkill(initialParams.get('skill'))?.areaId : null
+    return initialParams?.get('area') || fromSkill || null
+  })
+  const [skillId, setSkillId] = useState(() => initialParams?.get('skill') || null)
+  const [schoolId] = useState(() => initialParams?.get('school') || null)
+  const [degreeLevel, setDegreeLevel] = useState(() => initialParams?.get('degree') || null)
+  const [modality, setModality] = useState(() => initialParams?.get('modality') || null)
+  const [coveredOnly, setCoveredOnly] = useState(() => initialParams?.get('covered') === '1')
+  const [areaMenuOpen, setAreaMenuOpen] = useState(false)
   const [selected, setSelected] = useState(null)
   // The drawer hosts three swappable views, never stacked overlays.
   const [drawerView, setDrawerView] = useState('detail') // 'detail' | 'ally' | 'flow'
@@ -58,9 +73,10 @@ export default function App({ variant = '1A' }) {
 
   // Dev affordance: ?program=<id> deep-opens the drawer; &flow=<step> opens the
   // CTA flow view at a given step; &ally=1 opens Ally (useful for review).
+  // Hash params (from school-page cards) can also deep-open a program.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const id = params.get('program')
+    const id = params.get('program') || initialParams?.get('program')
     if (id) {
       const p = PROGRAMS.find((x) => x.id === id)
       if (p) {
@@ -79,26 +95,42 @@ export default function App({ variant = '1A' }) {
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
-    const matched = q
+    let matched = q
       ? PROGRAMS.filter(
           (p) =>
             p.name.toLowerCase().includes(q) || p.school?.name.toLowerCase().includes(q),
         )
       : PROGRAMS
+    if (areaId) matched = matched.filter((p) => p.areaId === areaId)
+    if (skillId) matched = matched.filter((p) => p.skillIds?.includes(skillId))
+    if (schoolId) matched = matched.filter((p) => p.schoolId === schoolId)
+    if (degreeLevel) matched = matched.filter((p) => p.degreeLevel === degreeLevel)
+    if (modality) matched = matched.filter((p) => p.courseModality === modality)
+    if (coveredOnly && partner) matched = matched.filter((p) => isFullyCoveredEstimate(p, partner))
     return applyQuickFilter(matched, activeFilter)
-  }, [query, activeFilter])
+  }, [query, activeFilter, areaId, skillId, schoolId, degreeLevel, modality, coveredOnly, partner])
+
+  // Applied-filter chips (taxonomy + landing handoffs), each clearable.
+  const appliedFilters = [
+    skillId && { key: 'skill', label: getSkill(skillId)?.label, clear: () => { setSkillId(null); setAreaId(null) } },
+    !skillId && areaId && { key: 'area', label: getArea(areaId)?.label, clear: () => setAreaId(null) },
+    schoolId && { key: 'school', label: getSchool(schoolId)?.name, clear: null }, // school scope comes from the school page
+    degreeLevel && { key: 'degree', label: degreeLevel, clear: () => setDegreeLevel(null) },
+    modality && { key: 'modality', label: modality, clear: () => setModality(null) },
+    coveredOnly && { key: 'covered', label: 'Fully covered (est.)', clear: () => setCoveredOnly(false) },
+  ].filter(Boolean)
 
   return (
     <div className="min-h-screen bg-surface-50">
       {/* Global header */}
       <header className="border-b border-surface-200 bg-surface-0">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
-          <div className="flex items-center gap-2 font-black text-brand-700">
+          <a href="#/" className="flex items-center gap-2 font-black text-brand-700">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-600 text-sm text-white">
               ac
             </span>
             allcampus
-          </div>
+          </a>
           <div className="h-8 w-8 rounded-full bg-surface-200" aria-hidden />
         </div>
       </header>
@@ -126,6 +158,42 @@ export default function App({ variant = '1A' }) {
 
           {/* Filters row: filters left, Clear filters + Search right (compare removed) */}
           <div className="mx-auto mt-3 flex max-w-4xl flex-wrap items-center gap-2">
+            {/* Areas of Study: functional, driven by taxonomy.js */}
+            <div className="relative">
+              <button
+                onClick={() => setAreaMenuOpen((o) => !o)}
+                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-[13px] font-semibold hover:border-brand-300 ${
+                  areaId
+                    ? 'border-brand-400 bg-brand-50 text-brand-700'
+                    : 'border-surface-200 bg-surface-0 text-ink-700'
+                }`}
+              >
+                <BookIcon className="text-base text-ink-400" />
+                {areaId ? getArea(areaId)?.label : 'Areas of Study'}
+                <ChevronDownIcon className="text-base text-ink-400" />
+              </button>
+              {areaMenuOpen && (
+                <div className="absolute left-0 top-full z-30 mt-1 w-60 rounded-lg border border-surface-200 bg-surface-0 py-1 text-left shadow-lg">
+                  <button
+                    onClick={() => { setAreaId(null); setSkillId(null); setAreaMenuOpen(false) }}
+                    className="block w-full px-3 py-2 text-left text-[13px] font-semibold text-ink-700 hover:bg-surface-50"
+                  >
+                    All areas
+                  </button>
+                  {AREAS.map((a) => (
+                    <button
+                      key={a.id}
+                      onClick={() => { setAreaId(a.id); setSkillId(null); setAreaMenuOpen(false) }}
+                      className={`block w-full px-3 py-2 text-left text-[13px] hover:bg-surface-50 ${
+                        areaId === a.id ? 'font-bold text-brand-700' : 'font-semibold text-ink-700'
+                      }`}
+                    >
+                      {a.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             {FILTER_DROPDOWNS.map((f) => {
               const Icon = f.icon
               return (
@@ -141,7 +209,14 @@ export default function App({ variant = '1A' }) {
             })}
             <div className="ml-auto flex items-center gap-3">
               <button
-                onClick={() => setQuery('')}
+                onClick={() => {
+                  setQuery('')
+                  setAreaId(null)
+                  setSkillId(null)
+                  setDegreeLevel(null)
+                  setModality(null)
+                  setCoveredOnly(false)
+                }}
                 className="text-[13px] font-semibold text-ink-500 hover:text-ink-900"
               >
                 Clear filters
@@ -156,6 +231,32 @@ export default function App({ variant = '1A' }) {
 
       {/* Results */}
       <main className="mx-auto max-w-6xl px-5 py-7">
+        {/* Applied filters from the landing/school handoff + taxonomy */}
+        {appliedFilters.length > 0 && (
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <span className="text-[12px] font-bold uppercase tracking-wide text-ink-400">
+              Filtered by
+            </span>
+            {appliedFilters.map((f) => (
+              <span
+                key={f.key}
+                className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-[13px] font-bold text-brand-700"
+              >
+                {f.label}
+                {f.clear && (
+                  <button
+                    onClick={f.clear}
+                    aria-label={`Clear ${f.label} filter`}
+                    className="text-brand-400 hover:text-brand-700"
+                  >
+                    ✕
+                  </button>
+                )}
+              </span>
+            ))}
+          </div>
+        )}
+
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-lg">
             We found{' '}

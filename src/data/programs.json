@@ -49,8 +49,17 @@
       "People & Organizational Analytics",
       "Capstone Consulting Project"
     ],
-    "concentrations": ["Operations", "Finance", "People Strategy"],
-    "applicationUrl": "https://example.com/apply/txwes-mba"
+    "concentrations": [
+      "Operations",
+      "Finance",
+      "People Strategy"
+    ],
+    "applicationUrl": "https://example.com/apply/txwes-mba",
+    "areaId": "business",
+    "skillIds": [
+      "mba-general",
+      "leadership-org"
+    ]
   },
   {
     "id": "abilene-prehealth-cert",
@@ -93,10 +102,23 @@
       "Complete the online program application",
       "Submit a 250-word minimum purpose statement describing your goals"
     ],
-    "benefits": ["Faith-based education", "Flexibility and support", "100% online", "No SAT or ACT required"],
-    "curriculumHighlights": ["Human Anatomy & Physiology", "Foundations of Chemistry", "Intro to Public Health"],
+    "benefits": [
+      "Faith-based education",
+      "Flexibility and support",
+      "100% online",
+      "No SAT or ACT required"
+    ],
+    "curriculumHighlights": [
+      "Human Anatomy & Physiology",
+      "Foundations of Chemistry",
+      "Intro to Public Health"
+    ],
     "concentrations": [],
-    "applicationUrl": "https://example.com/apply/abilene-prehealth"
+    "applicationUrl": "https://example.com/apply/abilene-prehealth",
+    "areaId": "healthcare",
+    "skillIds": [
+      "public-health"
+    ]
   },
   {
     "id": "nursing-u-healthcare-admin",
@@ -145,7 +167,11 @@
       "Healthcare Policy & Ethics"
     ],
     "concentrations": [],
-    "applicationUrl": "https://example.com/apply/nursing-healthcare-admin"
+    "applicationUrl": "https://example.com/apply/nursing-healthcare-admin",
+    "areaId": "healthcare",
+    "skillIds": [
+      "health-admin"
+    ]
   },
   {
     "id": "snhu-ba-english",
@@ -186,10 +212,21 @@
       "Complete an admissions form, no application fee",
       "Submit official transcripts from prior schools"
     ],
-    "benefits": ["8-week terms", "Learn around your schedule", "24/7 online support"],
+    "benefits": [
+      "8-week terms",
+      "Learn around your schedule",
+      "24/7 online support"
+    ],
     "curriculumHighlights": [],
-    "concentrations": ["Literature", "Creative Writing"],
-    "applicationUrl": "https://example.com/apply/snhu-ba-english"
+    "concentrations": [
+      "Literature",
+      "Creative Writing"
+    ],
+    "applicationUrl": "https://example.com/apply/snhu-ba-english",
+    "areaId": "liberal-arts",
+    "skillIds": [
+      "english-writing"
+    ]
   },
   {
     "id": "state-online-supply-chain",
@@ -241,7 +278,11 @@
       "Supply Chain Analytics"
     ],
     "concentrations": [],
-    "applicationUrl": "https://example.com/apply/state-online-supply-chain"
+    "applicationUrl": "https://example.com/apply/state-online-supply-chain",
+    "areaId": "business",
+    "skillIds": [
+      "operations-supply-chain"
+    ]
   },
   {
     "id": "metro-tech-cs",
@@ -278,7 +319,10 @@
       "terms": "Standard tuition applies. Confirm current pricing with the institution."
     },
     "admissionRequirements": [],
-    "benefits": ["Project-based, portfolio-building coursework", "Flexible online schedule"],
+    "benefits": [
+      "Project-based, portfolio-building coursework",
+      "Flexible online schedule"
+    ],
     "curriculumHighlights": [
       "Programming Foundations",
       "Data Structures & Algorithms",
@@ -286,7 +330,11 @@
       "Capstone Software Project"
     ],
     "concentrations": [],
-    "applicationUrl": "https://example.com/apply/metro-tech-cs"
+    "applicationUrl": "https://example.com/apply/metro-tech-cs",
+    "areaId": "it",
+    "skillIds": [
+      "cs-software"
+    ]
   },
   {
     "id": "state-online-pm-cert",
@@ -329,10 +377,23 @@
       "Submit the online program application",
       "No prior college credit required"
     ],
-    "benefits": ["PMI-aligned curriculum", "Prepares you for the PMP exam", "100% online, self-paced"],
-    "curriculumHighlights": ["Project Initiation & Planning", "Scheduling & Cost Control", "Risk Management", "Agile Foundations"],
+    "benefits": [
+      "PMI-aligned curriculum",
+      "Prepares you for the PMP exam",
+      "100% online, self-paced"
+    ],
+    "curriculumHighlights": [
+      "Project Initiation & Planning",
+      "Scheduling & Cost Control",
+      "Risk Management",
+      "Agile Foundations"
+    ],
     "concentrations": [],
-    "applicationUrl": "https://example.com/apply/state-online-pm-cert"
+    "applicationUrl": "https://example.com/apply/state-online-pm-cert",
+    "areaId": "business",
+    "skillIds": [
+      "project-management"
+    ]
   },
   {
     "id": "metro-tech-data-cert",
@@ -374,9 +435,22 @@
       "Submit the online program application",
       "High-school diploma or equivalent"
     ],
-    "benefits": ["Pay per course as you go", "Hands-on projects with real datasets", "100% online"],
-    "curriculumHighlights": ["Foundations of Data Analysis", "SQL & Databases", "Data Visualization", "Intro to Statistical Modeling"],
+    "benefits": [
+      "Pay per course as you go",
+      "Hands-on projects with real datasets",
+      "100% online"
+    ],
+    "curriculumHighlights": [
+      "Foundations of Data Analysis",
+      "SQL & Databases",
+      "Data Visualization",
+      "Intro to Statistical Modeling"
+    ],
     "concentrations": [],
-    "applicationUrl": "https://example.com/apply/metro-tech-data-cert"
+    "applicationUrl": "https://example.com/apply/metro-tech-data-cert",
+    "areaId": "it",
+    "skillIds": [
+      "data-analytics-ai"
+    ]
   }
 ]

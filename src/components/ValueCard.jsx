@@ -1,4 +1,5 @@
-import { resolveCost } from '../data/model.js'
+import { resolveCost, money } from '../data/model.js'
+import { estimatedOutOfPocket } from '../data/benefit.js'
 import { InfoIcon } from './icons.jsx'
 
 /*
@@ -14,9 +15,16 @@ import { InfoIcon } from './icons.jsx'
  * transfer-credit tooltip on Associate / Bachelor's), and deferred tuition.
  * No calculator, no TR math.
  */
-export default function ValueCard({ program }) {
+export default function ValueCard({ program, partner = null, joined = false }) {
   const c = resolveCost(program)
   if (!c.primaryValue) return null
+  // Move 5 (2026-08-12 direction, supersedes the June "no math on the cost
+  // card" decision): the drawer finally does the arithmetic — program total
+  // plus the learner's estimated out-of-pocket with their employer benefit.
+  // One shared engine (benefit.js); everything labeled as an estimate.
+  const total = program.totalTuitionCost ?? null
+  const benefitKnown = partner?.benefitKnown && partner.employerReimbursement > 0
+  const oop = benefitKnown ? estimatedOutOfPocket(program, partner) : null
 
   return (
     <section
@@ -72,6 +80,27 @@ export default function ValueCard({ program }) {
           )}
         </div>
         {c.capLine && <p className="mt-1.5 text-[15px] font-bold text-ink-900">{c.capLine}</p>}
+        {/* The math, done: total + your estimated out-of-pocket (move 5). */}
+        {total != null && program.requiredCredits && program.tuitionPerCredit && (
+          <p className="mt-2 text-[15px] text-ink-700">
+            Total tuition: <span className="font-black">{money(total)}</span>{' '}
+            <span className="text-ink-500">
+              ({program.requiredCredits} credits × {money(program.tuitionPerCredit)}/credit
+              {c.struck ? ', discount applied' : ''})
+            </span>
+          </p>
+        )}
+        {benefitKnown && oop != null && (
+          joined ? (
+            <p className="mt-1.5 text-[17px] font-black text-good-700">
+              Your estimated out-of-pocket: {money(oop)}/yr with the {partner.name} benefit
+            </p>
+          ) : (
+            <p className="mt-1.5 text-[14px] font-semibold text-ink-500">
+              Join free to see your estimated out-of-pocket with the {partner.name} benefit.
+            </p>
+          )
+        )}
       </div>
 
       {/* Payment-structure indicator (flat-fee certs) */}

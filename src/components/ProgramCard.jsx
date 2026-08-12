@@ -1,30 +1,44 @@
 import Badge from './Badge.jsx'
 import { ProgramImage, SchoolMark } from './ProgramDetail.jsx'
-import { startDateDisplay, resolveCost, badgeLabel } from '../data/model.js'
+import { startDateDisplay, resolveCost, badgeLabel, money } from '../data/model.js'
+import { estimatedOutOfPocket } from '../data/benefit.js'
 import { CalendarIcon, ArrowRightIcon, InfoIcon } from './icons.jsx'
 
 /*
- * Program list card. Compare removed. Deferred tuition is a card tag with an
- * info tooltip (not the discount badge, not a sort-only feature).
+ * Program list card. Save/Compare are the value moments that trigger the
+ * account gate (move 2); after joining, the card answers "what would I pay"
+ * inline with the employer benefit applied (move 5) — estimate-labeled.
+ * Root is a div (not a button) so the Save/Compare buttons nest legally.
  */
-export default function ProgramCard({ program, onExplore }) {
+export default function ProgramCard({
+  program,
+  partner = null,
+  joined = false,
+  saved = false,
+  onSave,
+  onCompare,
+  onExplore,
+}) {
   const p = program
   const start = startDateDisplay(p)
   const tags = [p.degreeLevel, p.duration, p.courseModality].filter(Boolean)
-  // Mirror the drawer's hero on the list card: per-credit (degrees + credit
-  // certs), total (flat certs). Same source of truth as ValueCard.
   const cost = resolveCost(p)
   const priceUnit =
     cost.primaryLabel === 'Per credit' ? 'per credit' : cost.primaryLabel === 'Total program cost' ? 'total' : null
 
+  const benefitKnown = partner?.benefitKnown && partner.employerReimbursement > 0
+  const oop = benefitKnown ? estimatedOutOfPocket(p, partner) : null
+
+  const explore = () => onExplore?.(p)
+
   return (
-    <button
-      type="button"
-      onClick={() => onExplore?.(p)}
-      className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 text-left transition hover:border-brand-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={explore}
+      onKeyDown={(e) => e.key === 'Enter' && explore()}
+      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 text-left transition hover:border-brand-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
     >
-      {/* Badge rail: discount badge only. Deferred moved to the bottom tag row
-          (06-29 review). Rail is hidden entirely when there's no badge. */}
       {badgeLabel(p) && (
         <div className="flex flex-wrap items-center gap-2 px-4 pt-4">
           <Badge program={p} />
@@ -58,6 +72,17 @@ export default function ProgramCard({ program, onExplore }) {
             )}
           </div>
         )}
+        {/* Move 5 on the list: the benefit answer, inline. */}
+        {benefitKnown && joined && oop != null && (
+          <p className="mt-1 text-[13px] font-bold text-good-700">
+            Your est. out-of-pocket: {money(oop)}/yr with the {partner.name} benefit
+          </p>
+        )}
+        {benefitKnown && !joined && (
+          <p className="mt-1 text-[13px] font-semibold text-ink-400">
+            Join free to see your price with the {partner.name} benefit
+          </p>
+        )}
         {start && (
           <div className="mt-2 flex items-center gap-2 text-[13px] text-ink-500">
             <CalendarIcon className="text-sm text-brand-500" />
@@ -66,9 +91,8 @@ export default function ProgramCard({ program, onExplore }) {
         )}
       </div>
 
-      {/* Tags: program facts plus the deferred-tuition tag (moved here from the
-          top rail, 06-29 review). Deferred keeps its info color + tooltip. */}
-      <div className="mt-auto flex flex-wrap items-center gap-1.5 px-4 pb-4 pt-3">
+      {/* Tags */}
+      <div className="mt-auto flex flex-wrap items-center gap-1.5 px-4 pb-3 pt-3">
         {tags.map((t) => (
           <span key={t} className="rounded bg-surface-100 px-2 py-0.5 text-[11px] font-medium text-ink-500">
             {t}
@@ -85,13 +109,39 @@ export default function ProgramCard({ program, onExplore }) {
         )}
       </div>
 
-      {/* Action */}
-      <div className="border-t border-surface-100 px-4 py-3">
+      {/* Actions: explore + the gate-triggering value moments */}
+      <div className="flex items-center justify-between border-t border-surface-100 px-4 py-3">
         <span className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 group-hover:text-brand-700">
           Explore program
           <ArrowRightIcon className="text-base transition-transform group-hover:translate-x-0.5" />
         </span>
+        <span className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onSave?.(p)
+            }}
+            className={`rounded-full border px-2.5 py-1 text-[12px] font-bold transition ${
+              saved
+                ? 'border-good-700 bg-good-700/10 text-good-700'
+                : 'border-surface-200 text-ink-500 hover:border-brand-300 hover:text-ink-900'
+            }`}
+          >
+            {saved ? '♥ Saved' : '♡ Save'}
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onCompare?.(p)
+            }}
+            className="rounded-full border border-surface-200 px-2.5 py-1 text-[12px] font-bold text-ink-500 transition hover:border-brand-300 hover:text-ink-900"
+          >
+            ⇄ Compare
+          </button>
+        </span>
       </div>
-    </button>
+    </div>
   )
 }

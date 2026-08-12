@@ -82,12 +82,21 @@ export default function CtaFlow({
           {step === 'choose' && (
             <div>
               <p className="mb-4 text-[15px] text-ink-700">How would you like to gather more information?</p>
+              {/* Fork reordered (move 6): the specialist leads for benefit
+                  questions, applying states its expectations before the new
+                  tab, and the exit is a quiet text link, not a loud card. */}
               <div className="space-y-2.5">
+                <OptionRow
+                  icon={HeadsetIcon}
+                  title="Talk to an Education Benefits Specialist (recommended)"
+                  sub="Free 20–30 minute call. Confirms your benefit and keeps your discount eligibility. We won't share your information with the school unless you decide to move forward."
+                  onClick={() => setStep('advisor')}
+                />
                 {allyEnabled && (
                   <OptionRow
                     icon={SparkleIcon}
                     title="Ask Ally"
-                    sub="Get instant answers about this program. No call to book, nothing leaves AllCampus."
+                    sub="Get instant answers about this program first. No call to book, nothing leaves AllCampus."
                     onClick={() => onOpenAlly?.(program)}
                   />
                 )}
@@ -99,19 +108,19 @@ export default function CtaFlow({
                   onClick={() => setStep('gate')}
                 />
                 <OptionRow
-                  icon={HeadsetIcon}
-                  title="Need more information first?"
-                  sub="Talk with an Education Benefits Specialist about costs, benefits, school options, and next steps. We won't share your information with the school unless you decide to move forward."
-                  onClick={() => setStep('advisor')}
-                />
-                <OptionRow
                   icon={ExternalIcon}
                   channel="school"
                   title="Apply now"
-                  sub="Ready to get started? Secure your tuition discount and submit your application directly to the school. You'll hear from the school's admissions team about next steps."
+                  sub={`Heads up: the application lives on ${school}'s site and needs its own account there. Request information first to keep your tuition discount. You'll hear from the school's admissions team about next steps.`}
                   onClick={applyNow}
                 />
               </div>
+              <button
+                onClick={onClose}
+                className="mt-4 text-[13px] font-semibold text-ink-400 transition hover:text-ink-700"
+              >
+                Keep browsing programs
+              </button>
             </div>
           )}
 

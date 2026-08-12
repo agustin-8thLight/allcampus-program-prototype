@@ -37,7 +37,7 @@ const DEFAULT_STORIES = [
 ]
 
 const STORIES_BY_PARTNER = {
-  'duncan-avn': [
+  boeing: [
     {
       id: 'kyle',
       name: 'Kyle S.',

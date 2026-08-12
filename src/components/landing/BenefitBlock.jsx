@@ -12,7 +12,7 @@ import { estimatedOutOfPocket, fullyCoveredPrograms } from '../../data/benefit.j
  */
 
 export default function BenefitBlock({ partner, onSeeFullyCovered, onCheckEmployer, programs = PROGRAMS }) {
-  const known = partner?.benefitKnown
+  const known = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
 
   if (!known) {
     return (

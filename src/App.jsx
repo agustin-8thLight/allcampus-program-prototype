@@ -4,6 +4,8 @@ import { AREAS, getArea, getSkill } from './data/taxonomy.js'
 import { isFullyCoveredEstimate } from './data/benefit.js'
 import { getSchool } from './data/schools.js'
 import ProgramCard from './components/ProgramCard.jsx'
+import EmptyStateAlly from './components/EmptyStateAlly.jsx'
+import { emitStoryEvent } from './data/useCases.js'
 import Drawer from './components/Drawer.jsx'
 import ProgramDrawerView from './components/ProgramDrawerView.jsx'
 import CtaFlow from './components/CtaFlow.jsx'
@@ -31,7 +33,14 @@ const FILTER_DROPDOWNS = [
 // owns the concept switcher and the hash router. `partner` is the demo
 // employer state; `initialParams` seeds filters when arriving from the
 // landing/school pages (q, area, skill, school, degree, modality, covered).
-export default function App({ variant = '1A', partner = null, initialParams = null }) {
+export default function App({
+  variant = '1A',
+  partner = null,
+  initialParams = null,
+  joined = false,
+  intent = null,
+  onGate = null,
+}) {
   const [query, setQuery] = useState(() => initialParams?.get('q') || '')
   const [activeFilter, setActiveFilter] = useState('mostAffordable')
   const [areaId, setAreaId] = useState(() => {
@@ -50,7 +59,35 @@ export default function App({ variant = '1A', partner = null, initialParams = nu
   const [flowReturnView, setFlowReturnView] = useState('detail') // where the flow's back goes
   const [flowStep, setFlowStep] = useState('choose')
   const [requested, setRequested] = useState(() => new Set()) // program ids the user has acted on
+  const [saved, setSaved] = useState(() => new Set()) // saved program ids (post-join)
   const { showToast } = useToast()
+
+  // Save/Compare are the value moments that justify the account gate (move 2).
+  const onSave = (p) => {
+    emitStoryEvent('save', { id: p.id })
+    if (!joined) {
+      onGate?.('save')
+      return
+    }
+    setSaved((s) => {
+      const n = new Set(s)
+      n.has(p.id) ? n.delete(p.id) : n.add(p.id)
+      return n
+    })
+  }
+  const onCompare = () => {
+    emitStoryEvent('save')
+    if (!joined) onGate?.('compare')
+    else showToast({ tone: 'info', title: 'Added to compare', body: 'Comparison is stubbed in this prototype.' })
+  }
+
+  // Story signal: a non-empty query counts as "searched" (typed or seeded
+  // from the landing/school pages).
+  useEffect(() => {
+    if (!query.trim()) return
+    const t = setTimeout(() => emitStoryEvent('search', { query }), 700)
+    return () => clearTimeout(t)
+  }, [query])
 
   const markRequested = (p) => setRequested((s) => new Set(s).add(p.id))
   const applyToSchool = (p) => {
@@ -66,6 +103,7 @@ export default function App({ variant = '1A', partner = null, initialParams = nu
   // "Get Program Details" opens the chooser; the advisor links open it at the
   // advisor step. (On click, the real build also creates the HubSpot deal.)
   const openFlow = (from, step = 'choose') => {
+    emitStoryEvent('fork')
     setFlowReturnView(from)
     setFlowStep(step)
     setDrawerView('flow')
@@ -270,7 +308,10 @@ export default function App({ variant = '1A', partner = null, initialParams = nu
               return (
                 <button
                   key={f.id}
-                  onClick={() => setActiveFilter(f.id)}
+                  onClick={() => {
+                    emitStoryEvent('quick-filter', { id: f.id })
+                    setActiveFilter(f.id)
+                  }}
                   className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold transition ${
                     active
                       ? 'bg-brand-600 text-white'
@@ -285,11 +326,38 @@ export default function App({ variant = '1A', partner = null, initialParams = nu
         </div>
 
         {results.length === 0 ? (
-          <p className="mt-10 text-center text-ink-400">No programs match your search.</p>
+          // Move 4: the honest empty state + the Ally handoff, never a dead end.
+          <EmptyStateAlly
+            query={query}
+            partner={partner}
+            hasFilters={appliedFilters.length > 0}
+            onPickArea={(id) => {
+              setQuery('')
+              setSkillId(null)
+              setAreaId(id)
+            }}
+            onCoveredOnly={() => {
+              setQuery('')
+              setCoveredOnly(true)
+              setActiveFilter('mostAffordable')
+            }}
+          />
         ) : (
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((p) => (
-              <ProgramCard key={p.id} program={p} onExplore={setSelected} />
+              <ProgramCard
+                key={p.id}
+                program={p}
+                partner={partner}
+                joined={joined}
+                saved={saved.has(p.id)}
+                onSave={onSave}
+                onCompare={onCompare}
+                onExplore={(prog) => {
+                  emitStoryEvent('drawer', { id: prog.id })
+                  setSelected(prog)
+                }}
+              />
             ))}
           </div>
         )}
@@ -327,6 +395,8 @@ export default function App({ variant = '1A', partner = null, initialParams = nu
           <ProgramDrawerView
             program={selected}
             variant={variant}
+            partner={partner}
+            joined={joined}
             requested={requested.has(selected.id)}
             onClose={() => {
               setSelected(null)

@@ -90,6 +90,28 @@ export default function SchoolPage({ schoolId, partner, onNavigate }) {
       {/* School-scoped catalog preview */}
       <section className="mx-auto max-w-6xl px-5 pt-16">
         <Eyebrow>Programs at {school.name.split(' ')[0]}</Eyebrow>
+        {/* Search-within-school (recommendation: the school page is browsable;
+            a miss routes to the honest empty state + Ally handoff). */}
+        <form
+          className="mt-4 flex max-w-xl items-center gap-2"
+          onSubmit={(e) => {
+            e.preventDefault()
+            const q = new FormData(e.currentTarget).get('q')?.toString().trim()
+            if (q) onNavigate(`/browse?school=${school.id}&q=${encodeURIComponent(q)}`)
+          }}
+        >
+          <input
+            name="q"
+            placeholder={`Search ${school.name.split(' ')[0]} programs — e.g. nursing, welding…`}
+            className="min-w-0 flex-1 rounded-lg border border-mk-line bg-white px-4 py-2.5 text-[15px] text-mk-slate outline-none placeholder:text-mk-body/60 focus:border-mk-teal-600"
+          />
+          <button
+            type="submit"
+            className="rounded-lg bg-mk-green-600 px-5 py-2.5 text-[15px] font-bold text-white transition hover:bg-mk-green-700"
+          >
+            Search
+          </button>
+        </form>
         <Heading size="sm" className="mt-2">
           {programs.length} program{programs.length === 1 ? '' : 's'} in the AllCampus network
         </Heading>

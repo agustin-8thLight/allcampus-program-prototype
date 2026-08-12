@@ -4,23 +4,30 @@ import LandingPage from '../pages/LandingPage.jsx'
 import SchoolPage from '../pages/SchoolPage.jsx'
 import ConceptNotes from './ConceptNotes.jsx'
 import CtaCompare from './CtaCompare.jsx'
+import StoryLauncher from './StoryLauncher.jsx'
+import StoryCoach from './StoryCoach.jsx'
+import GateModal from './GateModal.jsx'
+import IntentStep from './IntentStep.jsx'
 import { CORPORATE_PARTNERS, EMPLOYER_STATES } from '../data/corporatePartners.js'
+import { getUseCase } from '../data/useCases.js'
 
 /*
  * Prototype review frame. This is NOT part of the AllCampus product UI, it is
  * the harness reviewers use to switch concepts and read the design rationale.
- * It owns the active variant, the demo employer state, and the hash router,
- * and renders the real pages beneath a slim dark bar.
+ * It owns the active variant, the demo employer state, the hash router, and
+ * (2026-08-12) the story machinery: the use-case launcher, the story coach,
+ * the account gate, and the joined/intent session state.
  *
  * Routes (hash-based so GitHub Pages needs no redirect rules):
+ *   #/stories              use-case launcher (DEFAULT on first load)
  *   #/                     redesigned landing page (2026-08-11 direction)
  *   #/browse?...           the program search/browse surface (original App)
  *   #/school/<id>          school page scoped to one partner school
  *
- * Employer demo states (?employer= override): duncan-avn (known benefit,
- * engineering-skewed), acme-edu (known benefit, default mix), global-default
- * (unknown benefit fallback). In production this comes from the learner
- * record or partner-branded URL, never a switcher.
+ * Employer demo states (?employer= override): sheetz, texas-roadhouse,
+ * boeing, lowes, global-default. REAL partner names by decision (2026-08-12,
+ * internal-only; the deployed build sits behind AccessGate + noindex). In
+ * production the employer comes from the learner record or partner URL.
  */
 const VARIANTS = [
   { code: '1A', name: 'Phase 1', tagline: 'Ships first: cost-first program detail and an advisor. No Ally.' },
@@ -34,19 +41,29 @@ function initialVariant() {
 
 function initialEmployer() {
   const e = new URLSearchParams(window.location.search).get('employer')
-  return CORPORATE_PARTNERS[e] ? e : 'duncan-avn'
+  return CORPORATE_PARTNERS[e] ? e : 'sheetz'
+}
+
+function initialStory() {
+  return getUseCase(new URLSearchParams(window.location.search).get('story'))
 }
 
 function parseHash() {
-  const raw = window.location.hash.replace(/^#/, '') || '/'
+  const raw = window.location.hash.replace(/^#/, '') || '/stories'
   const [path, qs] = raw.split('?')
-  return { path: path || '/', params: new URLSearchParams(qs || ''), raw }
+  return { path: path || '/stories', params: new URLSearchParams(qs || ''), raw }
 }
 
 export default function PrototypeFrame() {
   const [variant, setVariant] = useState(initialVariant)
   const [employerId, setEmployerId] = useState(initialEmployer)
   const [route, setRoute] = useState(parseHash)
+  const [story, setStory] = useState(initialStory)
+  // Session state for the gate + intent branching (move 2 + move 3).
+  const [joined, setJoined] = useState(false)
+  const [intent, setIntent] = useState(null)
+  const [gate, setGate] = useState(null) // { trigger } | null
+  const [intentOpen, setIntentOpen] = useState(false)
   const [notesOpen, setNotesOpen] = useState(
     () => new URLSearchParams(window.location.search).get('notes') === '1',
   )
@@ -66,6 +83,37 @@ export default function PrototypeFrame() {
     window.location.hash = `#${path}`
   }
 
+  const startStory = (u) => {
+    setStory(u)
+    setEmployerId(u.employerId)
+    setJoined(false)
+    setIntent(null)
+    navigate(u.entry)
+  }
+
+  const exitStory = () => {
+    setStory(null)
+    navigate('/stories')
+  }
+
+  // Gate → join → intent → branch (moves 2 and 3).
+  const requestGate = (trigger = 'save') => {
+    if (joined) return
+    setGate({ trigger })
+  }
+  const join = () => {
+    setJoined(true)
+    setGate(null)
+    setIntentOpen(true)
+  }
+  const applyIntent = (id) => {
+    setIntent(id)
+    setIntentOpen(false)
+    if (id === 'soon') navigate('/browse?filter=mostAffordable')
+    else if (id === 'benefits') navigate('/')
+    else navigate('/browse')
+  }
+
   // Concepts only differ inside the program drawer, so a switch is invisible on
   // the list. A brief toast confirms the change took. Keyed so re-selecting the
   // same concept still re-triggers it; skipped on initial load.
@@ -82,12 +130,24 @@ export default function PrototypeFrame() {
   }, [variant])
 
   let page
-  if (route.path.startsWith('/school/')) {
+  if (route.path === '/stories') {
+    page = <StoryLauncher onStart={startStory} onFreeExplore={() => { setStory(null); navigate('/') }} />
+  } else if (route.path.startsWith('/school/')) {
     const schoolId = route.path.split('/')[2]
     page = <SchoolPage schoolId={schoolId} partner={partner} onNavigate={navigate} />
   } else if (route.path === '/browse') {
     // Keyed by the raw hash so a new search from the landing page re-seeds filters.
-    page = <App key={route.raw} variant={variant} partner={partner} initialParams={route.params} />
+    page = (
+      <App
+        key={route.raw}
+        variant={variant}
+        partner={partner}
+        initialParams={route.params}
+        joined={joined}
+        intent={intent}
+        onGate={requestGate}
+      />
+    )
   } else {
     page = <LandingPage partner={partner} onNavigate={navigate} />
   }
@@ -96,9 +156,13 @@ export default function PrototypeFrame() {
     <>
       {/* Review bar (meta chrome, sits above the product) */}
       <div className="fixed inset-x-0 top-0 z-[60] flex h-12 items-center gap-3 bg-ink-900 px-3 text-white sm:px-4">
-        <span className="hidden text-[10px] font-bold uppercase tracking-[0.2em] text-white/45 sm:block">
-          Prototype
-        </span>
+        <button
+          onClick={exitStory}
+          className="rounded-full bg-white/10 px-3 py-1 text-[13px] font-bold text-white/85 transition hover:bg-white/20"
+          title="Use-case launcher"
+        >
+          Stories
+        </button>
 
         <div className="flex items-center gap-1 rounded-full bg-white/10 p-0.5">
           {VARIANTS.map((v) => (
@@ -116,13 +180,13 @@ export default function PrototypeFrame() {
         </div>
 
         {/* Employer demo state (review-only; production reads the learner record) */}
-        <div className="flex items-center gap-1 rounded-full bg-white/10 p-0.5">
+        <div className="hidden items-center gap-1 rounded-full bg-white/10 p-0.5 md:flex">
           {EMPLOYER_STATES.map((e) => (
             <button
               key={e.id}
               onClick={() => setEmployerId(e.id)}
               title={e.tagline}
-              className={`rounded-full px-3 py-1 text-[12px] font-bold transition ${
+              className={`rounded-full px-2.5 py-1 text-[12px] font-bold transition ${
                 employerId === e.id ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
               }`}
             >
@@ -132,10 +196,15 @@ export default function PrototypeFrame() {
         </div>
 
         <span className="hidden flex-1 truncate text-[12px] text-white/55 xl:block">
-          {active?.tagline}
+          {story ? `Story: ${story.name} — ${story.title}` : active?.tagline}
         </span>
 
         <div className="ml-auto flex items-center gap-2">
+          {joined && (
+            <span className="hidden rounded-full bg-good-700/30 px-2.5 py-1 text-[11px] font-bold text-white/85 lg:block">
+              Joined{intent ? ` · ${intent}` : ''}
+            </span>
+          )}
           <button
             onClick={() => setCompareOpen(true)}
             className="hidden rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10 md:block"
@@ -151,8 +220,23 @@ export default function PrototypeFrame() {
         </div>
       </div>
 
-      {/* The real product, offset below the bar */}
-      <div className="pt-12">{page}</div>
+      {/* The real product, offset below the bar (and above the coach) */}
+      <div className={`pt-12 ${story && route.path !== '/stories' ? 'pb-20' : ''}`}>{page}</div>
+
+      {/* Story coach (review chrome) */}
+      {story && route.path !== '/stories' && (
+        <StoryCoach key={story.id} story={story} routePath={route.path} onExit={exitStory} />
+      )}
+
+      {/* The account gate + intent question (product surfaces, moves 2–3) */}
+      <GateModal
+        open={!!gate}
+        trigger={gate?.trigger}
+        partner={partner}
+        onJoin={join}
+        onDismiss={() => setGate(null)}
+      />
+      <IntentStep open={intentOpen} suggestion={story?.intentSuggestion} onPick={applyIntent} />
 
       {notesOpen && (
         <ConceptNotes

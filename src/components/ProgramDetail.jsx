@@ -21,7 +21,15 @@ import {
  *                    "Talk to an advisor" prompt. Favored direction.
  * Cost follows Brigid's spec (see ValueCard). Empty sections are hidden.
  */
-export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, onOpenAlly, variant = '1A' }) {
+export default function ProgramDetail({
+  program,
+  onPrimaryCta,
+  onAdvisor,
+  onOpenAlly,
+  variant = '1A',
+  partner = null,
+  joined = false,
+}) {
   const p = program
   const start = startDateDisplay(p)
 
@@ -35,7 +43,7 @@ export default function ProgramDetail({ program, onPrimaryCta, onAdvisor, onOpen
     </header>
   )
 
-  const valueCard = <ValueCard program={p} />
+  const valueCard = <ValueCard program={p} partner={partner} joined={joined} />
   const glance = <AtAGlance program={p} start={start} />
 
   // The cost-questions action rides directly under the cost card — the cost is

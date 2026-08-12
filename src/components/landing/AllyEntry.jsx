@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Eyebrow, Heading, Body } from './Section.jsx'
 import { money } from '../../data/model.js'
+import { emitStoryEvent } from '../../data/useCases.js'
 
 /*
  * Ally on the landing page (2026-08-11 meeting): positioned BELOW search as a
@@ -94,7 +95,7 @@ export default function AllyEntry({ partner }) {
             <button
               key={x.id}
               type="button"
-              onClick={() => setActiveId(x.id)}
+              onClick={() => { emitStoryEvent('ally-entry'); setActiveId(x.id) }}
               className={`rounded-full border px-3 py-1.5 font-display text-[12.5px] font-bold transition ${
                 activeId === x.id
                   ? 'border-mk-purple bg-mk-purple text-white'

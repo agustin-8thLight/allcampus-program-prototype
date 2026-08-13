@@ -1,48 +1,28 @@
 import { useState } from 'react'
 import { Eyebrow, Heading, Body } from './Section.jsx'
-import { money } from '../../data/model.js'
-import { emitStoryEvent } from '../../data/useCases.js'
+import AllyOverlay from '../AllyOverlay.jsx'
 
 /*
- * Ally on the landing page (2026-08-11 meeting): positioned BELOW search as a
- * complementary entry point. Explicitly NOT for finding programs — for
- * questions about benefits, out-of-pocket costs, and getting started.
+ * Ally on the landing page (2026-08-11 meeting, reworked A3 2026-08-13):
+ * positioned BELOW search as a complementary entry point — benefits,
+ * out-of-pocket costs, getting started; not program search.
  *
- * The chat panel here is a scripted preview (three canned, employer-aware
- * Q&As) that demonstrates the positioning; the real conversational Ally
- * stays inside the program drawer. Mirrors the live "Meet Ally" block
- * (purple accent, chat card right).
+ * The card is an INVITATION, not the conversation: any interaction — a
+ * question chip, the input, the card itself — launches the full agent as a
+ * right-side overlay (AllyOverlay). Same identity as the drawer agent.
+ * Self-contained, so every surface that renders AllyEntry (landing, school
+ * page) gets the overlay for free.
  */
-
-function cannedAnswers(partner) {
-  const known = partner?.benefitKnown
-  return [
-    {
-      id: 'benefit',
-      q: 'How does my tuition benefit work?',
-      a: known
-        ? `${partner.name} offers up to ${money(partner.employerReimbursement)}/year in tuition support. Through its partnership with AllCampus, that benefit applies to discounted partner programs automatically when you enroll here.`
-        : 'If your employer offers a tuition benefit, it usually covers part of your yearly tuition. Tell me who you work for and I can check whether they partner with AllCampus.',
-    },
-    {
-      id: 'oop',
-      q: 'What will I pay out of pocket?',
-      a: known
-        ? 'It depends on the program. Discounted tuition minus your benefit is your estimated out-of-pocket — some certificates are fully covered. Every program page shows its estimate.'
-        : 'Once I know your employer and program, I can estimate it: discounted tuition minus any benefit you have. Without a benefit, you still get AllCampus partner pricing.',
-    },
-    {
-      id: 'start',
-      q: 'How do I get started?',
-      a: 'Pick a program that fits, then request details — nothing goes to the school until you say so. An Education Benefits Specialist can also walk you through it, free.',
-    },
-  ]
-}
+const PREVIEW_QUESTIONS = [
+  { id: 'benefit', q: 'How does my tuition benefit work?' },
+  { id: 'oop', q: 'What will I pay out of pocket?' },
+  { id: 'start', q: 'How do I get started?' },
+]
 
 export default function AllyEntry({ partner }) {
-  const answers = cannedAnswers(partner)
-  const [activeId, setActiveId] = useState(null)
-  const active = answers.find((x) => x.id === activeId)
+  const [overlay, setOverlay] = useState(null) // null | { seed: string|null }
+
+  const open = (seed = null) => setOverlay({ seed })
 
   return (
     <section className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-5 py-16 lg:grid-cols-2">
@@ -54,10 +34,21 @@ export default function AllyEntry({ partner }) {
           you&rsquo;d pay out of pocket, and how to get started. When you&rsquo;re ready to look at
           programs, the search above is the fastest way in.
         </Body>
+        <button
+          type="button"
+          onClick={() => open()}
+          className="mt-5 rounded-lg bg-mk-purple px-5 py-2.5 font-display text-[15px] font-bold text-white transition hover:opacity-90"
+        >
+          Open Ally
+        </button>
       </div>
 
-      {/* Chat preview card */}
-      <div className="rounded-xl border border-mk-line bg-white p-4 shadow-[0_6px_24px_rgba(51,71,91,0.10)]">
+      {/* Invitation card — every interaction launches the full agent overlay */}
+      <button
+        type="button"
+        onClick={() => open()}
+        className="rounded-xl border border-mk-line bg-white p-4 text-left shadow-[0_6px_24px_rgba(51,71,91,0.10)] transition hover:-translate-y-0.5 hover:border-mk-purple/50 hover:shadow-[0_10px_32px_rgba(123,97,196,0.18)]"
+      >
         <div className="flex items-center gap-2 border-b border-mk-line pb-3 font-display">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-mk-purple text-sm text-white">
             ✦
@@ -76,40 +67,44 @@ export default function AllyEntry({ partner }) {
         <div className="space-y-2 py-3 font-display">
           <div className="max-w-[85%] rounded-lg bg-mk-band px-3 py-2 text-[13px] leading-relaxed text-mk-slate">
             Hi, I&rsquo;m Ally. I help with benefits, costs, and getting started — pick a question
-            below.
+            and we&rsquo;ll talk it through.
           </div>
-          {active && (
-            <>
-              <div className="ml-auto max-w-[85%] rounded-lg bg-mk-teal-600 px-3 py-2 text-[13px] text-white">
-                {active.q}
-              </div>
-              <div className="max-w-[90%] rounded-lg bg-mk-band px-3 py-2 text-[13px] leading-relaxed text-mk-slate">
-                {active.a}
-              </div>
-            </>
-          )}
         </div>
 
         <div className="flex flex-wrap gap-2 border-t border-mk-line pt-3">
-          {answers.map((x) => (
-            <button
+          {PREVIEW_QUESTIONS.map((x) => (
+            <span
               key={x.id}
-              type="button"
-              onClick={() => { emitStoryEvent('ally-entry'); setActiveId(x.id) }}
-              className={`rounded-full border px-3 py-1.5 font-display text-[12.5px] font-bold transition ${
-                activeId === x.id
-                  ? 'border-mk-purple bg-mk-purple text-white'
-                  : 'border-mk-line bg-white text-mk-slate hover:border-mk-purple'
-              }`}
+              role="button"
+              tabIndex={0}
+              onClick={(e) => {
+                e.stopPropagation()
+                open(x.id)
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && open(x.id)}
+              className="rounded-full border border-mk-line bg-white px-3 py-1.5 font-display text-[12.5px] font-bold text-mk-slate transition hover:border-mk-purple hover:text-mk-purple"
             >
               {x.q}
-            </button>
+            </span>
           ))}
         </div>
+        <div className="mt-3 flex items-center gap-2 border-t border-mk-line pt-3">
+          <span className="min-w-0 flex-1 rounded-xl border border-mk-line px-3 py-2 font-display text-[12.5px] text-mk-body/60">
+            Ask Ally anything about your benefit…
+          </span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-mk-purple text-white">→</span>
+        </div>
         <p className="mt-2 font-display text-[11px] text-mk-body/70">
-          Preview with scripted answers. Ally is an AI assistant and can make mistakes.
+          Opens the full assistant. Scripted preview — Ally is an AI assistant and can make mistakes.
         </p>
-      </div>
+      </button>
+
+      <AllyOverlay
+        open={!!overlay}
+        partner={partner}
+        seedQuestionId={overlay?.seed || null}
+        onClose={() => setOverlay(null)}
+      />
     </section>
   )
 }

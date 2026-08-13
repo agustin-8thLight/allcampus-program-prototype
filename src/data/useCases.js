@@ -7,12 +7,16 @@
  *
  * Personas come from the Workplace Platform persona research; the four
  * archetypes and their employers come from the journey research (AllCampus
- * Flows, May 2026). Internal review only.
+ * Flows, May 2026). `archetype` names follow Brigid's tuition-benefit journey
+ * map (2026-08-13) so the prototype speaks the client's taxonomy. Her fifth
+ * archetype, 'Direct partner, mixed', has no story yet — Giant Eagle in the
+ * employer switcher covers it for review. Internal review only.
  */
 
 export const USE_CASES = [
   {
     id: 'devon',
+    archetype: 'Direct partner with tuition reimbursement',
     name: 'Devon',
     employerId: 'sheetz',
     title: 'Use my Sheetz benefit to move up',
@@ -36,6 +40,7 @@ export const USE_CASES = [
   },
   {
     id: 'samir',
+    archetype: 'Direct partner, no reimbursement',
     name: 'Samir',
     employerId: 'texas-roadhouse',
     title: 'No benefit — the cheapest real option',
@@ -58,6 +63,7 @@ export const USE_CASES = [
   },
   {
     id: 'carl',
+    archetype: 'Benefit administrator (BenefitHub)',
     name: 'Carl',
     employerId: 'boeing',
     title: 'A niche skill through BenefitHub',
@@ -79,6 +85,7 @@ export const USE_CASES = [
   },
   {
     id: 'tina',
+    archetype: 'Benefit perks, reimbursement unknown',
     name: 'Tina',
     employerId: 'lowes',
     title: 'Just looking, on a phone',

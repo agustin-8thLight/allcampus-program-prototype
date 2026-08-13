@@ -8,6 +8,7 @@ import StoryCards from '../components/landing/StoryCards.jsx'
 import LogoStrip from '../components/landing/LogoStrip.jsx'
 import LandingFaq from '../components/landing/LandingFaq.jsx'
 import { Eyebrow, Heading, MkButton } from '../components/landing/Section.jsx'
+import { hasBenefitAdmin } from '../data/corporatePartners.js'
 
 /*
  * Redesigned landing page (2026-08-11 client meeting). Section order:
@@ -50,8 +51,10 @@ export default function LandingPage({ partner, onNavigate }) {
 
       <section className="mx-auto max-w-6xl px-5 pt-16">
         <Eyebrow>How this works</Eyebrow>
-        <Heading className="mb-6 mt-2">Four parts, one path to your degree</Heading>
-        <EcosystemStrip variant="landing" />
+        <Heading className="mb-6 mt-2">
+          {hasBenefitAdmin(partner) ? 'Five parts' : 'Four parts'}, one path to your degree
+        </Heading>
+        <EcosystemStrip variant="landing" partner={partner} />
       </section>
 
       <div className="pt-16">

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { PROGRAMS, money } from '../data/model.js'
 import { estimatedOutOfPocket, fullyCoveredPrograms } from '../data/benefit.js'
 import { emitStoryEvent } from '../data/useCases.js'
+import { PREAPPROVAL_RULE, hasBenefitAdmin } from '../data/corporatePartners.js'
 import { SparkleIcon, SendIcon, CloseIcon, ShieldIcon } from './icons.jsx'
 
 /*
@@ -28,7 +29,7 @@ function buildScript(partner) {
       id: 'benefit',
       q: 'How does my tuition benefit work?',
       a: known
-        ? `${partner.name} offers up to ${money(partner.employerReimbursement)} per year in tuition support${partner.reimbursementProvider ? `, administered through ${partner.reimbursementProvider}` : ''}. Because ${partner.name} partners with AllCampus, that benefit stacks on top of partner-discounted tuition — you pay the discounted rate, your employer covers up to the cap, and what's left is your out-of-pocket. Always confirm the current policy with your benefits administrator.`
+        ? `${partner.name} offers up to ${money(partner.employerReimbursement)} per year in tuition support${hasBenefitAdmin(partner) ? `, administered by ${partner.benefitAdmin.name}` : ''}. Because ${partner.name} partners with AllCampus, that benefit stacks on top of partner-discounted tuition — you pay the discounted rate, your employer covers up to the cap, and what's left is your out-of-pocket. Qualification, pre-approval and filing happen ${hasBenefitAdmin(partner) ? `through ${partner.benefitAdmin.name}` : `with ${partner.name}`} — your policy and procedures live in ${partner.policyLocation || 'your benefits portal'}. ${PREAPPROVAL_RULE}`
         : partner?.policy
           ? `${partner.policy} That means the partner discount is your lever here — every program in this catalog is already discounted for ${partner?.name} employees.`
           : 'If your employer offers a tuition benefit, it usually covers part of each year’s tuition. Tell me who you work for and I can check whether they partner with AllCampus.',
@@ -57,7 +58,7 @@ function buildScript(partner) {
     {
       id: 'start',
       q: 'How do I get started?',
-      a: 'Search first — pick anything that looks close and open it; every program page shows real costs and next steps. When one feels right, request details (nothing goes to the school until you say so), or book a free call with an Education Benefits Specialist who can confirm your benefit before you commit to anything.',
+      a: `Search first — and that order is not just advice: ${PREAPPROVAL_RULE.toLowerCase()} Pick anything that looks close and open it; every program page shows real costs and next steps. When one feels right, request details (nothing goes to the school until you say so), or book a free call with an Education Benefits Specialist who can confirm your benefit before you commit to anything.`,
       followups: ['benefit'],
       cta: { label: 'Start searching', to: '/browse' },
     },

@@ -1,3 +1,4 @@
+import { PREAPPROVAL_RULE } from '../../data/corporatePartners.js'
 /*
  * Ecosystem role communication (2026-08-11 meeting, "mental model gap"):
  * users don't understand how employer, AllCampus, and school fit together,
@@ -34,6 +35,13 @@ const Art = {
       <path d="M8 54h48M20 28h6M20 38h6M32 28h.01M32 38h.01" />
     </svg>
   ),
+  benefitAdmin: (props) => (
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" {...props}>
+      <rect x="10" y="16" width="44" height="32" rx="4" />
+      <path d="M10 26h44M22 36h12M22 42h20" />
+      <path d="M24 16v-4h16v4" />
+    </svg>
+  ),
   allcampus: (props) => (
     <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" {...props}>
       <path d="M32 12l22 10-22 10-22-10 22-10z" />
@@ -50,40 +58,85 @@ const Art = {
   ),
 }
 
-const NODES = (schoolName) => [
-  {
-    key: 'you',
-    art: 'you',
-    label: 'You',
-    does: 'Pick a program and put your education benefit to work.',
-    contact: null,
-  },
-  {
-    key: 'employer',
-    art: 'employer',
-    label: 'Your employer',
-    does: 'Funds your education benefit and sets how much is covered.',
-    contact: 'Benefit questions: your HR or benefits portal',
-  },
-  {
-    key: 'allcampus',
-    art: 'allcampus',
-    label: 'AllCampus',
-    does: 'The vehicle that gets you there: your discount applies here, and this is where you get help.',
-    contact: 'Program & cost questions: Ally or an Education Benefits Specialist',
-    highlight: true,
-  },
-  {
-    key: 'school',
-    art: 'school',
-    label: schoolName || 'The school',
-    does: 'Delivers the program, the classes, and the degree.',
-    contact: 'Admissions & enrollment: the school, after you apply',
-  },
-]
+/*
+ * Node list per partner archetype (Brigid's journey map, 2026-08-13). Role
+ * copy follows her wording: the employer funds and (for direct archetypes)
+ * qualifies/approves/files; a benefit administrator does that job when one
+ * exists; AllCampus is the discount network; the schools deliver.
+ *
+ * COPY IS DRAFT until Brigid confirms the final map.
+ */
+const NODES = (schoolName, partner) => {
+  const type = partner?.partnerType
+  const admin = partner?.benefitAdmin
+  const employerName = partner?.benefitKnown ? partner.name : 'Your employer'
+  const noTr = type === 'direct-no-tr' || type === 'perks'
 
-export default function EcosystemStrip({ variant = 'landing', schoolName = null }) {
-  const nodes = NODES(schoolName)
+  const employerDoes = admin
+    ? `Funds your education benefit and partners with ${admin.name} to administer it.`
+    : noTr
+      ? 'Partners with AllCampus so you get discounted tuition — no reimbursement program here.'
+      : type === 'direct-mixed'
+        ? 'Partners with AllCampus for the discount and runs its own reimbursement program.'
+        : 'Funds your reimbursement and sets how much is covered. Qualification, approval and filing happen here.'
+
+  const employerContact = admin
+    ? null
+    : `Policy, qualification and filing: ${partner?.policyLocation || 'your HR or benefits portal'}`
+
+  const nodes = [
+    {
+      key: 'you',
+      art: 'you',
+      label: 'You',
+      does: 'Pick a program and put your education benefit to work.',
+      contact: null,
+    },
+    {
+      key: 'employer',
+      art: 'employer',
+      label: employerName,
+      does: employerDoes,
+      contact: employerContact,
+    },
+  ]
+
+  if (admin) {
+    nodes.push({
+      key: 'admin',
+      art: 'benefitAdmin',
+      label: admin.name,
+      does:
+        'Administers your benefit: determines who qualifies, runs pre-approval, processes filings and issues the funds.',
+      contact: `Policy, qualification and filing: ${admin.portalLabel}`,
+    })
+  }
+
+  nodes.push(
+    {
+      key: 'allcampus',
+      art: 'allcampus',
+      label: 'AllCampus',
+      does: noTr
+        ? 'The tuition discount network. Connecting with an in-network school through AllCampus is what secures your discount.'
+        : 'The tuition discount network — and where you get help. Connecting through AllCampus secures your discount.',
+      contact: 'Program & cost questions: Ally or an Education Benefits Specialist',
+      highlight: true,
+    },
+    {
+      key: 'school',
+      art: 'school',
+      label: schoolName || 'In-network schools',
+      does: 'Manage admissions, enrollment, cost and payment options, and deliver the program.',
+      contact: 'Admissions & enrollment: the school, after you apply',
+    },
+  )
+  return nodes
+}
+
+export default function EcosystemStrip({ variant = 'landing', schoolName = null, partner = null }) {
+  const nodes = NODES(schoolName, partner)
+  const showPreapproval = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
   return (
     <div className="font-display">
       {variant === 'school' && (
@@ -101,7 +154,9 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null 
 
       {/* One container holds the whole explanation; the AllCampus column is
           highlighted in light blue as the hinge of the four parts. */}
-      <ol className="grid grid-cols-1 gap-2 rounded-3xl border border-mk-line bg-white p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
+      <ol className={`grid grid-cols-1 gap-2 rounded-3xl border border-mk-line bg-white p-4 sm:grid-cols-2 sm:p-5 ${
+          nodes.length === 5 ? 'lg:grid-cols-5' : 'lg:grid-cols-4'
+        }`}>
         {nodes.map((n, i) => (
           <li key={n.key} className="relative">
             <div
@@ -148,6 +203,13 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null 
           </li>
         ))}
       </ol>
+
+      {/* Sequencing rule from the journey map — the reason search leads. */}
+      {showPreapproval && (
+        <p className="mt-3 text-[13px] text-mk-body">
+          <span className="font-bold text-mk-slate">One sequencing note:</span> {PREAPPROVAL_RULE}
+        </p>
+      )}
     </div>
   )
 }

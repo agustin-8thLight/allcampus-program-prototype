@@ -120,7 +120,7 @@ export default function SchoolPage({ schoolId, partner, onNavigate }) {
         <Heading size="sm" className="mb-5 mt-2">
           Your {school.name.split(' ')[0]} discount comes through AllCampus
         </Heading>
-        <EcosystemStrip variant="school" schoolName={school.name} />
+        <EcosystemStrip variant="school" schoolName={school.name} partner={partner} />
       </section>
 
       <BenefitBlock

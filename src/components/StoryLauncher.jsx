@@ -46,6 +46,11 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
                     {u.name} — {u.title}
                   </div>
                   <div className="truncate text-[13px] font-semibold text-mk-body">{u.who}</div>
+                  {u.archetype && (
+                    <div className="mt-0.5 truncate text-[11.5px] font-bold uppercase tracking-wide text-mk-teal-text">
+                      {u.archetype}
+                    </div>
+                  )}
                 </div>
               </div>
               <p className="mt-4 flex-1 text-[15px] leading-relaxed text-mk-body">{u.blurb}</p>

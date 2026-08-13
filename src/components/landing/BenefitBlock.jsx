@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Eyebrow, Heading, Body, MkButton } from './Section.jsx'
 import { money, PROGRAMS } from '../../data/model.js'
 import { estimatedOutOfPocket, fullyCoveredPrograms } from '../../data/benefit.js'
+import { PREAPPROVAL_RULE, hasBenefitAdmin } from '../../data/corporatePartners.js'
 import AllyOverlay from '../AllyOverlay.jsx'
 
 /*
@@ -70,11 +71,15 @@ export default function BenefitBlock({ partner, onSeeFullyCovered, onCheckEmploy
                 <span className="text-[16px] font-bold text-mk-body">/year</span>
               </span>
               <span className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
-                Tuition support{partner.reimbursementProvider ? `, administered through ${partner.reimbursementProvider}` : ''} — it
+                Tuition support
+                {hasBenefitAdmin(partner) ? `, administered by ${partner.benefitAdmin.name}` : ''} — it
                 stacks on top of AllCampus partner discounts.
               </span>
-              <span className="mt-auto pt-3 font-display text-[12px] text-mk-body/70">
-                Estimate. Confirm the current policy with your benefits administrator.
+              <span className="mt-auto pt-3 font-display text-[12px] leading-relaxed text-mk-body/70">
+                Estimate.{' '}
+                {partner.policyLocation
+                  ? `Your policy and procedures live in ${partner.policyLocation}.`
+                  : 'Confirm the current policy with your benefits administrator.'}
               </span>
             </Tile>
 
@@ -114,6 +119,9 @@ export default function BenefitBlock({ partner, onSeeFullyCovered, onCheckEmploy
               </span>
             </Tile>
           </div>
+          <p className="mt-3 font-display text-[13px] text-mk-body">
+            <span className="font-bold text-mk-slate">Order matters:</span> {PREAPPROVAL_RULE}
+          </p>
         </>
       )}
 

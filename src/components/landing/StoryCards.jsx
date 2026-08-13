@@ -1,11 +1,13 @@
 import { Eyebrow, Heading, Body } from './Section.jsx'
 import { storiesForPartner } from '../../data/stories.js'
+import { storyImage } from '../../data/images.js'
+import Img from '../Img.jsx'
 
 /*
  * Learner stories (2026-08-11 meeting): real photos, relatable narratives,
  * swappable by channel partner or employer. Stories are keyed by partner id
- * in data/stories.js; photos are FPO gradients until real learner
- * photography is licensed. People and quotes are FICTIONAL placeholders.
+ * in data/stories.js; portraits are stock photography (Unsplash) standing in until real
+ * learner photography is licensed. People and quotes are FICTIONAL placeholders.
  */
 
 export default function StoryCards({ partner }) {
@@ -25,16 +27,19 @@ export default function StoryCards({ partner }) {
             key={s.id}
             className="overflow-hidden rounded-xl border border-mk-line bg-white"
           >
-            {/* FPO portrait block */}
-            <div
-              className="flex h-40 items-end p-4"
-              style={{
-                background: `linear-gradient(135deg, hsl(${s.hue} 45% 42%), hsl(${(s.hue + 30) % 360} 50% 28%))`,
-              }}
-            >
-              <figcaption className="font-display text-white">
+            {/* Learner portrait */}
+            <div className="relative h-52">
+              <Img
+                src={storyImage(s.id)}
+                alt={s.name}
+                hue={s.hue}
+                rounded=""
+                className="h-52 w-full"
+                overlay="bg-gradient-to-t from-mk-slate/80 via-mk-slate/10 to-transparent"
+              />
+              <figcaption className="absolute inset-x-0 bottom-0 p-4 font-display text-white">
                 <span className="block text-[15px] font-extrabold">{s.name}</span>
-                <span className="block text-[12.5px] text-white/80">{s.role}</span>
+                <span className="block text-[12.5px] text-white/85">{s.role}</span>
               </figcaption>
             </div>
             <blockquote className="p-5">

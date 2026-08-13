@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Eyebrow, Heading, Body } from './Section.jsx'
 import { goalsForEmployer, areasForEmployer, getArea, programMatchesGoal } from '../../data/taxonomy.js'
 import { PROGRAMS } from '../../data/model.js'
+import { goalImage } from '../../data/images.js'
+import Img from '../Img.jsx'
 import { fullyCoveredPrograms } from '../../data/benefit.js'
 
 /*
@@ -49,12 +51,13 @@ export default function GoalsExplorer({ partner, onSelectGoal, onSelectArea }) {
                 className="group overflow-hidden rounded-2xl border border-mk-line bg-white text-left shadow-sm transition hover:-translate-y-0.5 hover:border-mk-teal-600 hover:shadow-[0_8px_24px_rgba(69,120,140,0.16)]"
               >
                 {/* Visual band (imagery lands in the images pass; hue holds the slot) */}
-                <div
-                  className="h-24 w-full"
-                  style={{
-                    background: `linear-gradient(120deg, hsl(${g.hue} 42% 38%), hsl(${(g.hue + 40) % 360} 48% 55%))`,
-                  }}
-                  aria-hidden
+                <Img
+                  src={goalImage(g.id)}
+                  alt=""
+                  hue={g.hue}
+                  rounded=""
+                  className="h-32 w-full"
+                  overlay="bg-gradient-to-t from-mk-slate/45 to-transparent"
                 />
                 <div className="px-5 py-4">
                   <span className="block font-display text-[17px] font-extrabold leading-snug text-mk-slate">

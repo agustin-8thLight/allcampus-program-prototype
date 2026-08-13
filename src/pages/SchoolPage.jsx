@@ -6,6 +6,8 @@ import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.
 import { PROGRAMS, money } from '../data/model.js'
 import { estimatedOutOfPocket } from '../data/benefit.js'
 import { getSchool } from '../data/schools.js'
+import { schoolImage } from '../data/images.js'
+import Img from '../components/Img.jsx'
 
 /*
  * School page (2026-08-11 meeting): same structural logic as the homepage,
@@ -41,8 +43,18 @@ export default function SchoolPage({ schoolId, partner, onNavigate }) {
 
       {/* School hero, mirrors the live school-page pattern: slate band,
           white logo circle, heading, highlights, actions. */}
-      <section className="bg-[linear-gradient(112deg,#26394a_0%,#33475b_60%,#3b5a70_100%)] py-14 text-white">
-        <div className="mx-auto max-w-6xl px-5 font-display">
+      <section className="relative py-14 text-white">
+        <Img
+          src={schoolImage(school.id)}
+          alt=""
+          hue={206}
+          rounded=""
+          eager
+          position="absolute"
+          className="inset-0 h-full w-full"
+          overlay="bg-[linear-gradient(112deg,rgba(38,57,74,0.93)_0%,rgba(51,71,91,0.85)_60%,rgba(59,90,112,0.70)_100%)]"
+        />
+        <div className="relative mx-auto max-w-6xl px-5 font-display">
           <span
             className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-[20px] font-black"
             style={{ color: school.logoColor }}

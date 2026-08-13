@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { personaImage } from '../data/images.js'
+import Img from './Img.jsx'
 
 /*
  * Story coach: slim bottom bar that narrates the active use case. Advances
@@ -36,12 +38,13 @@ export default function StoryCoach({ story, routePath, onExit }) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-[70] border-t border-white/10 bg-ink-900/95 px-4 py-3 text-white backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center gap-4">
-        <span
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-black"
-          style={{ background: `hsl(${story.color} 55% 45%)` }}
-        >
-          {story.name[0]}
-        </span>
+        <Img
+          src={personaImage(story.id)}
+          alt={story.name}
+          hue={story.color}
+          rounded="rounded-full"
+          className="h-9 w-9 shrink-0"
+        />
         <div className="min-w-0 flex-1">
           <div className="text-[11px] font-bold uppercase tracking-wide text-white/50">
             {story.name}’s walk · step {Math.min(i + 1, story.steps.length)} of {story.steps.length}

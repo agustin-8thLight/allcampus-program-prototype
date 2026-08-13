@@ -1,5 +1,7 @@
 import { USE_CASES } from '../data/useCases.js'
 import { ArrowRightIcon } from './icons.jsx'
+import { personaImage } from '../data/images.js'
+import Img from './Img.jsx'
 
 /*
  * Story launcher (#/stories): the review entry point. Four realistic
@@ -32,12 +34,13 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
               className="group flex flex-col rounded-2xl border border-mk-line bg-white p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
             >
               <div className="flex items-center gap-3">
-                <span
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-lg font-black text-white"
-                  style={{ background: `hsl(${u.color} 55% 45%)` }}
-                >
-                  {u.name[0]}
-                </span>
+                <Img
+                  src={personaImage(u.id)}
+                  alt={u.name}
+                  hue={u.color}
+                  rounded="rounded-full"
+                  className="h-14 w-14 shrink-0"
+                />
                 <div className="min-w-0">
                   <div className="font-display text-xl font-black text-mk-slate">
                     {u.name} — {u.title}

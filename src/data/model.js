@@ -9,6 +9,7 @@
 import programsRaw from './programs.json'
 import { getSchool, isDirectHandoff } from './schools.js'
 import { WHO_FOR } from './programContent.js'
+import { programImage as remoteProgramImage } from './images.js'
 
 /* Program images (FPO), bundled via Vite; matched by basename = program id. */
 const PROGRAM_IMAGES = import.meta.glob('../assets/programs/*.{jpg,jpeg,png,webp}', {
@@ -79,7 +80,7 @@ export const PROGRAMS = programsRaw.map((p) => ({
   school: getSchool(p.schoolId),
   routingType: getSchool(p.schoolId)?.routingType || 'standard',
   isDirectHandoff: isDirectHandoff(p.schoolId),
-  programImageUrl: imageForId(p.id),
+  programImageUrl: imageForId(p.id) || remoteProgramImage(p.id),
   terms: p.discount?.terms ?? null,
   badgeType: resolveBadgeType(p),
 }))

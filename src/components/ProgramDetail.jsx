@@ -2,6 +2,7 @@ import Badge from './Badge.jsx'
 import ValueCard from './ValueCard.jsx'
 import SchoolPanel from './SchoolPanel.jsx'
 import { startDateDisplay, durationDisplay, programTypeLabel } from '../data/model.js'
+import Img from './Img.jsx'
 import {
   CalendarIcon,
   ClockIcon,
@@ -287,16 +288,7 @@ function SchoolMark({ school }) {
 }
 
 function ProgramImage({ hue, src, alt = '', className = '' }) {
-  if (src) {
-    return <img src={src} alt={alt} loading="lazy" className={`rounded-[var(--radius-card)] object-cover ${className}`} />
-  }
-  return (
-    <div
-      className={`overflow-hidden rounded-[var(--radius-card)] ${className}`}
-      style={{ background: `linear-gradient(135deg, hsl(${hue} 55% 48%), hsl(${(hue + 28) % 360} 60% 32%))` }}
-      aria-hidden
-    />
-  )
+  return <Img src={src} alt={alt} hue={hue ?? 208} className={className} />
 }
 
 /* School + badge for the drawer's top bar. Badge only on Baseline (1A). */

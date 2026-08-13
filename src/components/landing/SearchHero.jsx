@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { MkButton } from './Section.jsx'
+import { heroImage } from '../../data/images.js'
+import Img from '../Img.jsx'
 
 /*
  * Landing hero: search front and center with degree-level and modality
  * selectors (2026-08-11 meeting; modality stays — some programs are
  * on-campus). Pattern mirrors the live BenefitEd template: dimmed hero with
  * white display heading, floating white search card with labeled fields and
- * a green Search action. Photo is FPO (gradient) until imagery is licensed.
+ * a green Search action. Hero photography is stock (Unsplash) standing in
+ * until licensed imagery is supplied.
  */
 
 const DEGREE_LEVELS = ['Any degree level', 'Certificate', 'Associate', "Bachelor's", "Master's"]
@@ -31,9 +34,19 @@ export default function SearchHero({ partner, onSearch }) {
 
   return (
     <section className="relative font-display">
-      {/* FPO hero backdrop */}
-      <div className="bg-[linear-gradient(112deg,#2e4356_0%,#33475b_45%,#45788c_100%)] pb-24 pt-16 text-white">
-        <div className="mx-auto max-w-6xl px-5">
+      {/* Hero: photography with a slate wash so type stays legible */}
+      <div className="relative pb-24 pt-16 text-white">
+        <Img
+          src={heroImage(partner?.id)}
+          alt=""
+          hue={206}
+          rounded=""
+          eager
+          position="absolute"
+          className="inset-0 h-full w-full"
+          overlay="bg-[linear-gradient(112deg,rgba(30,45,58,0.92)_0%,rgba(51,71,91,0.82)_45%,rgba(69,120,140,0.62)_100%)]"
+        />
+        <div className="relative mx-auto max-w-6xl px-5">
           <h1 className="max-w-2xl text-[36px] font-extrabold leading-tight sm:text-[44px]">
             Advance your career through education
           </h1>

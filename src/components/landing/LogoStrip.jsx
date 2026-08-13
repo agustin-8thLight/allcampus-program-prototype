@@ -9,27 +9,32 @@ import { SCHOOLS } from '../../data/schools.js'
 export default function LogoStrip({ onSelectSchool }) {
   const schools = Object.values(SCHOOLS)
   return (
-    <section className="border-y border-mk-line bg-white py-10">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-6 px-5">
+    <section className="border-y border-mk-line bg-white py-12">
+      <div className="mx-auto max-w-6xl px-5">
+        <p className="mb-6 text-center font-display text-[12px] font-bold uppercase tracking-[0.16em] text-mk-body">
+          {schools.length} partner universities, one application path
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-5">
         {schools.map((s) => (
           <button
             key={s.id}
             type="button"
             onClick={() => onSelectSchool(s)}
             title={`${s.name} page`}
-            className="group flex items-center gap-2 opacity-75 transition hover:opacity-100"
+            className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition hover:bg-mk-band"
           >
             <span
-              className="flex h-9 w-9 items-center justify-center rounded-full text-[13px] font-black text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-[14px] font-black text-white shadow-sm"
               style={{ background: s.logoColor }}
             >
               {s.logoMonogram}
             </span>
-            <span className="font-display text-[13.5px] font-bold text-mk-slate group-hover:underline">
+            <span className="font-display text-[13.5px] font-bold text-mk-slate group-hover:text-mk-teal-700">
               {s.name}
             </span>
           </button>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )

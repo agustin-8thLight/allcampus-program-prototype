@@ -6,6 +6,7 @@
 
 export default function MkHeader({ partner, onNavigate }) {
   const cobrand = partner?.benefitKnown ? partner.name : null
+  const mark = partner?.name?.trim()?.[0] || ''
   return (
     <header className="sticky top-12 z-40 border-b border-mk-line bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
@@ -21,8 +22,15 @@ export default function MkHeader({ partner, onNavigate }) {
           {cobrand && (
             <>
               <span className="text-mk-body/60">+</span>
-              <span className="border-l border-mk-line pl-2 text-[15px] font-bold text-mk-slate">
-                {cobrand}
+              <span className="flex items-center gap-1.5 border-l border-mk-line pl-2">
+                <span
+                  className="flex h-7 w-7 items-center justify-center rounded-md text-[13px] font-black text-white"
+                  style={{ background: partner.brandColor || '#33475b' }}
+                  aria-hidden
+                >
+                  {mark}
+                </span>
+                <span className="text-[15px] font-bold text-mk-slate">{cobrand}</span>
               </span>
             </>
           )}

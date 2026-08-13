@@ -31,6 +31,7 @@ export const CORPORATE_PARTNERS = {
   },
   sheetz: {
     id: 'sheetz',
+    brandColor: '#c8102e', // approximate, for the co-brand mark only
     name: 'Sheetz',
     benefitKnown: true,
     employerReimbursement: 5250,
@@ -45,6 +46,7 @@ export const CORPORATE_PARTNERS = {
   },
   'texas-roadhouse': {
     id: 'texas-roadhouse',
+    brandColor: '#a6192e', // approximate, for the co-brand mark only
     name: 'Texas Roadhouse',
     benefitKnown: true,
     employerReimbursement: 0,
@@ -59,6 +61,7 @@ export const CORPORATE_PARTNERS = {
   },
   boeing: {
     id: 'boeing',
+    brandColor: '#0033a1', // approximate, for the co-brand mark only
     name: 'Boeing',
     benefitKnown: true,
     employerReimbursement: 10000,
@@ -73,6 +76,7 @@ export const CORPORATE_PARTNERS = {
   },
   lowes: {
     id: 'lowes',
+    brandColor: '#004990', // approximate, for the co-brand mark only
     name: "Lowe's",
     benefitKnown: true,
     employerReimbursement: 0,

@@ -49,6 +49,11 @@ export default function StoryCards({ partner }) {
               <p className="mt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
                 {s.program}
               </p>
+              {s.outcome && (
+                <p className="mt-1 flex items-center gap-1.5 font-display text-[12.5px] font-bold text-mk-green-700">
+                  <span aria-hidden>→</span> {s.outcome}
+                </p>
+              )}
             </blockquote>
           </figure>
         ))}

@@ -9,6 +9,7 @@
 const DEFAULT_STORIES = [
   {
     id: 'maria',
+    outcome: 'Now a supply-chain analyst',
     name: 'Maria T.',
     role: 'Store team lead',
     hue: 208,
@@ -18,6 +19,7 @@ const DEFAULT_STORIES = [
   },
   {
     id: 'devon',
+    outcome: 'Promoted to operations manager',
     name: 'Devon R.',
     role: 'Operations supervisor',
     hue: 152,
@@ -27,6 +29,7 @@ const DEFAULT_STORIES = [
   },
   {
     id: 'amara',
+    outcome: 'Moved into clinic administration',
     name: 'Amara N.',
     role: 'Patient services coordinator',
     hue: 268,
@@ -40,6 +43,7 @@ const STORIES_BY_PARTNER = {
   boeing: [
     {
       id: 'kyle',
+    outcome: 'Now on the systems engineering team',
       name: 'Kyle S.',
       role: 'Avionics technician',
       hue: 214,
@@ -49,6 +53,7 @@ const STORIES_BY_PARTNER = {
     },
     {
       id: 'renata',
+    outcome: 'Moved into planning analytics',
       name: 'Renata M.',
       role: 'Maintenance planner',
       hue: 32,
@@ -58,6 +63,7 @@ const STORIES_BY_PARTNER = {
     },
     {
       id: 'devon',
+    outcome: 'Promoted to operations manager',
       name: 'Devon R.',
       role: 'Operations supervisor',
       hue: 152,

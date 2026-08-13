@@ -21,6 +21,9 @@
   --color-mk-teal-700: #3b6b7e;
   --color-mk-teal-text: #3987a0;
   --color-mk-band: #eff6fa;
+  /* Light-blue highlight for the emphasized column in explanatory bands. */
+  --color-mk-blue-50: #e4f0fa;
+  --color-mk-blue-200: #b8d8ee;
   --color-mk-green-600: #58a63e;
   --color-mk-green-700: #4c9334;
   --color-mk-purple: #7b61c4;

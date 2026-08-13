@@ -99,39 +99,48 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null 
         </div>
       )}
 
-      <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {/* One container holds the whole explanation; the AllCampus column is
+          highlighted in light blue as the hinge of the four parts. */}
+      <ol className="grid grid-cols-1 gap-2 rounded-3xl border border-mk-line bg-white p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
         {nodes.map((n, i) => (
           <li key={n.key} className="relative">
-            <div className="h-full px-2 pb-2 pt-1">
-              {/* Illustration, sized generously — this band is explanatory, so
-                  it reads as a diagram, not as another bordered card set. */}
+            <div
+              className={`flex h-full flex-col rounded-2xl px-5 py-6 ${
+                n.highlight ? 'bg-mk-blue-50 ring-1 ring-mk-blue-200' : ''
+              }`}
+            >
+              {/* Illustration: large and centered above the column. */}
               <div
-                className={`flex h-20 w-20 items-center justify-center rounded-2xl ${
-                  n.highlight ? 'bg-mk-teal-600 text-white' : 'bg-mk-band text-mk-teal-700'
+                className={`mx-auto flex h-24 w-24 items-center justify-center rounded-2xl ${
+                  n.highlight ? 'bg-white text-mk-teal-700 shadow-sm' : 'bg-mk-band text-mk-teal-700'
                 }`}
               >
-                {Art[n.art] ? Art[n.art]({ className: 'h-11 w-11' }) : null}
+                {Art[n.art] ? Art[n.art]({ className: 'h-14 w-14' }) : null}
               </div>
-              <div className="mt-4 flex items-center gap-2">
+              <div className="mt-5 flex items-baseline gap-2">
                 <span
-                  className={`text-[12px] font-extrabold ${
-                    n.highlight ? 'text-mk-teal-700' : 'text-mk-body/70'
+                  className={`text-[13px] font-extrabold ${
+                    n.highlight ? 'text-mk-teal-700' : 'text-mk-body/60'
                   }`}
                 >
                   {i + 1}
                 </span>
-                <span className="text-[16px] font-extrabold text-mk-slate">{n.label}</span>
+                <span className="text-[20px] font-extrabold leading-snug text-mk-slate">
+                  {n.label}
+                </span>
               </div>
-              <p className="mt-1.5 text-[13.5px] leading-relaxed text-mk-body">{n.does}</p>
+              <p className="mt-2 text-[14px] leading-relaxed text-mk-body">{n.does}</p>
               {n.contact && (
-                <p className="mt-2 text-[12px] leading-snug text-mk-teal-text">{n.contact}</p>
+                <p className="mt-auto pt-3 text-[12.5px] leading-snug text-mk-teal-text">
+                  {n.contact}
+                </p>
               )}
             </div>
-            {/* Connector arrow between nodes (desktop) */}
+            {/* Connector between columns, aligned to the illustration row */}
             {i < nodes.length - 1 && (
               <span
                 aria-hidden
-                className="absolute -right-1 top-[40px] z-10 hidden text-[18px] text-mk-teal-600/70 lg:block"
+                className="absolute -right-[9px] top-[74px] z-10 hidden text-[17px] text-mk-teal-600/60 lg:block"
               >
                 →
               </span>

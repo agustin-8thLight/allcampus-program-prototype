@@ -146,11 +146,23 @@ export default function App({
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
+    // Free-text search matches more than the program title: subject area and
+    // skill labels count too, so "business" or "nursing" return the field's
+    // programs instead of a false empty state (loose-relevance finding).
     let matched = q
-      ? PROGRAMS.filter(
-          (p) =>
-            p.name.toLowerCase().includes(q) || p.school?.name.toLowerCase().includes(q),
-        )
+      ? PROGRAMS.filter((p) => {
+          const haystack = [
+            p.name,
+            p.school?.name,
+            p.degreeLevel,
+            getArea(p.areaId)?.label,
+            ...(p.skillIds || []).map((id) => getSkill(id)?.label),
+          ]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase()
+          return haystack.includes(q)
+        })
       : PROGRAMS
     if (goalId) {
       const g = getGoal(goalId)

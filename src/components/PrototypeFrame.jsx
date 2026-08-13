@@ -8,6 +8,7 @@ import StoryLauncher from './StoryLauncher.jsx'
 import StoryCoach from './StoryCoach.jsx'
 import GateModal from './GateModal.jsx'
 import DeviceFrame from './DeviceFrame.jsx'
+import AllyOverlay from './AllyOverlay.jsx'
 import IntentStep from './IntentStep.jsx'
 import { CORPORATE_PARTNERS, EMPLOYER_STATES } from '../data/corporatePartners.js'
 import { getUseCase } from '../data/useCases.js'
@@ -67,6 +68,7 @@ export default function PrototypeFrame() {
   // Phone view (E3): auto-enabled for mobile-first stories like Tina's.
   const [phone, setPhone] = useState(false)
   const [intentOpen, setIntentOpen] = useState(false)
+  const [frameAlly, setFrameAlly] = useState(false)
   const [notesOpen, setNotesOpen] = useState(
     () => new URLSearchParams(window.location.search).get('notes') === '1',
   )
@@ -102,6 +104,39 @@ export default function PrototypeFrame() {
     setStory(null)
     setPhone(false)
     navigate('/stories')
+  }
+
+  /*
+   * Story driver: the coach's "Show me" button executes the current step so a
+   * reviewer can be walked through the UI instead of hunting for each control.
+   * Shapes are documented in data/useCases.js.
+   */
+  const driveStep = (drive) => {
+    if (!drive) return
+    if (drive.nav) {
+      navigate(drive.nav)
+      return
+    }
+    switch (drive.do) {
+      case 'gate':
+        if (!joined) setGate({ trigger: 'save' })
+        break
+      case 'join':
+        join()
+        break
+      case 'intent':
+        if (!joined) setJoined(true)
+        applyIntent(drive.intent)
+        break
+      case 'ally':
+        setFrameAlly(true)
+        break
+      case 'phone':
+        setPhone(true)
+        break
+      default:
+        break
+    }
   }
 
   // Gate → join → intent → branch (moves 2 and 3).
@@ -252,7 +287,13 @@ export default function PrototypeFrame() {
 
       {/* Story coach (review chrome) */}
       {story && route.path !== '/stories' && (
-        <StoryCoach key={story.id} story={story} routePath={route.path} onExit={exitStory} />
+        <StoryCoach
+          key={story.id}
+          story={story}
+          routePath={route.path}
+          onExit={exitStory}
+          onDrive={driveStep}
+        />
       )}
 
       {/* The account gate + intent question (product surfaces, moves 2–3) */}
@@ -264,6 +305,10 @@ export default function PrototypeFrame() {
         onDismiss={() => setGate(null)}
       />
       <IntentStep open={intentOpen} suggestion={story?.intentSuggestion} onPick={applyIntent} />
+
+      {/* Ally opened by the story driver (the page-level entry points own their
+          own overlays; this one exists so "Show me" can open Ally anywhere). */}
+      <AllyOverlay open={frameAlly} partner={partner} onClose={() => setFrameAlly(false)} />
 
       {notesOpen && (
         <ConceptNotes

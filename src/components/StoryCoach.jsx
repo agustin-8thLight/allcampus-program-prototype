@@ -8,7 +8,7 @@ import Img from './Img.jsx'
  * when the route matches the step's route prefix. Reviewers can also advance
  * manually or exit to the launcher. Review chrome — not product UI.
  */
-export default function StoryCoach({ story, routePath, onExit }) {
+export default function StoryCoach({ story, routePath, onExit, onDrive }) {
   const [i, setI] = useState(0)
   // Discoverability: the bar pulses once on first render so reviewers notice it.
   const [fresh, setFresh] = useState(true)
@@ -82,10 +82,16 @@ export default function StoryCoach({ story, routePath, onExit }) {
         <div className="flex shrink-0 items-center gap-2">
           {!done && (
             <button
-              onClick={() => setI((x) => Math.min(x + 1, story.steps.length - 1))}
-              className="rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold transition hover:bg-white/10"
+              onClick={() => {
+                // Next performs the step, then advances the narration — a
+                // reviewer can drive themselves or be walked through.
+                if (step.drive) onDrive?.(step.drive)
+                setI((x) => Math.min(x + 1, story.steps.length - 1))
+              }}
+              title={step.drive ? 'Do this step for me' : 'Next hint'}
+              className="rounded-lg bg-white px-3.5 py-1.5 text-[13px] font-bold text-ink-900 transition hover:bg-white/90"
             >
-              Next
+              {step.drive ? 'Show me →' : 'Next'}
             </button>
           )}
           <button

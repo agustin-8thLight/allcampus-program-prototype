@@ -134,14 +134,16 @@ export default function App({
       const p = PROGRAMS.find((x) => x.id === id)
       if (p) {
         setSelected(p)
-        const flow = params.get('flow')
+        // Read deep-link params from BOTH the query string and the hash: the
+        // story driver navigates via the hash (#/browse?program=…&flow=choose).
+        const flow = params.get('flow') || initialParams?.get('flow')
         if (flow) {
           setFlowStep(flow)
           setFlowReturnView('detail')
           setDrawerView('flow')
         }
-        if (params.get('ally')) setDrawerView('ally')
-        if (params.get('requested')) setRequested(new Set([p.id]))
+        if (params.get('ally') || initialParams?.get('ally')) setDrawerView('ally')
+        if (params.get('requested') || initialParams?.get('requested')) setRequested(new Set([p.id]))
       }
     }
   }, [])

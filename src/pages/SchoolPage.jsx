@@ -127,6 +127,7 @@ export default function SchoolPage({ schoolId, partner, onNavigate }) {
         partner={partner}
         programs={programs.length ? programs : undefined}
         onSeeFullyCovered={() => goBrowse({ school: school.id, covered: 1 })}
+        onSeeBestValue={() => goBrowse({ school: school.id, filter: 'mostAffordable' })}
         onCheckEmployer={() => goBrowse({ school: school.id })}
       />
 

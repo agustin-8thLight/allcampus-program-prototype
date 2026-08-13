@@ -46,6 +46,7 @@ export default function LandingPage({ partner, onNavigate }) {
       <BenefitBlock
         partner={partner}
         onSeeFullyCovered={() => goBrowse({ covered: 1 })}
+        onSeeBestValue={() => goBrowse({ filter: 'mostAffordable' })}
         onCheckEmployer={() => goBrowse({})}
       />
 

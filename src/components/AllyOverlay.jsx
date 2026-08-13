@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { PROGRAMS, money } from '../data/model.js'
-import { estimatedOutOfPocket, fullyCoveredPrograms } from '../data/benefit.js'
+import {
+  estimatedOutOfPocket,
+  fullyCoveredPrograms,
+  discountSavings,
+  bestSavingsProgram,
+  bestDiscountPercent,
+} from '../data/benefit.js'
 import { emitStoryEvent } from '../data/useCases.js'
 import { PREAPPROVAL_RULE, hasBenefitAdmin } from '../data/corporatePartners.js'
 import { SparkleIcon, SendIcon, CloseIcon, ShieldIcon } from './icons.jsx'
@@ -23,6 +29,9 @@ function buildScript(partner) {
   const oops = PROGRAMS.map((p) => estimatedOutOfPocket(p, partner)).filter((v) => v != null)
   const minOop = oops.length ? Math.min(...oops) : null
   const maxOop = oops.length ? Math.max(...oops) : null
+  const topSaver = bestSavingsProgram(PROGRAMS)
+  const topSavings = topSaver ? discountSavings(topSaver) : null
+  const topPercent = bestDiscountPercent(PROGRAMS)
 
   return [
     {
@@ -39,7 +48,7 @@ function buildScript(partner) {
       id: 'oop',
       q: 'What will I pay out of pocket?',
       a: known
-        ? `With the ${partner.name} benefit applied, first-year estimates across this catalog run from ${money(minOop ?? 0)} to ${money(maxOop ?? 0)}${covered.length ? `, and ${covered.length} program${covered.length > 1 ? 's are' : ' is'} fully covered` : ''}. Every price card shows the exact estimate for that program — same math, program by program.`
+        ? `With the ${partner.name} benefit applied, first-year estimates across this catalog run from ${money(minOop ?? 0)} to ${money(maxOop ?? 0)}${covered.length ? `, and ${covered.length} program${covered.length > 1 ? 's are' : ' is'} fully covered` : ''}. Every price card shows the exact estimate for that program — same math, program by program.${covered.length ? '' : ` Nothing hits zero, but the partner discount is taking up to ${topPercent ?? 20}% off before your benefit is applied.`}`
         : `Without an employer contribution, your out-of-pocket is the discounted tuition itself — certificates here start around ${money(minOop ?? 3600)}. Sorting by “Most affordable” puts the cheapest real options first.`,
       followups: known ? ['covered', 'start'] : ['start'],
       cta: known && covered.length ? { label: `See ${covered.length} fully covered program${covered.length > 1 ? 's' : ''}`, to: '/browse?covered=1' } : { label: 'Browse most affordable first', to: '/browse?filter=mostAffordable' },
@@ -50,10 +59,14 @@ function buildScript(partner) {
       a: known
         ? covered.length
           ? `Right now, ${covered.length}: ${covered.slice(0, 3).map((p) => p.name).join('; ')}${covered.length > 3 ? '…' : ''}. “Fully covered” means the yearly cost fits inside your ${money(partner.employerReimbursement)} benefit — verified per program on its price card.`
-          : `None fully covered at the moment — but several come close. Sort by “Most affordable” and look for the lowest out-of-pocket lines.`
+          : `None land at zero right now — but the partner discount still does real work: up to ${topPercent ?? 20}% off, which is ${money(topSavings ?? 0)} off ${topSaver?.name || 'the biggest-saving program'} before your benefit applies. With your ${money(partner.employerReimbursement)} on top, the lowest first-year out-of-pocket in the catalog is ${money(minOop ?? 0)}. Want me to line those up cheapest first?`
         : `That takes a known employer benefit. ${partner?.name || 'Your employer'} doesn’t have tuition reimbursement on file, so the partner discount is doing the work here.`,
       followups: ['start'],
-      cta: known && covered.length ? { label: 'Show them in search', to: '/browse?covered=1' } : null,
+      cta: known
+        ? covered.length
+          ? { label: 'Show them in search', to: '/browse?covered=1' }
+          : { label: 'Line them up cheapest first', to: '/browse?filter=mostAffordable' }
+        : null,
     },
     {
       id: 'start',

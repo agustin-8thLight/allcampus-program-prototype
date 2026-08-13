@@ -42,7 +42,9 @@ export default function App({
   onGate = null,
 }) {
   const [query, setQuery] = useState(() => initialParams?.get('q') || '')
-  const [activeFilter, setActiveFilter] = useState('mostAffordable')
+  const [activeFilter, setActiveFilter] = useState(
+    () => initialParams?.get('filter') || 'mostAffordable',
+  )
   const [areaId, setAreaId] = useState(() => {
     const fromSkill = initialParams?.get('skill') ? getSkill(initialParams.get('skill'))?.areaId : null
     return initialParams?.get('area') || fromSkill || null

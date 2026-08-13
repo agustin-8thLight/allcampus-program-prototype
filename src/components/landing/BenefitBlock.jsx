@@ -1,7 +1,14 @@
 import { useState } from 'react'
 import { Eyebrow, Heading, Body, MkButton } from './Section.jsx'
 import { money, PROGRAMS } from '../../data/model.js'
-import { estimatedOutOfPocket, fullyCoveredPrograms } from '../../data/benefit.js'
+import {
+  estimatedOutOfPocket,
+  fullyCoveredPrograms,
+  discountSavings,
+  bestSavingsProgram,
+  bestDiscountPercent,
+  lowestOutOfPocket,
+} from '../../data/benefit.js'
 import { PREAPPROVAL_RULE, hasBenefitAdmin } from '../../data/corporatePartners.js'
 import AllyOverlay from '../AllyOverlay.jsx'
 
@@ -44,14 +51,24 @@ const TileLabel = ({ children }) => (
   </span>
 )
 
-export default function BenefitBlock({ partner, onSeeFullyCovered, onCheckEmployer, programs = PROGRAMS }) {
+export default function BenefitBlock({
+  partner,
+  onSeeFullyCovered,
+  onSeeBestValue,
+  onCheckEmployer,
+  programs = PROGRAMS,
+}) {
   const [allyOpen, setAllyOpen] = useState(false)
   const amount = partner?.employerReimbursement ?? 0
   const state = !partner?.benefitKnown ? 'unknown' : amount > 0 ? 'known' : 'none'
 
   const covered = fullyCoveredPrograms(programs, partner)
-  const oops = programs.map((p) => estimatedOutOfPocket(p, partner)).filter((v) => v != null)
-  const cheapestOop = oops.length ? Math.min(...oops) : null
+  const cheapestOop = lowestOutOfPocket(programs, partner)
+  // Nothing fully covered? Lead with what IS true: what the partner discount
+  // is worth and the cheapest real out-of-pocket — never a green zero.
+  const topSaver = bestSavingsProgram(programs)
+  const topSavings = topSaver ? discountSavings(topSaver) : null
+  const topPercent = bestDiscountPercent(programs)
 
   return (
     <section className="mx-auto max-w-6xl px-5 pt-16">
@@ -101,23 +118,48 @@ export default function BenefitBlock({ partner, onSeeFullyCovered, onCheckEmploy
               </span>
             </Tile>
 
-            {/* Tile 3: fully covered → covered search */}
-            <Tile tone="accent" onClick={onSeeFullyCovered}>
-              <TileLabel>Zero out-of-pocket</TileLabel>
-              <span className="mt-3 font-display text-[34px] font-black leading-none text-mk-green-700">
-                {covered.length}
-                <span className="ml-2 text-[16px] font-bold text-mk-slate">
-                  fully covered program{covered.length === 1 ? '' : 's'}
+            {/* Tile 3: fully covered when there are any; otherwise the honest
+                positive — what the discount saves and the cheapest real price. */}
+            {covered.length > 0 ? (
+              <Tile tone="accent" onClick={onSeeFullyCovered}>
+                <TileLabel>Zero out-of-pocket</TileLabel>
+                <span className="mt-3 font-display text-[34px] font-black leading-none text-mk-green-700">
+                  {covered.length}
+                  <span className="ml-2 text-[16px] font-bold text-mk-slate">
+                    fully covered program{covered.length === 1 ? '' : 's'}
+                  </span>
                 </span>
-              </span>
-              <span className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
-                Programs whose yearly cost fits inside your benefit — verified per program on its
-                price card.
-              </span>
-              <span className="mt-auto pt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
-                See them in search →
-              </span>
-            </Tile>
+                <span className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
+                  Programs whose yearly cost fits inside your benefit — verified per program on its
+                  price card.
+                </span>
+                <span className="mt-auto pt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
+                  See them in search →
+                </span>
+              </Tile>
+            ) : (
+              <Tile tone="accent" onClick={() => onSeeBestValue?.()}>
+                <TileLabel>What the discount is worth</TileLabel>
+                <span className="mt-3 font-display text-[34px] font-black leading-none text-mk-green-700">
+                  {topSavings ? `Save ${money(topSavings)}` : 'Partner pricing'}
+                </span>
+                <span className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
+                  {topPercent
+                    ? `Partner discounts reach ${topPercent}% off — up to ${money(topSavings || 0)} off a full program before your benefit is applied.`
+                    : 'Every program here is priced below its standard tuition.'}
+                  {cheapestOop != null && (
+                    <>
+                      {' '}
+                      With your benefit, the lowest first-year out-of-pocket is{' '}
+                      <strong className="text-mk-slate">{money(cheapestOop)}</strong>.
+                    </>
+                  )}
+                </span>
+                <span className="mt-auto pt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
+                  See the best-value programs →
+                </span>
+              </Tile>
+            )}
           </div>
           <p className="mt-3 font-display text-[13px] text-mk-body">
             <span className="font-bold text-mk-slate">Order matters:</span> {PREAPPROVAL_RULE}

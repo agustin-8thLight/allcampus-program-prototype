@@ -38,3 +38,51 @@ export function fullyCoveredPrograms(programs, partner) {
   if (!partner?.benefitKnown) return []
   return programs.filter((p) => isFullyCoveredEstimate(p, partner))
 }
+
+/*
+ * Savings helpers (2026-08-13). When nothing is fully covered, "0 fully
+ * covered" is a discouraging non-answer — so these power the positive
+ * alternative: what the AllCampus partner discount is actually worth, and the
+ * cheapest real out-of-pocket. Discount and reimbursement are separate levers
+ * (Brigid's journey map), and for no-reimbursement employers the discount is
+ * the ONLY lever, so it deserves the headline.
+ */
+
+/** Undiscounted program total, from the standard per-credit rate. */
+export function standardTotalCost(program) {
+  if (program?.standardTotalTuitionCost != null) return program.standardTotalTuitionCost
+  if (program?.standardTuitionPerCredit != null && program?.requiredCredits != null)
+    return program.standardTuitionPerCredit * program.requiredCredits
+  return null
+}
+
+/** Dollars the partner discount takes off this program's full price. */
+export function discountSavings(program) {
+  const std = standardTotalCost(program)
+  const now = program?.totalTuitionCost
+  if (std == null || now == null) return null
+  return Math.max(0, std - now)
+}
+
+/** The program whose discount saves the most (for the savings headline). */
+export function bestSavingsProgram(programs) {
+  return programs.reduce((best, p) => {
+    const s = discountSavings(p)
+    if (s == null) return best
+    return !best || s > (discountSavings(best) ?? 0) ? p : best
+  }, null)
+}
+
+/** Largest discount percentage across the catalog. */
+export function bestDiscountPercent(programs) {
+  const pcts = programs
+    .map((p) => p.discount?.percentUsed)
+    .filter((v) => typeof v === 'number')
+  return pcts.length ? Math.max(...pcts) : null
+}
+
+/** Cheapest estimated first-year out-of-pocket, with the benefit applied. */
+export function lowestOutOfPocket(programs, partner) {
+  const vals = programs.map((p) => estimatedOutOfPocket(p, partner)).filter((v) => v != null)
+  return vals.length ? Math.min(...vals) : null
+}

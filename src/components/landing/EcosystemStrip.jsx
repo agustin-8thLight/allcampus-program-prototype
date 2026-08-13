@@ -16,21 +16,58 @@
  * vs school admissions); the `contact` line per node sketches that here.
  */
 
+/*
+ * Simple line illustrations, one per ecosystem role. Inline SVG (no assets to
+ * license) drawn on currentColor so they inherit the node's accent.
+ */
+const Art = {
+  you: (props) => (
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" {...props}>
+      <circle cx="32" cy="22" r="9" />
+      <path d="M14 54c0-9.5 8-16 18-16s18 6.5 18 16" />
+    </svg>
+  ),
+  employer: (props) => (
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" {...props}>
+      <path d="M12 54V20l14-8 14 8v34" />
+      <path d="M40 54V30h12v24" />
+      <path d="M8 54h48M20 28h6M20 38h6M32 28h.01M32 38h.01" />
+    </svg>
+  ),
+  allcampus: (props) => (
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" {...props}>
+      <path d="M32 12l22 10-22 10-22-10 22-10z" />
+      <path d="M18 27v11c0 5 6.3 8.5 14 8.5S46 43 46 38V27" />
+      <path d="M54 22v13" />
+    </svg>
+  ),
+  school: (props) => (
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" {...props}>
+      <path d="M10 26h44M14 26v26M50 26v26M8 52h48" />
+      <path d="M32 10l20 12H12l20-12z" />
+      <path d="M24 52V36h16v16" />
+    </svg>
+  ),
+}
+
 const NODES = (schoolName) => [
   {
     key: 'you',
+    art: 'you',
     label: 'You',
     does: 'Pick a program and put your education benefit to work.',
     contact: null,
   },
   {
     key: 'employer',
+    art: 'employer',
     label: 'Your employer',
     does: 'Funds your education benefit and sets how much is covered.',
     contact: 'Benefit questions: your HR or benefits portal',
   },
   {
     key: 'allcampus',
+    art: 'allcampus',
     label: 'AllCampus',
     does: 'The vehicle that gets you there: your discount applies here, and this is where you get help.',
     contact: 'Program & cost questions: Ally or an Education Benefits Specialist',
@@ -38,6 +75,7 @@ const NODES = (schoolName) => [
   },
   {
     key: 'school',
+    art: 'school',
     label: schoolName || 'The school',
     does: 'Delivers the program, the classes, and the degree.',
     contact: 'Admissions & enrollment: the school, after you apply',
@@ -64,24 +102,27 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null 
       <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {nodes.map((n, i) => (
           <li key={n.key} className="relative">
-            <div
-              className={`h-full rounded-xl border p-5 ${
-                n.highlight
-                  ? 'border-mk-teal-600 bg-white shadow-[0_2px_12px_rgba(69,120,140,0.14)]'
-                  : 'border-mk-line bg-white'
-              }`}
-            >
-              <div className="flex items-center gap-2">
+            <div className="h-full px-2 pb-2 pt-1">
+              {/* Illustration, sized generously — this band is explanatory, so
+                  it reads as a diagram, not as another bordered card set. */}
+              <div
+                className={`flex h-20 w-20 items-center justify-center rounded-2xl ${
+                  n.highlight ? 'bg-mk-teal-600 text-white' : 'bg-mk-band text-mk-teal-700'
+                }`}
+              >
+                {Art[n.art] ? Art[n.art]({ className: 'h-11 w-11' }) : null}
+              </div>
+              <div className="mt-4 flex items-center gap-2">
                 <span
-                  className={`flex h-6 w-6 items-center justify-center rounded-full text-[12px] font-extrabold ${
-                    n.highlight ? 'bg-mk-teal-600 text-white' : 'bg-mk-band text-mk-teal-700'
+                  className={`text-[12px] font-extrabold ${
+                    n.highlight ? 'text-mk-teal-700' : 'text-mk-body/70'
                   }`}
                 >
                   {i + 1}
                 </span>
-                <span className="text-[15px] font-extrabold text-mk-slate">{n.label}</span>
+                <span className="text-[16px] font-extrabold text-mk-slate">{n.label}</span>
               </div>
-              <p className="mt-2 text-[13.5px] leading-relaxed text-mk-body">{n.does}</p>
+              <p className="mt-1.5 text-[13.5px] leading-relaxed text-mk-body">{n.does}</p>
               {n.contact && (
                 <p className="mt-2 text-[12px] leading-snug text-mk-teal-text">{n.contact}</p>
               )}
@@ -90,7 +131,7 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null 
             {i < nodes.length - 1 && (
               <span
                 aria-hidden
-                className="absolute -right-2.5 top-1/2 z-10 hidden -translate-y-1/2 text-mk-teal-600 lg:block"
+                className="absolute -right-1 top-[40px] z-10 hidden text-[18px] text-mk-teal-600/70 lg:block"
               >
                 →
               </span>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { MkButton } from './Section.jsx'
+import { AREAS, skillsForArea } from '../../data/taxonomy.js'
 import { heroImage } from '../../data/images.js'
 import Img from '../Img.jsx'
 
@@ -19,11 +20,18 @@ export default function SearchHero({ partner, onSearch }) {
   const [q, setQ] = useState('')
   const [degree, setDegree] = useState(DEGREE_LEVELS[0])
   const [modality, setModality] = useState(MODALITIES[0])
+  // Field selector covers areas of study AND their skills in one control:
+  // value is 'area:<id>' or 'skill:<id>' so people can pick either
+  // granularity without choosing between two menus.
+  const [field, setField] = useState('')
 
   const submit = (e) => {
     e?.preventDefault()
+    const [kind, id] = field ? field.split(':') : []
     onSearch({
       q: q.trim(),
+      area: kind === 'area' ? id : null,
+      skill: kind === 'skill' ? id : null,
       degree: degree === DEGREE_LEVELS[0] ? null : degree,
       modality: modality === MODALITIES[0] ? null : modality,
     })
@@ -61,11 +69,13 @@ export default function SearchHero({ partner, onSearch }) {
         </div>
       </div>
 
-      {/* Floating search card */}
-      <div className="mx-auto -mt-14 max-w-5xl px-5">
+      {/* Floating search card. `relative z-10` matters: the hero's absolutely
+          positioned photo would otherwise paint over this static sibling and
+          clip the top label row. */}
+      <div className="relative z-10 mx-auto -mt-14 max-w-5xl px-5">
         <form
           onSubmit={submit}
-          className="grid grid-cols-1 gap-4 rounded-xl bg-white p-5 shadow-[0_10px_30px_rgba(51,71,91,0.14)] sm:grid-cols-[1.4fr_1fr_1fr_auto] sm:items-end"
+          className="grid grid-cols-1 gap-4 rounded-xl bg-white p-5 shadow-[0_10px_30px_rgba(51,71,91,0.14)] sm:grid-cols-2 lg:grid-cols-[1.3fr_1.2fr_.9fr_.9fr_auto] sm:items-end"
         >
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-bold text-mk-slate">
@@ -79,6 +89,24 @@ export default function SearchHero({ partner, onSearch }) {
             />
           </label>
           <label className="block">
+            <span className="mb-1.5 block text-[13px] font-bold text-mk-slate">
+              Area of study or skill
+            </span>
+            <select value={field} onChange={(e) => setField(e.target.value)} className={selectCls}>
+              <option value="">Any area or skill</option>
+              {AREAS.map((a) => (
+                <optgroup key={a.id} label={a.label}>
+                  <option value={`area:${a.id}`}>All of {a.label}</option>
+                  {skillsForArea(a.id).map((sk) => (
+                    <option key={sk.id} value={`skill:${sk.id}`}>
+                      {sk.label}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </label>
+          <label className="block">
             <span className="mb-1.5 block text-[13px] font-bold text-mk-slate">Degree level</span>
             <select value={degree} onChange={(e) => setDegree(e.target.value)} className={selectCls}>
               {DEGREE_LEVELS.map((d) => (
@@ -87,9 +115,7 @@ export default function SearchHero({ partner, onSearch }) {
             </select>
           </label>
           <label className="block">
-            <span className="mb-1.5 block text-[13px] font-bold text-mk-slate">
-              How would you like to attend?
-            </span>
+            <span className="mb-1.5 block text-[13px] font-bold text-mk-slate">Format</span>
             <select value={modality} onChange={(e) => setModality(e.target.value)} className={selectCls}>
               {MODALITIES.map((m) => (
                 <option key={m}>{m}</option>

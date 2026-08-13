@@ -29,6 +29,10 @@ jobs:
         env:
           # Project site is served from /<repo>/, so Vite assets need this base.
           BASE_PATH: /allcampus-program-prototype/
+          # Static review passphrase (AccessGate). Client-side only: it keeps the
+          # prototype from being casually opened or scraped, it is not security.
+          # Override by setting a GATE_PASS repo secret.
+          VITE_GATE_PASS: ${{ secrets.GATE_PASS || 'allcampus-2026' }}
       - uses: actions/configure-pages@v5
         with:
           enablement: true

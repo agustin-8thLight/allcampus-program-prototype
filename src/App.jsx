@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PROGRAMS, QUICK_FILTERS, applyQuickFilter } from './data/model.js'
-import { AREAS, getArea, getSkill } from './data/taxonomy.js'
+import { AREAS, getArea, getSkill, getGoal, programMatchesGoal } from './data/taxonomy.js'
 import { isFullyCoveredEstimate } from './data/benefit.js'
 import { getSchool } from './data/schools.js'
 import ProgramCard from './components/ProgramCard.jsx'
@@ -48,6 +48,9 @@ export default function App({
     return initialParams?.get('area') || fromSkill || null
   })
   const [skillId, setSkillId] = useState(() => initialParams?.get('skill') || null)
+  // Goal handoff from the landing Goals block: the relatable outcome label
+  // filters via its taxonomy mapping and appears as the applied chip.
+  const [goalId, setGoalId] = useState(() => initialParams?.get('goal') || null)
   const [schoolId] = useState(() => initialParams?.get('school') || null)
   const [degreeLevel, setDegreeLevel] = useState(() => initialParams?.get('degree') || null)
   const [modality, setModality] = useState(() => initialParams?.get('modality') || null)
@@ -139,6 +142,10 @@ export default function App({
             p.name.toLowerCase().includes(q) || p.school?.name.toLowerCase().includes(q),
         )
       : PROGRAMS
+    if (goalId) {
+      const g = getGoal(goalId)
+      if (g) matched = matched.filter((p) => programMatchesGoal(p, g))
+    }
     if (areaId) matched = matched.filter((p) => p.areaId === areaId)
     if (skillId) matched = matched.filter((p) => p.skillIds?.includes(skillId))
     if (schoolId) matched = matched.filter((p) => p.schoolId === schoolId)
@@ -146,10 +153,11 @@ export default function App({
     if (modality) matched = matched.filter((p) => p.courseModality === modality)
     if (coveredOnly && partner) matched = matched.filter((p) => isFullyCoveredEstimate(p, partner))
     return applyQuickFilter(matched, activeFilter)
-  }, [query, activeFilter, areaId, skillId, schoolId, degreeLevel, modality, coveredOnly, partner])
+  }, [query, activeFilter, areaId, skillId, goalId, schoolId, degreeLevel, modality, coveredOnly, partner])
 
   // Applied-filter chips (taxonomy + landing handoffs), each clearable.
   const appliedFilters = [
+    goalId && { key: 'goal', label: `Goal: ${getGoal(goalId)?.label}`, clear: () => setGoalId(null) },
     skillId && { key: 'skill', label: getSkill(skillId)?.label, clear: () => { setSkillId(null); setAreaId(null) } },
     !skillId && areaId && { key: 'area', label: getArea(areaId)?.label, clear: () => setAreaId(null) },
     schoolId && { key: 'school', label: getSchool(schoolId)?.name, clear: null }, // school scope comes from the school page

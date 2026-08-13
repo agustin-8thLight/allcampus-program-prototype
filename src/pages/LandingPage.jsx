@@ -3,7 +3,7 @@ import SearchHero from '../components/landing/SearchHero.jsx'
 import AllyEntry from '../components/landing/AllyEntry.jsx'
 import BenefitBlock from '../components/landing/BenefitBlock.jsx'
 import EcosystemStrip from '../components/landing/EcosystemStrip.jsx'
-import SkillsExplorer from '../components/landing/SkillsExplorer.jsx'
+import GoalsExplorer from '../components/landing/GoalsExplorer.jsx'
 import StoryCards from '../components/landing/StoryCards.jsx'
 import LogoStrip from '../components/landing/LogoStrip.jsx'
 import LandingFaq from '../components/landing/LandingFaq.jsx'
@@ -53,9 +53,10 @@ export default function LandingPage({ partner, onNavigate }) {
       </section>
 
       <div className="pt-16">
-        <SkillsExplorer
+        <GoalsExplorer
           partner={partner}
-          onSelectSkill={(skill) => goBrowse({ skill: skill.id })}
+          onSelectGoal={(goal) => goBrowse({ goal: goal.id })}
+          onSelectArea={(area) => goBrowse({ area: area.id })}
         />
       </div>
 

@@ -131,3 +131,47 @@ export function areasForEmployer(partner) {
   const hidden = new Set(partner?.hiddenAreaIds || [])
   return AREAS.filter((a) => !hidden.has(a.id))
 }
+
+/*
+ * Goals (2026-08-12 direction): the relatable, outcome-shaped labels people
+ * actually recognize and search for — "the end result users might want" —
+ * as opposed to catalog categories. Goals are the recognition language on
+ * marketing surfaces; skills/areas remain the catalog's filter language.
+ * Each goal MAPS into the taxonomy (skillIds and/or a degreeLevel).
+ *
+ * LABEL COPY IS DRAFT — validate exact wording with Brigid before launch;
+ * she owns the student-friction vocabulary.
+ */
+export const GOALS = [
+  { id: 'become-np', label: 'Become a nurse practitioner', sub: 'RN today, advanced practice next', skillIds: ['nurse-practitioner', 'nursing'], areaId: 'healthcare', hue: 196 },
+  { id: 'move-into-management', label: 'Move into management', sub: 'Lead a team, a shift, a store', skillIds: ['leadership-org', 'mba-general'], areaId: 'business', hue: 262 },
+  { id: 'get-pm-certified', label: 'Get certified in project management', sub: 'A credential that changes your week', skillIds: ['project-management'], areaId: 'business', hue: 208 },
+  { id: 'break-into-cyber', label: 'Break into IT & cybersecurity', sub: 'From curious to qualified', skillIds: ['cybersecurity', 'it-systems', 'cs-software'], areaId: 'it', hue: 150 },
+  { id: 'work-with-data', label: 'Work with data & AI', sub: 'Analytics roles in any industry', skillIds: ['data-analytics-ai'], areaId: 'it', hue: 90 },
+  { id: 'trade-to-engineering', label: 'Turn trade experience into an engineering degree', sub: 'Welding, machining, maintenance — it counts', skillIds: ['industrial-systems', 'engineering-mgmt'], areaId: 'engineering', hue: 24 },
+  { id: 'finish-bachelors', label: 'Finish my bachelor’s degree', sub: 'Credits you have, a degree you finish', degreeLevel: "Bachelor's", hue: 330 },
+  { id: 'run-healthcare-ops', label: 'Advance in healthcare administration', sub: 'Run the clinic, not just the desk', skillIds: ['health-admin'], areaId: 'healthcare', hue: 178 },
+  { id: 'supply-chain', label: 'Run operations & supply chain', sub: 'From the floor to the planning room', skillIds: ['operations-supply-chain'], areaId: 'business', hue: 45 },
+]
+
+export const getGoal = (id) => GOALS.find((g) => g.id === id) || null
+
+/** Does a program serve this goal? Skill intersection OR degree-level match. */
+export function programMatchesGoal(program, goal) {
+  if (!goal) return true
+  if (goal.skillIds?.length && program.skillIds?.some((s) => goal.skillIds.includes(s))) return true
+  if (goal.degreeLevel && program.degreeLevel === goal.degreeLevel) return true
+  return false
+}
+
+/** Goals for an employer: hidden areas pruned, emphasized areas first. */
+export function goalsForEmployer(partner) {
+  const hidden = new Set(partner?.hiddenAreaIds || [])
+  const emphasized = partner?.emphasizedAreaIds || []
+  const visible = GOALS.filter((g) => !g.areaId || !hidden.has(g.areaId))
+  const rank = (g) => {
+    const i = emphasized.indexOf(g.areaId)
+    return i === -1 ? emphasized.length : i
+  }
+  return [...visible].sort((a, b) => rank(a) - rank(b))
+}

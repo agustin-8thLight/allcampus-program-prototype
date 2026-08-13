@@ -1,13 +1,15 @@
+import { useState } from 'react'
 import MkHeader from '../components/landing/MkHeader.jsx'
 import EcosystemStrip from '../components/landing/EcosystemStrip.jsx'
 import BenefitBlock from '../components/landing/BenefitBlock.jsx'
 import AllyEntry from '../components/landing/AllyEntry.jsx'
 import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.jsx'
-import { PROGRAMS, money } from '../data/model.js'
+import { PROGRAMS, money, resolveCost, startDateDisplay } from '../data/model.js'
 import { estimatedOutOfPocket } from '../data/benefit.js'
 import { getSchool } from '../data/schools.js'
 import { schoolImage } from '../data/images.js'
 import Img from '../components/Img.jsx'
+import AllyOverlay from '../components/AllyOverlay.jsx'
 
 /*
  * School page (2026-08-11 meeting): same structural logic as the homepage,
@@ -31,6 +33,8 @@ export default function SchoolPage({ schoolId, partner, onNavigate }) {
     )
   }
 
+  const [allyOpen, setAllyOpen] = useState(false)
+  const benefitKnown = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
   const programs = PROGRAMS.filter((p) => p.schoolId === school.id)
   const goBrowse = (params = {}) => {
     const qs = new URLSearchParams(params).toString()
@@ -79,6 +83,33 @@ export default function SchoolPage({ schoolId, partner, onNavigate }) {
             <MkButton tone="ghostLight" onClick={() => goBrowse({})}>
               Explore all programs
             </MkButton>
+          </div>
+
+          {/* Compact benefit banner: the landing module's promise, in one line,
+              at the moment a channel visitor arrives. */}
+          <div className="mt-7 flex flex-col gap-3 rounded-xl border border-white/25 bg-white/10 p-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[14.5px] leading-relaxed text-white/95">
+              {benefitKnown ? (
+                <>
+                  Your <strong>{partner.name}</strong> benefit — up to{' '}
+                  <strong>{money(partner.employerReimbursement)}/year</strong> — applies at{' '}
+                  {school.name.split(' ')[0]}.{' '}
+                  <span className="text-white/70">Estimate; confirm with your benefits administrator.</span>
+                </>
+              ) : (
+                <>
+                  Every {school.name.split(' ')[0]} program here carries AllCampus partner pricing.{' '}
+                  <span className="text-white/70">No employer benefit required.</span>
+                </>
+              )}
+            </p>
+            <button
+              type="button"
+              onClick={() => setAllyOpen(true)}
+              className="shrink-0 rounded-lg bg-mk-purple px-4 py-2.5 text-[14px] font-bold text-white transition hover:opacity-90"
+            >
+              {benefitKnown ? 'See what you’d pay ✦' : 'Ask Ally about costs ✦'}
+            </button>
           </div>
         </div>
       </section>
@@ -135,23 +166,38 @@ export default function SchoolPage({ schoolId, partner, onNavigate }) {
                 key={p.id}
                 type="button"
                 onClick={() => goBrowse({ school: school.id, program: p.id })}
-                className="group rounded-xl border border-mk-line bg-white p-5 text-left transition hover:border-mk-teal-600 hover:shadow-[0_4px_16px_rgba(69,120,140,0.12)]"
+                className="group flex gap-4 overflow-hidden rounded-xl border border-mk-line bg-white p-4 text-left transition hover:border-mk-teal-600 hover:shadow-[0_4px_16px_rgba(69,120,140,0.12)]"
               >
-                <div className="font-display text-[12.5px] font-bold text-mk-teal-text">
-                  {p.degreeLevel}
-                </div>
-                <div className="mt-1 font-display text-[16px] font-extrabold text-mk-slate">
-                  {p.name}
-                </div>
-                {oop != null && (
-                  <div className="mt-2 font-display text-[13px] text-mk-body">
-                    Est. {oop === 0 ? 'fully covered by your benefit' : `${money(oop)} out of pocket/yr`}{' '}
-                    <span className="text-mk-body/60">(estimate)</span>
-                  </div>
-                )}
-                <div className="mt-2 font-display text-[13px] font-bold text-mk-teal-700">
-                  See details →
-                </div>
+                <Img
+                  src={p.programImageUrl}
+                  alt=""
+                  hue={p.programImageHue}
+                  className="h-28 w-32 shrink-0 sm:w-40"
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="block font-display text-[12.5px] font-bold text-mk-teal-text">
+                    {p.degreeLevel} · {p.duration}
+                  </span>
+                  <span className="mt-1 block font-display text-[16px] font-extrabold leading-snug text-mk-slate">
+                    {p.name}
+                  </span>
+                  <span className="mt-1.5 block font-display text-[13.5px] font-bold text-mk-slate">
+                    {resolveCost(p).primaryValue}{' '}
+                    <span className="font-semibold text-mk-body">
+                      {resolveCost(p).primaryLabel === 'Per credit' ? 'per credit' : 'total'}
+                    </span>
+                  </span>
+                  {oop != null && (
+                    <span className="mt-0.5 block font-display text-[13px] font-bold text-mk-green-700">
+                      {oop === 0
+                        ? 'Fully covered by your benefit (est.)'
+                        : `Est. ${money(oop)} out of pocket/yr`}
+                    </span>
+                  )}
+                  <span className="mt-1.5 block font-display text-[12.5px] text-mk-body">
+                    Starts {startDateDisplay(p) || 'soon'}
+                  </span>
+                </span>
               </button>
             )
           })}
@@ -162,6 +208,13 @@ export default function SchoolPage({ schoolId, partner, onNavigate }) {
       </section>
 
       <AllyEntry partner={partner} />
+
+      <AllyOverlay
+        open={allyOpen}
+        partner={partner}
+        seedQuestionId="oop"
+        onClose={() => setAllyOpen(false)}
+      />
 
       <footer className="bg-mk-slate py-8 text-center font-display text-xs text-white/60">
         AllCampus school-page prototype, throwaway spec with mock data. Not production.

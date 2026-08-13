@@ -7,6 +7,7 @@ import CtaCompare from './CtaCompare.jsx'
 import StoryLauncher from './StoryLauncher.jsx'
 import StoryCoach from './StoryCoach.jsx'
 import GateModal from './GateModal.jsx'
+import DeviceFrame from './DeviceFrame.jsx'
 import IntentStep from './IntentStep.jsx'
 import { CORPORATE_PARTNERS, EMPLOYER_STATES } from '../data/corporatePartners.js'
 import { getUseCase } from '../data/useCases.js'
@@ -63,6 +64,8 @@ export default function PrototypeFrame() {
   const [joined, setJoined] = useState(false)
   const [intent, setIntent] = useState(null)
   const [gate, setGate] = useState(null) // { trigger } | null
+  // Phone view (E3): auto-enabled for mobile-first stories like Tina's.
+  const [phone, setPhone] = useState(false)
   const [intentOpen, setIntentOpen] = useState(false)
   const [notesOpen, setNotesOpen] = useState(
     () => new URLSearchParams(window.location.search).get('notes') === '1',
@@ -72,6 +75,9 @@ export default function PrototypeFrame() {
   )
   const active = VARIANTS.find((v) => v.code === variant)
   const partner = CORPORATE_PARTNERS[employerId]
+  // The DeviceFrame iframe loads this same app with ?chrome=0: render the
+  // product alone — no review bar, no coach, no nested device frame.
+  const bare = new URLSearchParams(window.location.search).get('chrome') === '0'
 
   useEffect(() => {
     const onHash = () => setRoute(parseHash())
@@ -88,11 +94,13 @@ export default function PrototypeFrame() {
     setEmployerId(u.employerId)
     setJoined(false)
     setIntent(null)
+    setPhone(!!u.mobile)
     navigate(u.entry)
   }
 
   const exitStory = () => {
     setStory(null)
+    setPhone(false)
     navigate('/stories')
   }
 
@@ -152,6 +160,8 @@ export default function PrototypeFrame() {
     page = <LandingPage partner={partner} onNavigate={navigate} />
   }
 
+  if (bare) return page
+
   return (
     <>
       {/* Review bar (meta chrome, sits above the product) */}
@@ -206,8 +216,17 @@ export default function PrototypeFrame() {
             </span>
           )}
           <button
+            onClick={() => setPhone((v) => !v)}
+            title="Preview at a 390px phone viewport"
+            className={`hidden rounded-lg border px-3 py-1.5 text-[13px] font-bold transition md:block ${
+              phone ? 'border-brand-400 bg-brand-400/20 text-white' : 'border-white/25 text-white hover:bg-white/10'
+            }`}
+          >
+            Phone view
+          </button>
+          <button
             onClick={() => setCompareOpen(true)}
-            className="hidden rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10 md:block"
+            className="hidden rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10 lg:block"
           >
             Compare next step
           </button>
@@ -221,7 +240,15 @@ export default function PrototypeFrame() {
       </div>
 
       {/* The real product, offset below the bar (and above the coach) */}
-      <div className={`pt-12 ${story && route.path !== '/stories' ? 'pb-20' : ''}`}>{page}</div>
+      <div className={`pt-12 ${story && route.path !== '/stories' ? 'pb-20' : ''}`}>
+        <DeviceFrame
+          enabled={phone && route.path !== '/stories'}
+          onToggle={() => setPhone(false)}
+          params={{ employer: employerId, variant }}
+        >
+          {page}
+        </DeviceFrame>
+      </div>
 
       {/* Story coach (review chrome) */}
       {story && route.path !== '/stories' && (

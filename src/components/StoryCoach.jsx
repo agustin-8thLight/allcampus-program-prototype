@@ -10,8 +10,15 @@ import Img from './Img.jsx'
  */
 export default function StoryCoach({ story, routePath, onExit }) {
   const [i, setI] = useState(0)
+  // Discoverability: the bar pulses once on first render so reviewers notice it.
+  const [fresh, setFresh] = useState(true)
   const step = story.steps[Math.min(i, story.steps.length - 1)]
   const done = i >= story.steps.length - 1
+
+  useEffect(() => {
+    const t = setTimeout(() => setFresh(false), 2600)
+    return () => clearTimeout(t)
+  }, [])
 
   // Route-based advancement
   useEffect(() => {
@@ -36,7 +43,11 @@ export default function StoryCoach({ story, routePath, onExit }) {
   }, [story])
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[70] border-t border-white/10 bg-ink-900/95 px-4 py-3 text-white backdrop-blur">
+    <div
+      className={`fixed inset-x-0 bottom-0 z-[70] border-t bg-ink-900/95 px-4 py-3 text-white backdrop-blur transition-shadow ${
+        fresh ? 'border-brand-400 shadow-[0_-8px_32px_rgba(80,190,190,0.35)]' : 'border-white/10'
+      }`}
+    >
       <div className="mx-auto flex max-w-5xl items-center gap-4">
         <Img
           src={personaImage(story.id)}
@@ -46,8 +57,25 @@ export default function StoryCoach({ story, routePath, onExit }) {
           className="h-9 w-9 shrink-0"
         />
         <div className="min-w-0 flex-1">
-          <div className="text-[11px] font-bold uppercase tracking-wide text-white/50">
-            {story.name}’s walk · step {Math.min(i + 1, story.steps.length)} of {story.steps.length}
+          <div className="flex items-center gap-2.5">
+            <span className="text-[11px] font-bold uppercase tracking-wide text-white/50">
+              {story.name}’s walk · step {Math.min(i + 1, story.steps.length)} of {story.steps.length}
+            </span>
+            {/* Progress dots: filled = done, ringed = current */}
+            <span className="hidden items-center gap-1 sm:flex" aria-hidden>
+              {story.steps.map((_, n) => (
+                <span
+                  key={n}
+                  className={`h-1.5 rounded-full transition-all ${
+                    n === i
+                      ? 'w-4 bg-brand-400'
+                      : n < i
+                        ? 'w-1.5 bg-white/60'
+                        : 'w-1.5 bg-white/20'
+                  }`}
+                />
+              ))}
+            </span>
           </div>
           <p className="truncate-2 text-[14px] leading-snug text-white/90 sm:text-[15px]">{step.hint}</p>
         </div>

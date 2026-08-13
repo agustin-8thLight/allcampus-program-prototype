@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AREAS, getArea } from '../data/taxonomy.js'
 import { emitStoryEvent } from '../data/useCases.js'
 import { useToast } from './Toast.jsx'
 import { SparkleIcon } from './icons.jsx'
+import AllyOverlay from './AllyOverlay.jsx'
 
 /*
  * The empty-results state (move 4). Replaces the old dead end. Three jobs:
@@ -15,6 +16,7 @@ import { SparkleIcon } from './icons.jsx'
  */
 export default function EmptyStateAlly({ query, partner, hasFilters, onPickArea, onCoveredOnly }) {
   const { showToast } = useToast()
+  const [allyOpen, setAllyOpen] = useState(false)
   useEffect(() => {
     emitStoryEvent('empty-state', { query })
   }, [query])
@@ -109,12 +111,25 @@ export default function EmptyStateAlly({ query, partner, hasFilters, onPickArea,
               What does my benefit cover?
             </button>
           </div>
+          <button
+            onClick={() => setAllyOpen(true)}
+            className="mt-4 w-full rounded-lg bg-mk-purple px-4 py-2.5 text-[14px] font-bold text-white transition hover:opacity-90"
+          >
+            Keep talking to Ally →
+          </button>
           <p className="mt-3 text-[12px] text-ink-400">
             Same assistant, before and after joining. Cost answers use the shared, verified estimate
             — Ally never improvises a number.
           </p>
         </div>
       )}
+
+      <AllyOverlay
+        open={allyOpen}
+        partner={partner}
+        seedQuestionId="oop"
+        onClose={() => setAllyOpen(false)}
+      />
     </div>
   )
 }

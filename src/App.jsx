@@ -74,7 +74,17 @@ export default function App({
     }
     setSaved((s) => {
       const n = new Set(s)
-      n.has(p.id) ? n.delete(p.id) : n.add(p.id)
+      if (n.has(p.id)) {
+        n.delete(p.id)
+        showToast({ tone: 'info', title: 'Removed from saved', body: `${p.name} is off your list.` })
+      } else {
+        n.add(p.id)
+        showToast({
+          tone: 'good',
+          title: 'Saved',
+          body: `${p.name} is on your list — your price is shown with the ${partner?.name || 'partner'} benefit applied.`,
+        })
+      }
       return n
     })
   }

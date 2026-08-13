@@ -11,6 +11,16 @@ export default function GateModal({ open, partner, trigger = 'save', onJoin, onD
   return (
     <div className="fixed inset-0 z-[65] flex items-end justify-center bg-ink-900/40 p-4 sm:items-center">
       <div className="w-full max-w-md rounded-2xl bg-surface-0 p-6 shadow-xl">
+        {benefit && (
+          <div className="mb-3 flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-600 text-[11px] font-black text-white">
+              ac
+            </span>
+            <span className="text-[13px] font-bold text-ink-500">
+              + {partner.name} benefit
+            </span>
+          </div>
+        )}
         <h2 className="text-xl font-black text-ink-900">
           {trigger === 'compare' ? 'Compare programs and see YOUR price' : 'Save programs and see YOUR price'}
         </h2>

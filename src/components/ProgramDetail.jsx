@@ -181,6 +181,16 @@ export default function ProgramDetail({
           moment) in both phases. */}
       <div className="flex flex-col gap-5">
         {valueCard}
+        {variant === '2B' && (
+          <button
+            type="button"
+            onClick={() => onOpenAlly?.(p)}
+            className="flex items-center gap-2 self-start rounded-full border border-mk-purple/40 bg-mk-purple/5 px-4 py-2 text-[14px] font-bold text-mk-purple transition hover:bg-mk-purple/10"
+          >
+            <SparkleIcon className="text-base" />
+            Ask Ally about this cost
+          </button>
+        )}
         {costEbs}
         {glance}
       </div>

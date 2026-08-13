@@ -88,7 +88,8 @@ export default function CtaFlow({
               <div className="space-y-2.5">
                 <OptionRow
                   icon={HeadsetIcon}
-                  title="Talk to an Education Benefits Specialist (recommended)"
+                  title="Talk to an Education Benefits Specialist"
+                  recommended
                   sub="Free 20–30 minute call. Confirms your benefit and keeps your discount eligibility. We won't share your information with the school unless you decide to move forward."
                   onClick={() => setStep('advisor')}
                 />
@@ -196,24 +197,39 @@ export default function CtaFlow({
 
 /* ------------------------------------------------------------------ */
 
-function OptionRow({ icon: Icon, title, sub, channel = 'internal', onClick }) {
+function OptionRow({ icon: Icon, title, sub, channel = 'internal', recommended = false, onClick }) {
   const school = channel === 'school'
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center gap-3.5 rounded-xl border px-4 py-3.5 text-left transition ${
-        school ? 'border-blue-200 bg-blue-50/50 hover:border-blue-300' : 'border-surface-200 bg-surface-0 hover:border-brand-300 hover:bg-brand-50/40'
+      className={`flex w-full items-center gap-3.5 rounded-xl border px-4 py-4 text-left transition ${
+        recommended
+          ? 'border-good-700/50 bg-good-700/[0.07] ring-1 ring-good-700/25 hover:border-good-700'
+          : school
+            ? 'border-blue-200 bg-blue-50/50 hover:border-blue-300'
+            : 'border-surface-200 bg-surface-0 hover:border-brand-300 hover:bg-brand-50/40'
       }`}
     >
       <span
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xl ${
-          school ? 'bg-blue-100 text-blue-700' : 'bg-brand-50 text-brand-600'
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xl ${
+          recommended
+            ? 'bg-good-700 text-white'
+            : school
+              ? 'bg-blue-100 text-blue-700'
+              : 'bg-brand-50 text-brand-600'
         }`}
       >
         <Icon />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[15px] font-bold text-ink-900">{title}</span>
+        <span className="block text-[15px] font-bold text-ink-900">
+          {title}
+          {recommended && (
+            <span className="ml-2 rounded-full bg-good-700 px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide text-white">
+              Recommended
+            </span>
+          )}
+        </span>
         <span className="block text-[13px] leading-snug text-ink-500">{sub}</span>
       </span>
       <ArrowRightIcon className="shrink-0 text-base text-ink-400" />

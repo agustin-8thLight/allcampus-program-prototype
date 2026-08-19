@@ -44,7 +44,10 @@ export default function StoryCoach({ story, routePath, onExit, onDrive }) {
 
   return (
     <div
-      className={`fixed inset-x-0 bottom-0 z-[70] border-t bg-ink-900/95 px-4 py-3 text-white backdrop-blur transition-shadow ${
+      /* z-[80]: review chrome outranks every product overlay (GateModal z-65,
+         IntentStep z-66, AllyOverlay z-75) — "Show me" must stay clickable
+         while a product modal is open, or the story stalls on it. */
+      className={`fixed inset-x-0 bottom-0 z-[80] border-t bg-ink-900/95 px-4 py-3 text-white backdrop-blur transition-shadow ${
         fresh ? 'border-brand-400 shadow-[0_-8px_32px_rgba(80,190,190,0.35)]' : 'border-white/10'
       }`}
     >

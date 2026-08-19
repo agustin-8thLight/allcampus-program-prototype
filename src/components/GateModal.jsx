@@ -1,9 +1,10 @@
 import { emitStoryEvent } from '../data/useCases.js'
 
 /*
- * The account gate (move 2): appears ONLY when joining unlocks something —
- * saving, comparing, seeing an exact personal price. Browsing never triggers
- * it. Wireframe copy: "Save programs and see YOUR price."
+ * The account gate. Since the Aug 14 decision (login before catalog access)
+ * it fires from the catalog prompt as well as Save/Compare. The old footnote
+ * promising "browsing never requires an account" is gone — that promise is no
+ * longer true and a broken promise is worse than none.
  */
 export default function GateModal({ open, partner, trigger = 'save', onJoin, onDismiss }) {
   if (!open) return null
@@ -22,7 +23,11 @@ export default function GateModal({ open, partner, trigger = 'save', onJoin, onD
           </div>
         )}
         <h2 className="text-xl font-black text-ink-900">
-          {trigger === 'compare' ? 'Compare programs and see YOUR price' : 'Save programs and see YOUR price'}
+          {trigger === 'catalog'
+            ? 'See the schools and YOUR price'
+            : trigger === 'compare'
+              ? 'Compare programs and see YOUR price'
+              : 'Save programs and see YOUR price'}
         </h2>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
           Create a free account to save and compare programs
@@ -47,9 +52,6 @@ export default function GateModal({ open, partner, trigger = 'save', onJoin, onD
             Not now
           </button>
         </div>
-        <p className="mt-3 text-[12px] text-ink-400">
-          Browsing never requires an account. This ask appears only when it gets you something.
-        </p>
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PROGRAMS, QUICK_FILTERS, applyQuickFilter } from './data/model.js'
 import { AREAS, getArea, getSkill, getGoal, programMatchesGoal } from './data/taxonomy.js'
-import { isFullyCoveredEstimate } from './data/benefit.js'
+import { isFullyCoveredEstimate, bestDiscountPercent } from './data/benefit.js'
 import { getSchool } from './data/schools.js'
 import ProgramCard from './components/ProgramCard.jsx'
 import EmptyStateAlly from './components/EmptyStateAlly.jsx'
@@ -15,7 +15,6 @@ import {
   SearchIcon,
   ChevronDownIcon,
   CapIcon,
-  MonitorIcon,
   BookIcon,
   BuildingIcon,
 } from './components/icons.jsx'
@@ -23,10 +22,10 @@ import {
 // Order = usefulness for narrowing (06-17 review): area of study, degree, and
 // university first; course modality last (least useful — nearly all online).
 // Areas of Study is functional (taxonomy.js); the others remain UI stubs.
+// Course Modality removed (Aug 14: all programs online, badge not filter).
 const FILTER_DROPDOWNS = [
   { label: 'Degree Level', icon: CapIcon },
   { label: 'Universities', icon: BuildingIcon },
-  { label: 'Course Modality', icon: MonitorIcon },
 ]
 
 // `variant` is supplied by the prototype review frame (PrototypeFrame), which
@@ -40,6 +39,13 @@ export default function App({
   joined = false,
   intent = null,
   onGate = null,
+  // Aug 14 decision: login before catalog access. 'gated' (default) shows an
+  // unauthenticated visitor the match count and a discount hint, then the
+  // account prompt — the notes' exact sequence ("prompts login before showing
+  // catalog. Show program count and hint at discounts without revealing
+  // school names or amounts"). 'open' preserves the anonymous browse the four
+  // story walkthroughs were authored against.
+  catalogMode = 'gated',
 }) {
   const [query, setQuery] = useState(() => initialParams?.get('q') || '')
   const [activeFilter, setActiveFilter] = useState(
@@ -55,7 +61,6 @@ export default function App({
   const [goalId, setGoalId] = useState(() => initialParams?.get('goal') || null)
   const [schoolId] = useState(() => initialParams?.get('school') || null)
   const [degreeLevel, setDegreeLevel] = useState(() => initialParams?.get('degree') || null)
-  const [modality, setModality] = useState(() => initialParams?.get('modality') || null)
   const [coveredOnly, setCoveredOnly] = useState(() => initialParams?.get('covered') === '1')
   const [areaMenuOpen, setAreaMenuOpen] = useState(false)
   const [selected, setSelected] = useState(null)
@@ -64,6 +69,7 @@ export default function App({
   const [flowReturnView, setFlowReturnView] = useState('detail') // where the flow's back goes
   const [flowStep, setFlowStep] = useState('choose')
   const [requested, setRequested] = useState(() => new Set()) // program ids the user has acted on
+  const teasing = catalogMode === 'gated' && !joined
   const [saved, setSaved] = useState(() => new Set()) // saved program ids (post-join)
   const { showToast } = useToast()
 
@@ -130,7 +136,7 @@ export default function App({
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const id = params.get('program') || initialParams?.get('program')
-    if (id) {
+    if (id && !teasing) {
       const p = PROGRAMS.find((x) => x.id === id)
       if (p) {
         setSelected(p)
@@ -176,10 +182,9 @@ export default function App({
     if (skillId) matched = matched.filter((p) => p.skillIds?.includes(skillId))
     if (schoolId) matched = matched.filter((p) => p.schoolId === schoolId)
     if (degreeLevel) matched = matched.filter((p) => p.degreeLevel === degreeLevel)
-    if (modality) matched = matched.filter((p) => p.courseModality === modality)
     if (coveredOnly && partner) matched = matched.filter((p) => isFullyCoveredEstimate(p, partner))
     return applyQuickFilter(matched, activeFilter)
-  }, [query, activeFilter, areaId, skillId, goalId, schoolId, degreeLevel, modality, coveredOnly, partner])
+  }, [query, activeFilter, areaId, skillId, goalId, schoolId, degreeLevel, coveredOnly, partner])
 
   // Applied-filter chips (taxonomy + landing handoffs), each clearable.
   const appliedFilters = [
@@ -188,7 +193,6 @@ export default function App({
     !skillId && areaId && { key: 'area', label: getArea(areaId)?.label, clear: () => setAreaId(null) },
     schoolId && { key: 'school', label: getSchool(schoolId)?.name, clear: null }, // school scope comes from the school page
     degreeLevel && { key: 'degree', label: degreeLevel, clear: () => setDegreeLevel(null) },
-    modality && { key: 'modality', label: modality, clear: () => setModality(null) },
     coveredOnly && { key: 'covered', label: 'Fully covered (est.)', clear: () => setCoveredOnly(false) },
   ].filter(Boolean)
 
@@ -286,7 +290,6 @@ export default function App({
                   setAreaId(null)
                   setSkillId(null)
                   setDegreeLevel(null)
-                  setModality(null)
                   setCoveredOnly(false)
                 }}
                 className="text-[13px] font-semibold text-ink-500 hover:text-ink-900"
@@ -335,8 +338,9 @@ export default function App({
             <span className="font-black text-brand-600">{results.length} programs</span> for you
           </p>
 
-          {/* Quick-filter chips (§7) */}
-          <div className="flex flex-wrap gap-2">
+          {/* Quick-filter chips (§7); hidden while gated — sorting a list
+              the visitor can't see yet is noise. */}
+          <div className={`flex flex-wrap gap-2 ${teasing ? 'hidden' : ''}`}>
             {QUICK_FILTERS.map((f) => {
               const active = activeFilter === f.id
               return (
@@ -359,7 +363,54 @@ export default function App({
           </div>
         </div>
 
-        {results.length === 0 ? (
+        {teasing ? (
+          /*
+           * The login-before-catalog moment, per the meeting notes verbatim:
+           * count, degree spread, a discount hint — no school names, no
+           * amounts — then the existing account prompt (GateModal → join →
+           * intent). After joining, the normal grid below renders unchanged.
+           */
+          <div className="mx-auto mt-8 max-w-xl rounded-2xl border border-surface-200 bg-surface-0 p-7 text-center shadow-sm">
+            <p className="text-[13px] font-bold uppercase tracking-wide text-ink-400">
+              Your results are ready
+            </p>
+            <h2 className="mt-2 text-[26px] font-black leading-tight text-ink-900">
+              {results.length} {results.length === 1 ? 'program matches' : 'programs match'}
+            </h2>
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5">
+              {['Certificate', 'Associate', "Bachelor's", "Master's"]
+                .map((level) => ({ level, n: results.filter((r) => r.degreeLevel === level).length }))
+                .filter((r) => r.n > 0)
+                .map((r) => (
+                  <span
+                    key={r.level}
+                    className="rounded-full bg-surface-100 px-2.5 py-1 text-[12.5px] font-bold text-ink-600"
+                  >
+                    {r.level} · {r.n}
+                  </span>
+                ))}
+            </div>
+            {bestDiscountPercent(results) != null && (
+              <p className="mt-3 text-[15px] font-bold text-good-700">
+                AllCampus discounts up to {bestDiscountPercent(results)}% off
+              </p>
+            )}
+            <p className="mx-auto mt-2 max-w-sm text-[13.5px] leading-relaxed text-ink-500">
+              Create a free account to see the schools, your discounted price
+              {partner?.benefitKnown ? ` with the ${partner.name} benefit applied` : ''}, and full
+              program details.
+            </p>
+            <button
+              onClick={() => onGate?.('catalog')}
+              className="mt-5 rounded-lg bg-brand-600 px-6 py-2.5 text-[15px] font-bold text-white transition hover:bg-brand-700"
+            >
+              Create a free account
+            </button>
+            <p className="mt-2 text-[12px] text-ink-400">
+              Already have one? The same window signs you in.
+            </p>
+          </div>
+        ) : results.length === 0 ? (
           // Move 4: the honest empty state + the Ally handoff, never a dead end.
           <EmptyStateAlly
             query={query}

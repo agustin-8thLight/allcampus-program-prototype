@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import App from '../App.jsx'
 import LandingPage from '../pages/LandingPage.jsx'
 import SchoolPage from '../pages/SchoolPage.jsx'
+import CategoryPage from '../pages/CategoryPage.jsx'
 import ConceptNotes from './ConceptNotes.jsx'
 import CtaCompare from './CtaCompare.jsx'
 import StoryLauncher from './StoryLauncher.jsx'
@@ -25,6 +26,7 @@ import { getUseCase } from '../data/useCases.js'
  *   #/                     redesigned landing page (2026-08-11 direction)
  *   #/browse?...           the program search/browse surface (original App)
  *   #/school/<id>          school page scoped to one partner school
+ *   #/category/<id>        category landing page (skill drill-down)
  *
  * Employer demo states (?employer= override): sheetz, texas-roadhouse,
  * boeing, lowes, global-default. REAL partner names by decision (2026-08-12,
@@ -50,6 +52,18 @@ function initialStory() {
   return getUseCase(new URLSearchParams(window.location.search).get('story'))
 }
 
+// Aug 14 decision: login before catalog access. 'gated' is the default;
+// 'open' preserves the anonymous browse the story walkthroughs were authored
+// against (startStory forces it), and lets reviewers compare the two.
+function initialCatalogMode() {
+  return new URLSearchParams(window.location.search).get('catalog') === 'open' ? 'open' : 'gated'
+}
+
+const CATALOG_MODES = [
+  { id: 'gated', label: 'Gated', tagline: 'Aug 14 decision: count + discount hint, then login before the catalog' },
+  { id: 'open', label: 'Open', tagline: 'Anonymous browse; the four stories run in this mode' },
+]
+
 function parseHash() {
   const raw = window.location.hash.replace(/^#/, '') || '/stories'
   const [path, qs] = raw.split('?')
@@ -65,6 +79,7 @@ export default function PrototypeFrame() {
   const [joined, setJoined] = useState(false)
   const [intent, setIntent] = useState(null)
   const [gate, setGate] = useState(null) // { trigger } | null
+  const [catalogMode, setCatalogMode] = useState(initialCatalogMode)
   // Phone view (E3): auto-enabled for mobile-first stories like Tina's.
   const [phone, setPhone] = useState(false)
   const [intentOpen, setIntentOpen] = useState(false)
@@ -96,6 +111,8 @@ export default function PrototypeFrame() {
     setEmployerId(u.employerId)
     setJoined(false)
     setIntent(null)
+    // The stories were authored against anonymous browse; keep them working.
+    setCatalogMode('open')
     setPhone(!!u.mobile)
     navigate(u.entry)
   }
@@ -126,6 +143,7 @@ export default function PrototypeFrame() {
         break
       case 'intent':
         if (!joined) setJoined(true)
+        setGate(null) // a story may reach intent with the gate still open
         applyIntent(drive.intent)
         break
       case 'ally':
@@ -178,6 +196,16 @@ export default function PrototypeFrame() {
   } else if (route.path.startsWith('/school/')) {
     const schoolId = route.path.split('/')[2]
     page = <SchoolPage schoolId={schoolId} partner={partner} onNavigate={navigate} />
+  } else if (route.path.startsWith('/category/')) {
+    // Aug 14 meeting: category tiles open a landing page with skill drill-down.
+    page = (
+      <CategoryPage
+        key={route.raw}
+        categoryId={route.path.split('/')[2]}
+        partner={partner}
+        onNavigate={navigate}
+      />
+    )
   } else if (route.path === '/browse') {
     // Keyed by the raw hash so a new search from the landing page re-seeds filters.
     page = (
@@ -189,6 +217,7 @@ export default function PrototypeFrame() {
         joined={joined}
         intent={intent}
         onGate={requestGate}
+        catalogMode={catalogMode}
       />
     )
   } else {
@@ -220,6 +249,25 @@ export default function PrototypeFrame() {
               }`}
             >
               {v.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Catalog gate: the Aug 14 decision vs the anonymous build */}
+        <div className="hidden items-center gap-1 rounded-full bg-white/10 p-0.5 lg:flex">
+          <span className="pl-2 pr-1 text-[11px] font-bold uppercase tracking-wide text-white/45">
+            Catalog
+          </span>
+          {CATALOG_MODES.map((m) => (
+            <button
+              key={m.id}
+              onClick={() => setCatalogMode(m.id)}
+              title={m.tagline}
+              className={`rounded-full px-2.5 py-1 text-[12px] font-bold transition ${
+                catalogMode === m.id ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              {m.label}
             </button>
           ))}
         </div>
@@ -298,7 +346,7 @@ export default function PrototypeFrame() {
 
       {/* The account gate + intent question (product surfaces, moves 2–3) */}
       <GateModal
-        open={!!gate}
+        open={!!gate && !joined}
         trigger={gate?.trigger}
         partner={partner}
         onJoin={join}

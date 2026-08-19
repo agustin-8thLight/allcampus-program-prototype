@@ -33,7 +33,34 @@ function buildScript(partner) {
   const topSavings = topSaver ? discountSavings(topSaver) : null
   const topPercent = bestDiscountPercent(PROGRAMS)
 
+  /*
+   * Career-guidance set FIRST (Aug 14 meeting: Ally leads with career
+   * guidance, not benefits Q&A, until the knowledge base is stronger). The
+   * benefit answers below are kept as follow-ups — they compute from
+   * benefit.js rather than improvising, and they remain the only surface
+   * answering the cost question, so they move back, not away.
+   */
   return [
+    {
+      id: 'narrow',
+      q: 'I’m not sure what to study',
+      a: `That is the most common place to start, and it does not have to be resolved before you look. Two ways in: pick the outcome you want — moving into management, becoming a nurse practitioner, finishing a bachelor's — and I'll map it to programs, or pick a subject area and narrow to the specific skill. Either route lands in the same catalog of ${PROGRAMS.length} programs, all online. You do not need to know the degree name.`,
+      followups: ['fit', 'outcomes'],
+      cta: { label: 'Start from an outcome', to: '/' },
+    },
+    {
+      id: 'fit',
+      q: 'Will this fit around a full-time job?',
+      a: `Every program in this catalog is 100% online, which is the baseline rather than a feature. Beyond that, the things that decide whether a program fits are pace and transfer credit: how many credits a term, and how many you already have. Both are on each program's page. If you have prior college credit or trade experience, that can shorten a bachelor's meaningfully.`,
+      followups: ['narrow', 'oop'],
+      cta: { label: 'Browse the fastest options', to: '/browse?filter=fastest' },
+    },
+    {
+      id: 'outcomes',
+      q: 'Where could a program like this lead?',
+      a: `I want to be straight with you: AllCampus does not have verified graduate outcome or salary data for these programs, so anything I told you about earnings would be made up. What I can tell you is what a program contains, what credential it grants, and what it costs with your discount. For where a specific degree has actually taken people, the school's admissions team and an Education Benefits Specialist are better sources than I am.`,
+      followups: ['narrow', 'start'],
+    },
     {
       id: 'benefit',
       q: 'How does my tuition benefit work?',
@@ -109,7 +136,7 @@ export default function AllyOverlay({ open, partner, seedQuestionId = null, onCl
         {
           role: 'ally',
           text: 'In the real product I’d answer that directly — this preview runs on scripted answers. The questions below cover what I can do here:',
-          followups: ['benefit', 'oop', 'start'],
+          followups: ['narrow', 'fit', 'benefit'],
         },
       ])
     }, 750)
@@ -125,8 +152,8 @@ export default function AllyOverlay({ open, partner, seedQuestionId = null, onCl
     setMessages([
       {
         role: 'ally',
-        text: `Hi, I’m Ally. I help with benefits, costs, and getting started${partner?.benefitKnown && partner.employerReimbursement > 0 ? ` — and I already know the ${partner.name} benefit` : ''}. What can I check for you?`,
-        followups: ['benefit', 'oop', 'start'],
+        text: `Hi, I’m Ally. I help you figure out what to study and how it fits your life${partner?.benefitKnown && partner.employerReimbursement > 0 ? `, and I can also walk through the ${partner.name} benefit` : ''}. Where do you want to start?`,
+        followups: ['narrow', 'fit', 'outcomes'],
       },
     ])
     if (seedQuestionId && !seeded.current) {

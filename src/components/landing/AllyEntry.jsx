@@ -13,10 +13,12 @@ import AllyOverlay from '../AllyOverlay.jsx'
  * Self-contained, so every surface that renders AllyEntry (landing, school
  * page) gets the overlay for free.
  */
+// Aug 14 meeting: "lead with career guidance framing, not benefits Q&A.
+// Avoid over-promising until Ally's knowledge base is stronger."
 const PREVIEW_QUESTIONS = [
-  { id: 'benefit', q: 'How does my tuition benefit work?' },
-  { id: 'oop', q: 'What will I pay out of pocket?' },
-  { id: 'start', q: 'How do I get started?' },
+  { id: 'narrow', q: 'I’m not sure what to study' },
+  { id: 'fit', q: 'Will this fit around a full-time job?' },
+  { id: 'outcomes', q: 'Where could a program like this lead?' },
 ]
 
 export default function AllyEntry({ partner }) {
@@ -27,12 +29,12 @@ export default function AllyEntry({ partner }) {
   return (
     <section className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-5 py-16 lg:grid-cols-2">
       <div>
-        <Eyebrow tone="purple">✦ AI-powered assistant</Eyebrow>
-        <Heading className="mt-2">Questions about your benefits? Ask Ally.</Heading>
+        <Eyebrow tone="purple">✦ AI copilot</Eyebrow>
+        <Heading className="mt-2">Not sure where to start? Talk it through with Ally.</Heading>
         <Body className="mt-3 max-w-md">
-          Ally is your education benefits assistant: how your employer&rsquo;s benefit works, what
-          you&rsquo;d pay out of pocket, and how to get started. When you&rsquo;re ready to look at
-          programs, the search above is the fastest way in.
+          Ally helps you narrow things down: what to study, which credential fits, and how a
+          program works around a full-time job. For the specifics of your employer&rsquo;s benefit,
+          the section above lays it out, and a specialist can confirm your numbers.
         </Body>
         <button
           type="button"
@@ -57,7 +59,7 @@ export default function AllyEntry({ partner }) {
             <div className="text-[14px] font-extrabold text-mk-slate">
               Ally <span className="ml-1 rounded border border-mk-line px-1 text-[10px] font-bold text-mk-body">AI</span>
             </div>
-            <div className="text-[11.5px] text-mk-body">Education Benefits Assistant</div>
+            <div className="text-[11.5px] text-mk-body">Career &amp; program copilot</div>
           </div>
           <span className="ml-auto flex items-center gap-1 text-[11.5px] text-mk-green-700">
             <span className="h-1.5 w-1.5 rounded-full bg-mk-green-600" /> Online
@@ -66,8 +68,7 @@ export default function AllyEntry({ partner }) {
 
         <div className="space-y-2 py-3 font-display">
           <div className="max-w-[85%] rounded-lg bg-mk-band px-3 py-2 text-[13px] leading-relaxed text-mk-slate">
-            Hi, I&rsquo;m Ally. I help with benefits, costs, and getting started — pick a question
-            and we&rsquo;ll talk it through.
+            Hi, I&rsquo;m Ally. Pick a question and we&rsquo;ll narrow down what fits you.
           </div>
         </div>
 
@@ -90,12 +91,13 @@ export default function AllyEntry({ partner }) {
         </div>
         <div className="mt-3 flex items-center gap-2 border-t border-mk-line pt-3">
           <span className="min-w-0 flex-1 rounded-xl border border-mk-line px-3 py-2 font-display text-[12.5px] text-mk-body/60">
-            Ask Ally anything about your benefit…
+            Ask Ally about programs, credentials, or fit…
           </span>
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-mk-purple text-white">→</span>
         </div>
         <p className="mt-2 font-display text-[11px] text-mk-body/70">
-          Opens the full assistant. Scripted preview — Ally is an AI assistant and can make mistakes.
+          Opens the full assistant. Scripted preview; Ally is an AI assistant and can make
+          mistakes. It doesn&rsquo;t confirm eligibility or approve funding.
         </p>
       </button>
 

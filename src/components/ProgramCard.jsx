@@ -39,12 +39,6 @@ export default function ProgramCard({
       onKeyDown={(e) => e.key === 'Enter' && explore()}
       className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-[var(--radius-card)] border border-surface-200 bg-surface-0 text-left transition hover:border-brand-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
     >
-      {badgeLabel(p) && (
-        <div className="flex flex-wrap items-center gap-2 px-4 pt-4">
-          <Badge program={p} />
-        </div>
-      )}
-
       {/* Title + school */}
       <div className="px-4 pt-4">
         <h3 className="text-[21px] font-bold leading-snug text-ink-900 line-clamp-2">{p.name}</h3>
@@ -54,9 +48,17 @@ export default function ProgramCard({
         </div>
       </div>
 
-      {/* Image */}
-      <div className="px-4 pt-3">
+      {/* Image, with the discount badge OVERLAID on its corner (2026-08-18
+          review: as an in-flow row the badge broke card heights whenever a
+          program had no discount, and the pale pill undersold the offer —
+          same corner on every card, zero height impact, solid for punch). */}
+      <div className="relative px-4 pt-3">
         <ProgramImage src={p.programImageUrl} alt={p.name} hue={p.programImageHue} className="h-32 w-full" />
+        {badgeLabel(p) && (
+          <span className="absolute left-6 top-5">
+            <Badge program={p} variant="overlay" />
+          </span>
+        )}
       </div>
 
       {/* Price + facts */}

@@ -80,7 +80,7 @@ export const PROGRAMS = programsRaw.map((p) => ({
   school: getSchool(p.schoolId),
   routingType: getSchool(p.schoolId)?.routingType || 'standard',
   isDirectHandoff: isDirectHandoff(p.schoolId),
-  programImageUrl: imageForId(p.id) || remoteProgramImage(p.id),
+  programImageUrl: imageForId(p.id) || remoteProgramImage(p.id) || p.imageUrl || null,
   terms: p.discount?.terms ?? null,
   badgeType: resolveBadgeType(p),
 }))

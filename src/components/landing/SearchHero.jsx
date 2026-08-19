@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { MkButton } from './Section.jsx'
-import { AREAS, skillsForArea } from '../../data/taxonomy.js'
+import AreaSkillSelect from './AreaSkillSelect.jsx'
 import { heroImage } from '../../data/images.js'
 import Img from '../Img.jsx'
 
@@ -32,6 +32,7 @@ export default function SearchHero({ partner, onSearch }) {
       q: q.trim(),
       area: kind === 'area' ? id : null,
       skill: kind === 'skill' ? id : null,
+      goal: kind === 'goal' ? id : null,
       degree: degree === DEGREE_LEVELS[0] ? null : degree,
       modality: modality === MODALITIES[0] ? null : modality,
     })
@@ -75,7 +76,7 @@ export default function SearchHero({ partner, onSearch }) {
       <div className="relative z-10 mx-auto -mt-14 max-w-5xl px-5">
         <form
           onSubmit={submit}
-          className="grid grid-cols-1 gap-4 rounded-xl bg-white p-5 shadow-[0_10px_30px_rgba(51,71,91,0.14)] sm:grid-cols-2 lg:grid-cols-[1.3fr_1.2fr_.9fr_.9fr_auto] sm:items-end"
+          className="relative grid grid-cols-1 gap-4 rounded-xl bg-white p-5 shadow-[0_10px_30px_rgba(51,71,91,0.14)] sm:grid-cols-2 lg:grid-cols-[1.3fr_1.2fr_.9fr_.9fr_auto] sm:items-end"
         >
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-bold text-mk-slate">
@@ -88,24 +89,10 @@ export default function SearchHero({ partner, onSearch }) {
               className="w-full rounded-md border border-mk-line px-3 py-2.5 text-[14px] text-mk-slate outline-none placeholder:text-mk-body/60 focus:border-mk-teal-600"
             />
           </label>
-          <label className="block">
-            <span className="mb-1.5 block text-[13px] font-bold text-mk-slate">
-              Area of study or skill
-            </span>
-            <select value={field} onChange={(e) => setField(e.target.value)} className={selectCls}>
-              <option value="">Any area or skill</option>
-              {AREAS.map((a) => (
-                <optgroup key={a.id} label={a.label}>
-                  <option value={`area:${a.id}`}>All of {a.label}</option>
-                  {skillsForArea(a.id).map((sk) => (
-                    <option key={sk.id} value={`skill:${sk.id}`}>
-                      {sk.label}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-          </label>
+          {/* Custom picker, kept from the gate-flow explorations (2026-08-19):
+              opens on a Popular tab of outcome labels, area tabs beside it —
+              the one piece retained from that branch after client review. */}
+          <AreaSkillSelect value={field} onChange={setField} />
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-bold text-mk-slate">Degree level</span>
             <select value={degree} onChange={(e) => setDegree(e.target.value)} className={selectCls}>

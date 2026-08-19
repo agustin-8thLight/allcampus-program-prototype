@@ -36,8 +36,8 @@ export default function LandingPage({ partner, onNavigate }) {
 
       <SearchHero
         partner={partner}
-        onSearch={({ q, area, skill, degree, modality }) =>
-          goBrowse({ q, area, skill, degree, modality })
+        onSearch={({ q, area, skill, goal, degree, modality }) =>
+          goBrowse({ q, area, skill, goal, degree, modality })
         }
       />
 

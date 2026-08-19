@@ -20,7 +20,10 @@ import AllyOverlay from '../components/AllyOverlay.jsx'
  * sits BEFORE any outbound school link.
  */
 
-export default function SchoolPage({ schoolId, partner, onNavigate }) {
+// `gated`: with the catalog behind login (Aug 14 decision), school pages must
+// not leak the prices browse withholds. The school's own identity stays — the
+// employer link that brought the visitor here already revealed it.
+export default function SchoolPage({ schoolId, partner, gated = false, onNavigate }) {
   const school = getSchool(schoolId)
   if (!school) {
     return (
@@ -182,18 +185,26 @@ export default function SchoolPage({ schoolId, partner, onNavigate }) {
                   <span className="mt-1 block font-display text-[16px] font-extrabold leading-snug text-mk-slate">
                     {p.name}
                   </span>
-                  <span className="mt-1.5 block font-display text-[13.5px] font-bold text-mk-slate">
-                    {resolveCost(p).primaryValue}{' '}
-                    <span className="font-semibold text-mk-body">
-                      {resolveCost(p).primaryLabel === 'Per credit' ? 'per credit' : 'total'}
+                  {gated ? (
+                    <span className="mt-1.5 block font-display text-[13px] font-semibold text-mk-body/70">
+                      Log in to see your price
                     </span>
-                  </span>
-                  {oop != null && (
-                    <span className="mt-0.5 block font-display text-[13px] font-bold text-mk-green-700">
-                      {oop === 0
-                        ? 'Fully covered by your benefit (est.)'
-                        : `Est. ${money(oop)} out of pocket/yr`}
-                    </span>
+                  ) : (
+                    <>
+                      <span className="mt-1.5 block font-display text-[13.5px] font-bold text-mk-slate">
+                        {resolveCost(p).primaryValue}{' '}
+                        <span className="font-semibold text-mk-body">
+                          {resolveCost(p).primaryLabel === 'Per credit' ? 'per credit' : 'total'}
+                        </span>
+                      </span>
+                      {oop != null && (
+                        <span className="mt-0.5 block font-display text-[13px] font-bold text-mk-green-700">
+                          {oop === 0
+                            ? 'Fully covered by your benefit (est.)'
+                            : `Est. ${money(oop)} out of pocket/yr`}
+                        </span>
+                      )}
+                    </>
                   )}
                   <span className="mt-1.5 block font-display text-[12.5px] text-mk-body">
                     Starts {startDateDisplay(p) || 'soon'}

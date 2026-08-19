@@ -1,7 +1,6 @@
 import MkHeader from '../components/landing/MkHeader.jsx'
 import SearchHero from '../components/landing/SearchHero.jsx'
 import AllyEntry from '../components/landing/AllyEntry.jsx'
-import CategoriesExplorer from '../components/landing/CategoriesExplorer.jsx'
 import BenefitBlock from '../components/landing/BenefitBlock.jsx'
 import EcosystemStrip from '../components/landing/EcosystemStrip.jsx'
 import GoalsExplorer from '../components/landing/GoalsExplorer.jsx'
@@ -18,8 +17,8 @@ import { hasBenefitAdmin, policyOwner, PREAPPROVAL_RULE } from '../data/corporat
  *  2. Education benefit block (known / unknown states)
  *  3. "How this works" strip + an accurate "what you do next" step list
  *     (the meeting's top priority: steps that build confidence)
- *  4. Category tiles (Coursera-style, four buckets → category landing pages)
- *  5. "Pick an outcome" tiles (unchanged)
+ *  4. Discovery band: outcome image cards + a compact subject-tile strip
+ *     (four buckets → category landing pages) inside one section
  *  6. Learner stories
  *  7. Ally — MOVED below stories and reframed to career guidance per the
  *     meeting ("helpful copilot, not the anchor feature")
@@ -110,21 +109,15 @@ export default function LandingPage({ partner, onNavigate }) {
         </div>
       </section>
 
-      {/* Category tiles (Aug 14: "high-level category tiles that expand into
-          core skills… clicking a category goes to a landing page"). Labels are
-          drafts for Brigid. */}
-      <div className="pt-16">
-        <CategoriesExplorer
-          partner={partner}
-          onSelectCategory={(c) => onNavigate(`/category/${c.id}`)}
-        />
-      </div>
-
+      {/* One discovery band (2026-08-19): outcomes lead as the emotive image
+          cards, the four subject tiles ride along as a compact strip inside —
+          two entries, one block, no lookalike sections. Tiles open the
+          category landing pages (Aug 14 ask). */}
       <div className="pt-16">
         <GoalsExplorer
           partner={partner}
           onSelectGoal={(goal) => goBrowse({ goal: goal.id })}
-          onSelectArea={(area) => goBrowse({ area: area.id })}
+          onSelectCategory={(c) => onNavigate(`/category/${c.id}`)}
         />
       </div>
 
@@ -132,7 +125,7 @@ export default function LandingPage({ partner, onNavigate }) {
 
       <AllyEntry partner={partner} />
 
-      <LogoStrip onSelectSchool={(s) => onNavigate(`/school/${s.id}`)} />
+      <LogoStrip onSelectSchool={(s) => onNavigate(`/school/${s.id}`)} onSeeAll={() => goBrowse({})} />
 
       <LandingFaq />
 

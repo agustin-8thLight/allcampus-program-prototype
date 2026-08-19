@@ -106,8 +106,8 @@ export default function CategoryPage({ categoryId, partner, onNavigate }) {
               </div>
 
               <div className="mt-6">
-                <MkButton tone="teal" onClick={() => onNavigate('/browse')}>
-                  Browse programs
+                <MkButton tone="teal" onClick={() => onNavigate(`/browse?category=${category.id}`)}>
+                  Browse all {inCategory.length} programs
                 </MkButton>
               </div>
             </div>

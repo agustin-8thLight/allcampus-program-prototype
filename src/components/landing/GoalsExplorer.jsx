@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { Eyebrow, Heading, Body } from './Section.jsx'
-import { goalsForEmployer, areasForEmployer, getArea, programMatchesGoal } from '../../data/taxonomy.js'
+import { SubjectIconTile } from './SubjectIcon.jsx'
+import { goalsForEmployer, categoriesForEmployer, programMatchesCategory, programMatchesGoal } from '../../data/taxonomy.js'
 import { PROGRAMS } from '../../data/model.js'
 import { goalImage } from '../../data/images.js'
 import Img from '../Img.jsx'
@@ -17,12 +17,11 @@ import { fullyCoveredPrograms } from '../../data/benefit.js'
  *
  * Goal LABELS are draft — validate wording with Brigid.
  */
-export default function GoalsExplorer({ partner, onSelectGoal, onSelectArea }) {
+export default function GoalsExplorer({ partner, onSelectGoal, onSelectCategory }) {
   const goals = goalsForEmployer(partner)
-  const areas = areasForEmployer(partner)
+  const categories = categoriesForEmployer(partner)
   const covered = fullyCoveredPrograms(PROGRAMS, partner)
   const emphasized = (partner?.emphasizedAreaIds?.length || 0) > 0
-  const [showAllAreas, setShowAllAreas] = useState(false)
 
   const countFor = (goal) => PROGRAMS.filter((p) => programMatchesGoal(p, goal)).length
   const coveredFor = (goal) => covered.filter((p) => programMatchesGoal(p, goal)).length
@@ -79,29 +78,44 @@ export default function GoalsExplorer({ partner, onSelectGoal, onSelectArea }) {
           })}
         </div>
 
-        {/* Secondary: catalog-language browsing for people who think in fields */}
+        {/* Subjects as a compact wayfinding strip (2026-08-19: as a second
+            band of big tiles this read as a copy of the outcome cards — the
+            differentiation is scale and job: outcomes are the emotive image
+            cards above, subjects are small utility tiles into their landing
+            pages). Labels are drafts for Brigid. */}
         <div className="mt-8 border-t border-mk-line pt-5">
-          <button
-            type="button"
-            onClick={() => setShowAllAreas((v) => !v)}
-            className="font-display text-[13.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
-          >
-            {showAllAreas ? 'Hide areas of study' : 'Prefer to browse by area of study?'}
-          </button>
-          {showAllAreas && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {areas.map((a) => (
+          <p className="font-display text-[12px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
+            Or browse by subject
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+            {categories.map((c) => {
+              const n = PROGRAMS.filter((p) => programMatchesCategory(p, c)).length
+              return (
                 <button
-                  key={a.id}
+                  key={c.id}
                   type="button"
-                  onClick={() => onSelectArea(a)}
-                  className="rounded-full border border-mk-line bg-white px-4 py-2 font-display text-[13.5px] font-bold text-mk-slate transition hover:border-mk-teal-600"
+                  onClick={() => onSelectCategory(c)}
+                  className="group flex items-center gap-3 rounded-xl border border-mk-line bg-white px-3.5 py-3 text-left transition hover:-translate-y-0.5 hover:border-mk-teal-600 hover:shadow-[0_6px_18px_rgba(69,120,140,0.14)]"
                 >
-                  {a.label}
+                  <SubjectIconTile id={c.id} size="sm" />
+                  <span className="min-w-0">
+                    <span className="block font-display text-[13.5px] font-extrabold leading-snug text-mk-slate">
+                      {c.label}
+                    </span>
+                    <span className="block font-display text-[12px] font-semibold text-mk-body">
+                      {n} {n === 1 ? 'program' : 'programs'}
+                    </span>
+                  </span>
+                  <span
+                    aria-hidden
+                    className="ml-auto font-display text-[15px] text-mk-teal-600 transition group-hover:translate-x-0.5"
+                  >
+                    →
+                  </span>
                 </button>
-              ))}
-            </div>
-          )}
+              )
+            })}
+          </div>
         </div>
       </div>
     </section>

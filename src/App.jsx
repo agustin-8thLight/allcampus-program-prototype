@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PROGRAMS, QUICK_FILTERS, applyQuickFilter } from './data/model.js'
-import { AREAS, getArea, getSkill, getGoal, programMatchesGoal } from './data/taxonomy.js'
+import { AREAS, getArea, getSkill, getGoal, getCategory, programMatchesGoal, programMatchesCategory } from './data/taxonomy.js'
 import { isFullyCoveredEstimate, bestDiscountPercent } from './data/benefit.js'
 import { getSchool } from './data/schools.js'
 import ProgramCard from './components/ProgramCard.jsx'
@@ -59,6 +59,9 @@ export default function App({
   // Goal handoff from the landing Goals block: the relatable outcome label
   // filters via its taxonomy mapping and appears as the applied chip.
   const [goalId, setGoalId] = useState(() => initialParams?.get('goal') || null)
+  // Category scope from the category landing page's CTA (kept as plain scope
+  // text in the count line, deliberately not a dismissible chip).
+  const [categoryId] = useState(() => initialParams?.get('category') || null)
   const [schoolId] = useState(() => initialParams?.get('school') || null)
   const [degreeLevel, setDegreeLevel] = useState(() => initialParams?.get('degree') || null)
   const [coveredOnly, setCoveredOnly] = useState(() => initialParams?.get('covered') === '1')
@@ -178,13 +181,17 @@ export default function App({
       const g = getGoal(goalId)
       if (g) matched = matched.filter((p) => programMatchesGoal(p, g))
     }
+    if (categoryId) {
+      const c = getCategory(categoryId)
+      if (c) matched = matched.filter((p) => programMatchesCategory(p, c))
+    }
     if (areaId) matched = matched.filter((p) => p.areaId === areaId)
     if (skillId) matched = matched.filter((p) => p.skillIds?.includes(skillId))
     if (schoolId) matched = matched.filter((p) => p.schoolId === schoolId)
     if (degreeLevel) matched = matched.filter((p) => p.degreeLevel === degreeLevel)
     if (coveredOnly && partner) matched = matched.filter((p) => isFullyCoveredEstimate(p, partner))
     return applyQuickFilter(matched, activeFilter)
-  }, [query, activeFilter, areaId, skillId, goalId, schoolId, degreeLevel, coveredOnly, partner])
+  }, [query, activeFilter, areaId, skillId, goalId, categoryId, schoolId, degreeLevel, coveredOnly, partner])
 
   // Applied-filter chips (taxonomy + landing handoffs), each clearable.
   const appliedFilters = [
@@ -336,31 +343,31 @@ export default function App({
           <p className="text-lg">
             We found{' '}
             <span className="font-black text-brand-600">{results.length} programs</span> for you
+            {categoryId && getCategory(categoryId) && (
+              <span className="font-semibold text-ink-500"> in {getCategory(categoryId).label}</span>
+            )}
           </p>
 
-          {/* Quick-filter chips (§7); hidden while gated — sorting a list
+          {/* Sort as a labeled dropdown — production's own "Sort by:" pattern;
+              chips here read as filters. Hidden while gated: sorting a list
               the visitor can't see yet is noise. */}
-          <div className={`flex flex-wrap gap-2 ${teasing ? 'hidden' : ''}`}>
-            {QUICK_FILTERS.map((f) => {
-              const active = activeFilter === f.id
-              return (
-                <button
-                  key={f.id}
-                  onClick={() => {
-                    emitStoryEvent('quick-filter', { id: f.id })
-                    setActiveFilter(f.id)
-                  }}
-                  className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold transition ${
-                    active
-                      ? 'bg-brand-600 text-white'
-                      : 'border border-surface-200 bg-surface-0 text-ink-700 hover:border-brand-300'
-                  }`}
-                >
+          <label className={`flex items-center gap-2 text-[13px] font-semibold text-ink-500 ${teasing ? 'hidden' : ''}`}>
+            Sort by:
+            <select
+              value={activeFilter}
+              onChange={(e) => {
+                emitStoryEvent('quick-filter', { id: e.target.value })
+                setActiveFilter(e.target.value)
+              }}
+              className="rounded-lg border border-surface-200 bg-surface-0 px-2.5 py-1.5 text-[13px] font-bold text-ink-900 outline-none focus:border-brand-400"
+            >
+              {QUICK_FILTERS.map((f) => (
+                <option key={f.id} value={f.id}>
                   {f.label}
-                </button>
-              )
-            })}
-          </div>
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
 
         {teasing ? (
@@ -376,6 +383,22 @@ export default function App({
             </p>
             <h2 className="mt-2 text-[26px] font-black leading-tight text-ink-900">
               {results.length} {results.length === 1 ? 'program matches' : 'programs match'}
+              {(() => {
+                // Echo what the visitor asked for, so the gate reads as a
+                // response to their search rather than a generic wall.
+                const ctx = query.trim()
+                  ? `“${query.trim()}”`
+                  : goalId
+                    ? getGoal(goalId)?.label
+                    : skillId
+                      ? getSkill(skillId)?.label
+                      : categoryId
+                        ? getCategory(categoryId)?.label
+                        : areaId
+                          ? getArea(areaId)?.label
+                          : null
+                return ctx ? <span className="font-bold text-ink-500"> for {ctx}</span> : null
+              })()}
             </h2>
             <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5">
               {['Certificate', 'Associate', "Bachelor's", "Master's"]
@@ -406,8 +429,10 @@ export default function App({
             >
               Create a free account
             </button>
-            <p className="mt-2 text-[12px] text-ink-400">
-              Already have one? The same window signs you in.
+            <p className="mt-3 text-[13px]">
+              <a href="#/" className="font-bold text-brand-600 underline-offset-2 hover:underline">
+                ← Keep exploring subjects
+              </a>
             </p>
           </div>
         ) : results.length === 0 ? (

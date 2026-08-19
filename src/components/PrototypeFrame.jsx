@@ -170,6 +170,10 @@ export default function PrototypeFrame() {
   const applyIntent = (id) => {
     setIntent(id)
     setIntentOpen(false)
+    // Joining from the catalog returns you to the results you just unlocked —
+    // navigating away here discarded the search that motivated the signup.
+    // Intent-driven routing applies only when joining from a non-browse surface.
+    if (route.path === '/browse') return
     if (id === 'soon') navigate('/browse?filter=mostAffordable')
     else if (id === 'benefits') navigate('/')
     else navigate('/browse')
@@ -195,7 +199,14 @@ export default function PrototypeFrame() {
     page = <StoryLauncher onStart={startStory} onFreeExplore={() => { setStory(null); navigate('/') }} />
   } else if (route.path.startsWith('/school/')) {
     const schoolId = route.path.split('/')[2]
-    page = <SchoolPage schoolId={schoolId} partner={partner} onNavigate={navigate} />
+    page = (
+      <SchoolPage
+        schoolId={schoolId}
+        partner={partner}
+        gated={catalogMode === 'gated' && !joined}
+        onNavigate={navigate}
+      />
+    )
   } else if (route.path.startsWith('/category/')) {
     // Aug 14 meeting: category tiles open a landing page with skill drill-down.
     page = (

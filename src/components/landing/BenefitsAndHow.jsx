@@ -131,10 +131,6 @@ export default function BenefitsAndHow({ partner, joined = false, onGate }) {
           )}
         </div>
 
-        <p className="mt-4 font-display text-[12px] text-mk-body/70">
-          Headline, boxes, and key lines are from Brigid&rsquo;s content doc (2026-08-20). Counts
-          and dollar figures are mock.
-        </p>
       </div>
     </section>
   )

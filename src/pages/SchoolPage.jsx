@@ -253,9 +253,6 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
             <EcosystemStrip variant="school" schoolName={school.name} partner={partner} />
           )}
         </div>
-        <p className="mt-5 font-display text-[12px] text-mk-body/60">
-          Key lines from Brigid's content doc (2026-08-20). Figures are mock.
-        </p>
       </section>
 
       {/* 2026-08-19 session: logged out, NO program grid. The grid is where

@@ -58,10 +58,6 @@ export default function StoryCards({ partner }) {
           </figure>
         ))}
       </div>
-      <p className="mt-3 font-display text-[11.5px] text-mk-body/70">
-        Placeholder people and quotes (FPO). Real learner photography and verified stories
-        required before launch.
-      </p>
     </section>
   )
 }

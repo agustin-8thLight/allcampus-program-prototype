@@ -106,10 +106,6 @@ export default function SchoolsPage({ partner, onNavigate }) {
             </button>
           ))}
         </div>
-        <p className="mt-6 font-display text-[12px] text-mk-body/70">
-          Discounts shown are AllCampus partnership pricing; program details and your exact price
-          appear after you create a free account. All data is mock.
-        </p>
       </section>
 
       <footer className="bg-mk-slate py-8 text-center font-display text-xs text-white/60">

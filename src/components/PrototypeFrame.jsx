@@ -3,21 +3,19 @@ import App from '../App.jsx'
 import LandingPage from '../pages/LandingPage.jsx'
 import SchoolPage from '../pages/SchoolPage.jsx'
 import CategoryPage from '../pages/CategoryPage.jsx'
-import ConceptNotes from './ConceptNotes.jsx'
-import CtaCompare from './CtaCompare.jsx'
 import StoryLauncher from './StoryLauncher.jsx'
 import StoryCoach from './StoryCoach.jsx'
 import GateModal from './GateModal.jsx'
 import DeviceFrame from './DeviceFrame.jsx'
 import AllyOverlay from './AllyOverlay.jsx'
 import IntentStep from './IntentStep.jsx'
-import { CORPORATE_PARTNERS, EMPLOYER_STATES } from '../data/corporatePartners.js'
+import { CORPORATE_PARTNERS, PARTNER_BUCKETS } from '../data/corporatePartners.js'
 import { getUseCase } from '../data/useCases.js'
 
 /*
  * Prototype review frame. This is NOT part of the AllCampus product UI, it is
  * the harness reviewers use to switch concepts and read the design rationale.
- * It owns the active variant, the demo employer state, the hash router, and
+ * It owns the scenario (partner bucket), the hash router, and
  * (2026-08-12) the story machinery: the use-case launcher, the story coach,
  * the account gate, and the joined/intent session state.
  *
@@ -33,36 +31,17 @@ import { getUseCase } from '../data/useCases.js'
  * internal-only; the deployed build sits behind AccessGate + noindex). In
  * production the employer comes from the learner record or partner URL.
  */
-const VARIANTS = [
-  { code: '1A', name: 'Phase 1', tagline: 'Ships first: cost-first program detail and an advisor. No Ally.' },
-  { code: '2B', name: 'Phase 2', tagline: 'Adds Ally, “who it’s for”, and school highlights. The fuller experience.' },
-]
-
-function initialVariant() {
-  const v = new URLSearchParams(window.location.search).get('variant')
-  return VARIANTS.some((x) => x.code === v) ? v : '2B'
-}
-
 function initialEmployer() {
   const e = new URLSearchParams(window.location.search).get('employer')
-  return CORPORATE_PARTNERS[e] ? e : 'sheetz'
+  // Default scenario = Brigid's bucket 1 (benefit partner with TR), the
+  // highest-converting group.
+  return CORPORATE_PARTNERS[e] ? e : 'atassist'
 }
 
 function initialStory() {
   return getUseCase(new URLSearchParams(window.location.search).get('story'))
 }
 
-// Aug 14 decision: login before catalog access. 'gated' is the default;
-// 'open' preserves the anonymous browse the story walkthroughs were authored
-// against (startStory forces it), and lets reviewers compare the two.
-function initialCatalogMode() {
-  return new URLSearchParams(window.location.search).get('catalog') === 'open' ? 'open' : 'gated'
-}
-
-const CATALOG_MODES = [
-  { id: 'gated', label: 'Gated', tagline: 'Aug 14 decision: count + discount hint, then login before the catalog' },
-  { id: 'open', label: 'Open', tagline: 'Anonymous browse; the four stories run in this mode' },
-]
 
 function parseHash() {
   const raw = window.location.hash.replace(/^#/, '') || '/stories'
@@ -71,7 +50,6 @@ function parseHash() {
 }
 
 export default function PrototypeFrame() {
-  const [variant, setVariant] = useState(initialVariant)
   const [employerId, setEmployerId] = useState(initialEmployer)
   const [route, setRoute] = useState(parseHash)
   const [story, setStory] = useState(initialStory)
@@ -79,18 +57,14 @@ export default function PrototypeFrame() {
   const [joined, setJoined] = useState(false)
   const [intent, setIntent] = useState(null)
   const [gate, setGate] = useState(null) // { trigger } | null
-  const [catalogMode, setCatalogMode] = useState(initialCatalogMode)
+  // Gated always (Brigid, Aug 19: drop the gated-vs-open toggle). A running
+  // story flips this internally so the walkthroughs keep working; no UI.
+  const [catalogMode, setCatalogMode] = useState('gated')
+  const [homeVariant, setHomeVariant] = useState('current') // 'current' | 'navigator'
   // Phone view (E3): auto-enabled for mobile-first stories like Tina's.
   const [phone, setPhone] = useState(false)
   const [intentOpen, setIntentOpen] = useState(false)
   const [frameAlly, setFrameAlly] = useState(false)
-  const [notesOpen, setNotesOpen] = useState(
-    () => new URLSearchParams(window.location.search).get('notes') === '1',
-  )
-  const [compareOpen, setCompareOpen] = useState(
-    () => new URLSearchParams(window.location.search).get('compare') === '1',
-  )
-  const active = VARIANTS.find((v) => v.code === variant)
   const partner = CORPORATE_PARTNERS[employerId]
   // The DeviceFrame iframe loads this same app with ?chrome=0: render the
   // product alone — no review bar, no coach, no nested device frame.
@@ -120,6 +94,7 @@ export default function PrototypeFrame() {
   const exitStory = () => {
     setStory(null)
     setPhone(false)
+    setCatalogMode('gated')
     navigate('/stories')
   }
 
@@ -179,20 +154,6 @@ export default function PrototypeFrame() {
     else navigate('/browse')
   }
 
-  // Concepts only differ inside the program drawer, so a switch is invisible on
-  // the list. A brief toast confirms the change took. Keyed so re-selecting the
-  // same concept still re-triggers it; skipped on initial load.
-  const [toast, setToast] = useState(null)
-  const firstRun = useRef(true)
-  useEffect(() => {
-    if (firstRun.current) {
-      firstRun.current = false
-      return
-    }
-    setToast({ ...active, k: Date.now() })
-    const t = setTimeout(() => setToast(null), 1800)
-    return () => clearTimeout(t)
-  }, [variant])
 
   let page
   if (route.path === '/stories') {
@@ -222,7 +183,6 @@ export default function PrototypeFrame() {
     page = (
       <App
         key={route.raw}
-        variant={variant}
         partner={partner}
         initialParams={route.params}
         joined={joined}
@@ -232,7 +192,7 @@ export default function PrototypeFrame() {
       />
     )
   } else {
-    page = <LandingPage partner={partner} onNavigate={navigate} />
+    page = <LandingPage partner={partner} homeVariant={homeVariant} onNavigate={navigate} />
   }
 
   if (bare) return page
@@ -249,58 +209,54 @@ export default function PrototypeFrame() {
           Stories
         </button>
 
-        <div className="flex items-center gap-1 rounded-full bg-white/10 p-0.5">
-          {VARIANTS.map((v) => (
-            <button
-              key={v.code}
-              onClick={() => setVariant(v.code)}
-              title={v.tagline}
-              className={`rounded-full px-3 py-1 text-[13px] font-bold transition ${
-                variant === v.code ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
-              }`}
-            >
-              {v.name}
-            </button>
-          ))}
-        </div>
+        {/* Brigid's five partner buckets as a dropdown, not company names
+            (2026-08-19 session). The scenario drives every partner-aware
+            surface; a running story overrides with its own employer record. */}
+        <label className="flex items-center gap-2 text-[12px] font-bold text-white/60">
+          <span className="hidden uppercase tracking-wide sm:block">Scenario</span>
+          <select
+            value={PARTNER_BUCKETS.find((b) => b.partnerId === employerId)?.id || ''}
+            onChange={(e) => {
+              const bucket = PARTNER_BUCKETS.find((b) => b.id === e.target.value)
+              if (bucket) setEmployerId(bucket.partnerId)
+            }}
+            className="max-w-[240px] rounded-lg border border-white/25 bg-ink-900 px-2 py-1.5 text-[13px] font-bold text-white outline-none"
+          >
+            {!PARTNER_BUCKETS.some((b) => b.partnerId === employerId) && (
+              <option value="">Story scenario</option>
+            )}
+            {PARTNER_BUCKETS.map((b) => (
+              <option key={b.id} value={b.id} title={b.tagline}>
+                {b.label}
+              </option>
+            ))}
+          </select>
+        </label>
 
-        {/* Catalog gate: the Aug 14 decision vs the anonymous build */}
+        {/* The two homepage versions for Brigid's review (keep-current vs the
+            diverged skills-navigator hero). */}
         <div className="hidden items-center gap-1 rounded-full bg-white/10 p-0.5 lg:flex">
           <span className="pl-2 pr-1 text-[11px] font-bold uppercase tracking-wide text-white/45">
-            Catalog
+            Homepage
           </span>
-          {CATALOG_MODES.map((m) => (
+          {[
+            { id: 'current', label: 'Current' },
+            { id: 'navigator', label: 'Navigator' },
+          ].map((v) => (
             <button
-              key={m.id}
-              onClick={() => setCatalogMode(m.id)}
-              title={m.tagline}
+              key={v.id}
+              onClick={() => setHomeVariant(v.id)}
               className={`rounded-full px-2.5 py-1 text-[12px] font-bold transition ${
-                catalogMode === m.id ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
+                homeVariant === v.id ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
               }`}
             >
-              {m.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Employer demo state (review-only; production reads the learner record) */}
-        <div className="hidden items-center gap-1 rounded-full bg-white/10 p-0.5 md:flex">
-          {EMPLOYER_STATES.map((e) => (
-            <button
-              key={e.id}
-              onClick={() => setEmployerId(e.id)}
-              title={e.tagline}
-              className={`rounded-full px-2.5 py-1 text-[12px] font-bold transition ${
-                employerId === e.id ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
-              }`}
-            >
-              {e.label}
+              {v.label}
             </button>
           ))}
         </div>
 
         <span className="hidden flex-1 truncate text-[12px] text-white/55 xl:block">
-          {story ? `Story: ${story.name} — ${story.title}` : active?.tagline}
+          {story ? `Story: ${story.name} — ${story.title}` : ''}
         </span>
 
         <div className="ml-auto flex items-center gap-2">
@@ -318,18 +274,6 @@ export default function PrototypeFrame() {
           >
             Phone view
           </button>
-          <button
-            onClick={() => setCompareOpen(true)}
-            className="hidden rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10 lg:block"
-          >
-            Compare next step
-          </button>
-          <button
-            onClick={() => setNotesOpen(true)}
-            className="rounded-lg border border-white/25 px-3 py-1.5 text-[13px] font-bold text-white transition hover:bg-white/10"
-          >
-            Phase notes
-          </button>
         </div>
       </div>
 
@@ -338,7 +282,7 @@ export default function PrototypeFrame() {
         <DeviceFrame
           enabled={phone && route.path !== '/stories'}
           onToggle={() => setPhone(false)}
-          params={{ employer: employerId, variant }}
+          params={{ employer: employerId }}
         >
           {page}
         </DeviceFrame>
@@ -355,7 +299,7 @@ export default function PrototypeFrame() {
         />
       )}
 
-      {/* The account gate + intent question (product surfaces, moves 2–3) */}
+      {/* The account gate + intent question (product surfaces) */}
       <GateModal
         open={!!gate && !joined}
         trigger={gate?.trigger}
@@ -368,31 +312,6 @@ export default function PrototypeFrame() {
       {/* Ally opened by the story driver (the page-level entry points own their
           own overlays; this one exists so "Show me" can open Ally anywhere). */}
       <AllyOverlay open={frameAlly} partner={partner} onClose={() => setFrameAlly(false)} />
-
-      {notesOpen && (
-        <ConceptNotes
-          activeCode={variant}
-          onSelect={setVariant}
-          onClose={() => setNotesOpen(false)}
-        />
-      )}
-
-      {compareOpen && <CtaCompare onClose={() => setCompareOpen(false)} />}
-
-      {/* Concept-switch confirmation toast (auto-clears). */}
-      {toast && (
-        <div
-          key={toast.k}
-          role="status"
-          className="toast pointer-events-none fixed left-3 top-14 z-[80] sm:left-4"
-        >
-          <div className="flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2 text-[13px] font-bold text-white shadow-lg">
-            <span className="h-2 w-2 rounded-full bg-brand-400" />
-            Showing: {toast.name}
-            <span className="font-normal text-white/60">, open a program to see it</span>
-          </div>
-        </div>
-      )}
     </>
   )
 }

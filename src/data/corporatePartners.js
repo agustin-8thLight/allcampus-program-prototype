@@ -70,7 +70,9 @@ export const CORPORATE_PARTNERS = {
   },
   'texas-roadhouse': {
     id: 'texas-roadhouse',
-    partnerType: 'direct-no-tr',
+    // Corrected per Brigid (2026-08-19 session): Texas Roadhouse is the MIXED
+    // eligibility example — some employees have TR, some don't — not no-TR.
+    partnerType: 'direct-mixed',
     benefitAdmin: null,
     policyLocation: 'your Texas Roadhouse benefits team',
     brandColor: '#a6192e', // approximate, for the co-brand mark only
@@ -126,6 +128,63 @@ export const CORPORATE_PARTNERS = {
     emphasizedAreaIds: ['business', 'healthcare'],
     hiddenAreaIds: [],
   },
+  // Bucket 1: benefit partner that administers TR (At Assist / Tuition IO
+  // type). Record is generic on purpose — the review dropdown shows buckets,
+  // not companies. Figures are MOCK.
+  atassist: {
+    id: 'atassist',
+    partnerType: 'benefit-admin',
+    benefitAdmin: { name: 'your benefit administrator', portalLabel: 'your benefit portal' },
+    policyLocation: 'your benefit portal',
+    name: 'Your employer',
+    benefitKnown: true,
+    employerReimbursement: 5250,
+    bachelorsReimbursement: 5250,
+    associatesReimbursement: 5250,
+    minBenefit: 0,
+    reimbursementProvider: 'Benefit administrator',
+    policy:
+      'Your employer provides tuition reimbursement administered through your benefit portal (estimate: $5,250/yr). Pre-approval runs there before you enroll.',
+    emphasizedAreaIds: ['business', 'healthcare'],
+    hiddenAreaIds: [],
+  },
+  // Bucket 2: benefit partner where eligibility is unknown — generic TR
+  // language, discounts as the certain benefit.
+  'benefit-unknown': {
+    id: 'benefit-unknown',
+    partnerType: 'perks',
+    benefitAdmin: null,
+    policyLocation: 'your benefits portal',
+    name: 'Your employer',
+    benefitKnown: false,
+    employerReimbursement: 0,
+    bachelorsReimbursement: 0,
+    associatesReimbursement: 0,
+    minBenefit: 0,
+    reimbursementProvider: null,
+    policy:
+      'Your employer connects you to AllCampus partner discounts. Tuition reimbursement may also be available — check your benefits portal or ask a specialist.',
+    emphasizedAreaIds: [],
+    hiddenAreaIds: [],
+  },
+  // Bucket 5: direct partner, discounts only.
+  'direct-no-tr': {
+    id: 'direct-no-tr',
+    partnerType: 'direct-no-tr',
+    benefitAdmin: null,
+    policyLocation: 'your benefits team',
+    name: 'Your employer',
+    benefitKnown: true,
+    employerReimbursement: 0,
+    bachelorsReimbursement: 0,
+    associatesReimbursement: 0,
+    minBenefit: 0,
+    reimbursementProvider: null,
+    policy:
+      'Your employer does not currently offer tuition reimbursement. AllCampus partner discounts still apply to every program.',
+    emphasizedAreaIds: [],
+    hiddenAreaIds: [],
+  },
   lowes: {
     id: 'lowes',
     partnerType: 'perks',
@@ -153,11 +212,51 @@ export const CORPORATE_PARTNERS = {
  */
 export const EMPLOYER_STATES = [
   { id: 'sheetz', label: 'Sheetz', tagline: 'Direct partner with tuition reimbursement (~$5,250/yr est.)' },
-  { id: 'texas-roadhouse', label: 'Texas Roadhouse', tagline: 'Direct partner, no reimbursement' },
+  { id: 'texas-roadhouse', label: 'Texas Roadhouse', tagline: 'Direct partner, mixed eligibility' },
   { id: 'boeing', label: 'Boeing', tagline: 'Benefit administrator (BenefitHub), ~$10,000/yr est.' },
   { id: 'giant-eagle', label: 'Giant Eagle', tagline: 'Direct partner, mixed: discount + in-house reimbursement' },
   { id: 'lowes', label: "Lowe's", tagline: 'Benefit perks, reimbursement unknown' },
   { id: 'global-default', label: 'Unknown', tagline: 'No employer on file: fallback benefit block' },
+]
+
+/*
+ * Brigid's five partner buckets (2026-08-19 session). These drive the review
+ * dropdown INSTEAD of company names — "do the buckets like I've laid out, not
+ * the companies." Each bucket points at a representative partner record; the
+ * scenario labels are what reviewers see. Bucket 1 (benefit partner with TR,
+ * e.g. At Assist / Tuition IO) is the highest-converting group.
+ */
+export const PARTNER_BUCKETS = [
+  {
+    id: 'benefit-tr',
+    label: 'Benefit partner with TR',
+    partnerId: 'atassist',
+    tagline: 'Channel partner that administers tuition reimbursement (At Assist / Tuition IO type). Highest converting.',
+  },
+  {
+    id: 'benefit-unknown',
+    label: 'Benefit partner, eligibility unknown',
+    partnerId: 'benefit-unknown',
+    tagline: 'Channel partner where we cannot assume TR — talk about discounts for everyone, TR as a possibility.',
+  },
+  {
+    id: 'direct-tr',
+    label: 'Direct partner with TR',
+    partnerId: 'sheetz',
+    tagline: 'Direct corporate partner funding tuition reimbursement.',
+  },
+  {
+    id: 'direct-mixed',
+    label: 'Direct partner, mixed eligibility',
+    partnerId: 'texas-roadhouse',
+    tagline: 'Direct partner where some employees are TR-eligible and some are not.',
+  },
+  {
+    id: 'direct-no-tr',
+    label: 'Direct partner, no TR',
+    partnerId: 'direct-no-tr',
+    tagline: 'Direct partner offering discounts only; no reimbursement program.',
+  },
 ]
 
 export const GLOBAL_DEFAULT_CORPORATE_PARTNER_ID = 'global-default'

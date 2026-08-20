@@ -1,6 +1,6 @@
 import MkHeader from '../components/landing/MkHeader.jsx'
 import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.jsx'
-import { SubjectIconTile } from '../components/landing/SubjectIcon.jsx'
+import SubjectIcon, { SubjectIconTile } from '../components/landing/SubjectIcon.jsx'
 import { PROGRAMS } from '../data/model.js'
 import { bestDiscountPercent, fullyCoveredPrograms } from '../data/benefit.js'
 import {
@@ -147,17 +147,31 @@ export default function CategoryPage({ categoryId, partner, onNavigate }) {
         <Heading size="sm" className="mt-1.5">
           Know what you want to work on?
         </Heading>
-        <div className="mt-5 space-y-5">
+        {/* Visual area cards: the Aug 19 session asked for a happy medium
+            between the visual tile layout and the info-dense chip list, so
+            each area gets a card that is more visual (icon tile, label,
+            program count) while keeping the skill chips inside it. */}
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {areas.map((area) => {
             const skills = skillsForArea(area.id)
+            const areaCount = inCategory.filter((p) => p.areaId === area.id).length
             return (
-              <div key={area.id}>
-                {areas.length > 1 && (
-                  <h3 className="mb-2 font-display text-[14px] font-extrabold text-mk-slate">
+              <div
+                key={area.id}
+                className="rounded-[var(--radius-card)] border border-mk-line bg-white p-5 shadow-[0_1px_2px_rgba(51,71,91,0.06)] transition hover:border-mk-teal-600"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-mk-band text-mk-teal-700 ring-1 ring-inset ring-mk-line">
+                    <SubjectIcon id={area.id} className="h-5 w-5" />
+                  </span>
+                  <h3 className="font-display text-[14px] font-extrabold text-mk-slate">
                     {area.label}
                   </h3>
-                )}
-                <div className="flex flex-wrap gap-2">
+                  <span className="ml-auto font-display text-[13px] font-bold text-mk-body/70">
+                    {areaCount} {areaCount === 1 ? 'program' : 'programs'}
+                  </span>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
                   {skills.map((s) => {
                     const n = countForSkill(s.id)
                     return (

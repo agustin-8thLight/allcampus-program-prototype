@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { MkButton } from './Section.jsx'
 import AreaSkillSelect from './AreaSkillSelect.jsx'
+import SkillsNavigator from './SkillsNavigator.jsx'
 import { heroImage } from '../../data/images.js'
 import Img from '../Img.jsx'
 
@@ -17,7 +18,7 @@ import Img from '../Img.jsx'
 // badge the platform as 100% online"). courseModality stays in the data.
 const DEGREE_LEVELS = ['Any degree level', 'Certificate', 'Associate', "Bachelor's", "Master's"]
 
-export default function SearchHero({ partner, onSearch }) {
+export default function SearchHero({ partner, onSearch, navigator = false, onNavigate }) {
   const [q, setQ] = useState('')
   const [degree, setDegree] = useState(DEGREE_LEVELS[0])
   // Field selector covers areas of study AND their skills in one control:
@@ -71,8 +72,13 @@ export default function SearchHero({ partner, onSearch }) {
 
       {/* Floating search card. `relative z-10` matters: the hero's absolutely
           positioned photo would otherwise paint over this static sibling and
-          clip the top label row. */}
+          clip the top label row. The `navigator` variant (2026-08-19 session)
+          replaces the whole form with the always-open skills navigator: the
+          job logged out is recognition, not search — search lives in the nav. */}
       <div className="relative z-10 mx-auto -mt-14 max-w-5xl px-5">
+        {navigator ? (
+          <SkillsNavigator onNavigate={onNavigate} />
+        ) : (
         <form
           onSubmit={submit}
           className="relative grid grid-cols-1 gap-4 rounded-xl bg-white p-5 shadow-[0_10px_30px_rgba(51,71,91,0.14)] sm:grid-cols-2 lg:grid-cols-[1.4fr_1.3fr_1fr_auto] sm:items-end"
@@ -104,6 +110,7 @@ export default function SearchHero({ partner, onSearch }) {
             Search
           </MkButton>
         </form>
+        )}
 
         {/* Replaces the Format filter: one platform property, not a choice. */}
         <p className="mt-3 flex items-center gap-2 text-[13px] font-bold text-mk-body">

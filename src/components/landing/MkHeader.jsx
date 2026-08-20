@@ -36,6 +36,20 @@ export default function MkHeader({ partner, onNavigate }) {
           )}
         </button>
         <nav className="flex items-center gap-4 font-display text-[13.5px] font-bold text-mk-body">
+          {/* 2026-08-19 session: search belongs in the nav, not the hero —
+              logged out, recognition beats searching. Routes to the gated
+              results, which prompt the account. */}
+          <button
+            type="button"
+            onClick={() => onNavigate('/browse')}
+            className="flex items-center gap-1.5 hover:text-mk-slate"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="h-4 w-4" aria-hidden>
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-4-4" />
+            </svg>
+            Search
+          </button>
           <button type="button" onClick={() => onNavigate('/browse')} className="hover:text-mk-slate">
             Browse programs
           </button>

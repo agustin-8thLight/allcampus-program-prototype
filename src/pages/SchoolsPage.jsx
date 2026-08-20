@@ -24,7 +24,7 @@ export default function SchoolsPage({ partner, onNavigate }) {
     <div className="min-h-screen bg-white">
       <MkHeader partner={partner} onNavigate={onNavigate} />
 
-      <section className="border-b border-mk-line bg-mk-band py-12">
+      <section className="border-b border-mk-line bg-mk-surface py-12">
         <div className="mx-auto max-w-6xl px-5">
           <button
             onClick={() => onNavigate('/')}

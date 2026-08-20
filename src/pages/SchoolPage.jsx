@@ -263,7 +263,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
           this compact tease routes to the gated browse teaser instead. */}
       {gated ? (
         <section className="mx-auto max-w-6xl px-5 pt-16">
-          <div className="rounded-[var(--radius-card)] border border-mk-line bg-mk-band p-6 font-display">
+          <div className="rounded-[var(--radius-card)] border border-mk-line bg-white p-6 font-display shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
             <p className="text-[18px] font-extrabold text-mk-slate">
               {programs.length} program{programs.length === 1 ? '' : 's'} at {firstWord}
               {bestPct != null && (

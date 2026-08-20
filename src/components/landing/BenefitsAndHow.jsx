@@ -66,7 +66,7 @@ export default function BenefitsAndHow({ partner, joined = false, onGate }) {
   ]
 
   return (
-    <section className="bg-mk-band py-16">
+    <section className="bg-white py-16">
       <div className="mx-auto max-w-6xl px-5">
         {/* Brigid's WHY ALLCAMPUS headline (content doc, 2026-08-20), Version
             A for TR audiences / Version B general — her structure, our mock
@@ -84,7 +84,7 @@ export default function BenefitsAndHow({ partner, joined = false, onGate }) {
 
         {/* The two big benefits */}
         <div className="mt-7 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="rounded-[var(--radius-card)] bg-white p-6 shadow-[0_1px_2px_rgba(51,71,91,0.06)]">
+          <div className="rounded-[var(--radius-card)] border border-mk-line bg-white p-6 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
             <p className="font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
               For everyone
             </p>
@@ -96,7 +96,7 @@ export default function BenefitsAndHow({ partner, joined = false, onGate }) {
               Connect with a school through AllCampus to make that happen.
             </p>
           </div>
-          <div className="rounded-[var(--radius-card)] bg-white p-6 shadow-[0_1px_2px_rgba(51,71,91,0.06)]">
+          <div className="rounded-[var(--radius-card)] border border-mk-line bg-white p-6 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
             <p className="font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
               {reimburses ? 'From your employer' : trPossible ? 'Worth checking' : 'The certain part'}
             </p>

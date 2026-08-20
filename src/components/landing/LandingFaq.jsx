@@ -36,7 +36,7 @@ export default function LandingFaq() {
         {FAQS.map((f) => (
           <details
             key={f.q}
-            className="group rounded-lg border border-mk-line bg-white px-5 py-4 open:bg-mk-band/60"
+            className="group rounded-lg border border-mk-line bg-white px-5 py-4 open:bg-mk-surface"
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-[15px] font-bold text-mk-slate">
               {f.q}

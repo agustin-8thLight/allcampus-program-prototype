@@ -49,13 +49,11 @@ export default function LandingPage({ partner, homeVariant = 'current', joined =
           cards, the four subject tiles ride along as a compact strip inside —
           two entries, one block, no lookalike sections. Tiles open the
           category landing pages (Aug 14 ask). */}
-      <div className="pt-16">
-        <GoalsExplorer
-          partner={partner}
-          onSelectGoal={(goal) => goBrowse({ goal: goal.id })}
-          onSelectCategory={(c) => onNavigate(`/category/${c.id}`)}
-        />
-      </div>
+      <GoalsExplorer
+        partner={partner}
+        onSelectGoal={(goal) => goBrowse({ goal: goal.id })}
+        onSelectCategory={(c) => onNavigate(`/category/${c.id}`)}
+      />
 
       <StoryCards partner={partner} />
 
@@ -71,13 +69,20 @@ export default function LandingPage({ partner, homeVariant = 'current', joined =
           framing, no out-of-pocket promises. */}
       <AllyEntry partner={partner} />
 
-      {/* Closing CTA band, mirrors the live template's "Unlock your potential" */}
-      <section className="bg-mk-band py-14 text-center">
-        <Heading size="sm">Unlock your potential</Heading>
-        <div className="mt-4">
-          <MkButton tone="teal" onClick={() => goBrowse({})}>
+      {/* Closing CTA: the dark bookend. Mirrors the hero (and the account
+          card's gradient) so the page opens and closes with the same weight,
+          then flows into the slate footer. A pale band here read as an
+          afterthought. */}
+      <section className="bg-gradient-to-br from-mk-teal-600 to-mk-slate py-14 text-center">
+        <Heading size="sm" className="text-white">Unlock your potential</Heading>
+        <div className="mt-5">
+          <button
+            type="button"
+            onClick={() => goBrowse({})}
+            className="inline-flex items-center justify-center rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
+          >
             Explore programs
-          </MkButton>
+          </button>
         </div>
       </section>
 

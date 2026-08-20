@@ -27,7 +27,7 @@ export default function GoalsExplorer({ partner, onSelectGoal, onSelectCategory 
   const coveredFor = (goal) => covered.filter((p) => programMatchesGoal(p, goal)).length
 
   return (
-    <section className="bg-mk-band py-16">
+    <section className="border-y border-mk-line bg-mk-surface py-16">
       <div className="mx-auto max-w-6xl px-5">
         <Eyebrow>Where do you want to end up?</Eyebrow>
         <Heading className="mt-2">Pick the outcome, we’ll map the programs</Heading>

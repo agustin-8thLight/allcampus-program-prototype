@@ -61,7 +61,7 @@ export default function CategoryPage({ categoryId, partner, onNavigate }) {
       <MkHeader partner={partner} onNavigate={onNavigate} />
 
       {/* Value header: why THIS subject, with the count + discount tease. */}
-      <section className="border-b border-mk-line bg-mk-band py-12">
+      <section className="border-b border-mk-line bg-mk-surface py-12">
         <div className="mx-auto max-w-6xl px-5">
           <button
             onClick={() => onNavigate('/')}

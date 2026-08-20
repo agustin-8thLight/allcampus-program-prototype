@@ -4,10 +4,11 @@ import { personaImage } from '../data/images.js'
 import Img from './Img.jsx'
 
 /*
- * Story launcher (#/stories): the review entry point. Four realistic
- * walkthroughs — pick a learner, the frame sets their employer and entry
- * door, and the StoryCoach guides the walk. Internal review surface, styled
- * with the marketing (mk-) tokens so it reads as part of the deliverable.
+ * Story launcher (#/stories): the review entry point. Four walkthroughs,
+ * anchored on Brigid's partner-type SCENARIOS (2026-08-20 direction: the
+ * scenario name is the prominent anchor; the persona is supporting cast).
+ * Picking one sets the employer and entry door; the StoryCoach guides the
+ * walk. Internal review surface, styled with the marketing (mk-) tokens.
  */
 export default function StoryLauncher({ onStart, onFreeExplore }) {
   return (
@@ -17,13 +18,12 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
           AllCampus × 8th Light · internal review
         </p>
         <h1 className="mt-2 font-display text-4xl font-black leading-tight text-mk-slate sm:text-5xl">
-          Four people, four doors,
+          Four partner scenarios,
           <br className="hidden sm:block" /> one experience.
         </h1>
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-mk-body">
-          Each story walks a real learner situation through the recommended experience — realistic
-          employer, realistic goal, realistic constraints. Pick one; a coach bar guides the steps
-          and shows which moves pay off. Or explore freely.
+          Each walkthrough is one of the partner types, seen through a realistic learner. Pick a
+          scenario; a coach bar guides the steps and shows which moves pay off. Or explore freely.
         </p>
 
         <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -33,24 +33,27 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
               onClick={() => onStart(u)}
               className="group flex flex-col rounded-2xl border border-mk-line bg-white p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
             >
-              <div className="flex items-center gap-3">
+              {/* Scenario first (Brigid's type title is the anchor); the
+                  persona rides along as supporting context. */}
+              <div className="text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
+                Scenario
+              </div>
+              <div className="mt-1 font-display text-[22px] font-black leading-snug text-mk-slate">
+                {u.archetype}
+              </div>
+              <div className="mt-3 flex items-center gap-2.5 border-t border-mk-line pt-3">
                 <Img
                   src={personaImage(u.id)}
                   alt={u.name}
                   hue={u.color}
                   rounded="rounded-full"
-                  className="h-14 w-14 shrink-0"
+                  className="h-10 w-10 shrink-0"
                 />
                 <div className="min-w-0">
-                  <div className="font-display text-xl font-black text-mk-slate">
-                    {u.name} — {u.title}
+                  <div className="truncate font-display text-[14.5px] font-bold text-mk-slate">
+                    {u.name} · {u.title}
                   </div>
-                  <div className="truncate text-[13px] font-semibold text-mk-body">{u.who}</div>
-                  {u.archetype && (
-                    <div className="mt-0.5 truncate text-[11.5px] font-bold uppercase tracking-wide text-mk-teal-text">
-                      {u.archetype}
-                    </div>
-                  )}
+                  <div className="truncate text-[12.5px] font-semibold text-mk-body">{u.who}</div>
                 </div>
               </div>
               <p className="mt-4 flex-1 text-[15px] leading-relaxed text-mk-body">{u.blurb}</p>

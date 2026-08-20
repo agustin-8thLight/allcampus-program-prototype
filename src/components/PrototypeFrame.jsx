@@ -61,7 +61,10 @@ export default function PrototypeFrame() {
   // Gated always (Brigid, Aug 19: drop the gated-vs-open toggle). A running
   // story flips this internally so the walkthroughs keep working; no UI.
   const [catalogMode, setCatalogMode] = useState('gated')
-  const [homeVariant, setHomeVariant] = useState('current') // 'current' | 'navigator'
+  // The two hero versions for Brigid's review live on the URL, not the bar:
+  // ?home=navigator swaps the search box for the exposed skills browser.
+  const homeVariant =
+    new URLSearchParams(window.location.search).get('home') === 'navigator' ? 'navigator' : 'current'
   // Phone view (E3): auto-enabled for mobile-first stories like Tina's.
   const [phone, setPhone] = useState(false)
   const [intentOpen, setIntentOpen] = useState(false)
@@ -238,21 +241,29 @@ export default function PrototypeFrame() {
           </select>
         </label>
 
-        {/* The two homepage versions for Brigid's review (keep-current vs the
-            diverged skills-navigator hero). */}
+        {/* Auth-state switch (2026-08-20 review: "Current/Navigator" meant
+            nothing at a glance; the state that actually changes the pages is
+            whether you're logged in). Logged in simulates a completed signup;
+            logged out resets the session. */}
         <div className="hidden items-center gap-1 rounded-full bg-white/10 p-0.5 lg:flex">
           <span className="pl-2 pr-1 text-[11px] font-bold uppercase tracking-wide text-white/45">
-            Homepage
+            View
           </span>
           {[
-            { id: 'current', label: 'Current' },
-            { id: 'navigator', label: 'Navigator' },
+            { id: false, label: 'Logged out' },
+            { id: true, label: 'Logged in' },
           ].map((v) => (
             <button
-              key={v.id}
-              onClick={() => setHomeVariant(v.id)}
+              key={v.label}
+              onClick={() => {
+                setJoined(v.id)
+                if (!v.id) {
+                  setIntent(null)
+                  setGate(null)
+                }
+              }}
               className={`rounded-full px-2.5 py-1 text-[12px] font-bold transition ${
-                homeVariant === v.id ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
+                joined === v.id ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
               }`}
             >
               {v.label}

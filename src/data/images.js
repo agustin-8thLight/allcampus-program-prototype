@@ -75,6 +75,26 @@ export const SCHOOL_IMAGES = {
   'nursing-u': U('1516549655169-df83a0774514', 1800, 800),
   'state-online': U('1592280771190-3e2e4d571952', 1800, 800),
   'metro-tech': U('1581092795360-fd1ca04f0952', 1800, 800),
+  /* Directory build-out (2026-08-20): every school gets a photo. All ids
+     curl-verified 200 AND eyeballed on a contact sheet before landing here —
+     a 200 can still be a hamburger. Mock pairings; production uses
+     school-supplied photography. */
+  'aurora-state': U('1541829070764-84a7d30dd3f3', 1800, 800),
+  'blue-ash': U('1568792923760-d70635a89fdc', 1800, 800),
+  'camden-valley': U('1580537659466-0a9bfa916a54', 1800, 800),
+  cedarfield: U('1517486808906-6ca8b3f04846', 1800, 800),
+  'csu-global': U('1523580494863-6f3031224c94', 1800, 800),
+  harborview: U('1574958269340-fa927503f3dd', 1800, 800),
+  herzing: U('1524995997946-a1c2e315a42f', 1800, 800),
+  'lakeland-state': U('1481627834876-b7833e8f5570', 1800, 800),
+  meridian: U('1507842217343-583bb7270b66', 1800, 800),
+  'northgate-tech': U('1521587760476-6c12a4b040da', 1800, 800),
+  'pacific-crest': U('1580582932707-520aed937b7b', 1800, 800),
+  'riverside-pub': U('1519452635265-7b1fbfd1e4e0', 1800, 800),
+  'summit-ridge': U('1591123120675-6f7f1aae0e5b', 1800, 800),
+  umsl: U('1543505298-b8be9b52a21a', 1800, 800),
+  'upper-iowa': U('1527891751199-7225231a68dd', 1800, 800),
+  westcliff: U('1583373834259-46cc92173cb7', 1800, 800),
 }
 
 export const programImage = (id) => PROGRAM_IMAGES[id] || null

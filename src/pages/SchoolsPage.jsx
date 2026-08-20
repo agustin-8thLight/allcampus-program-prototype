@@ -3,6 +3,8 @@ import { Eyebrow, Heading, Body } from '../components/landing/Section.jsx'
 import { SCHOOLS } from '../data/schools.js'
 import { PROGRAMS } from '../data/model.js'
 import { bestDiscountPercent } from '../data/benefit.js'
+import { schoolImage } from '../data/images.js'
+import Img from '../components/Img.jsx'
 
 /*
  * Schools directory (#/schools, 2026-08-20): every in-network university,
@@ -52,26 +54,40 @@ export default function SchoolsPage({ partner, onNavigate }) {
               key={s.id}
               type="button"
               onClick={() => onNavigate(`/school/${s.id}`)}
-              className="group flex flex-col rounded-[var(--radius-card)] border border-mk-line bg-white p-5 text-left shadow-[0_1px_2px_rgba(51,71,91,0.06)] transition hover:-translate-y-0.5 hover:border-mk-teal-600 hover:shadow-[0_8px_24px_rgba(69,120,140,0.16)]"
+              className="group flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-mk-line bg-white text-left shadow-[0_1px_2px_rgba(51,71,91,0.06)] transition hover:-translate-y-0.5 hover:border-mk-teal-600 hover:shadow-[0_8px_24px_rgba(69,120,140,0.16)]"
             >
-              <div className="flex items-center gap-3">
+              {/* Campus photo with the logo chip straddling its bottom edge. */}
+              <div className="relative">
+                <div className="relative h-32">
+                  <Img
+                    src={schoolImage(s.id)}
+                    alt=""
+                    hue={206}
+                    className="inset-0 h-full w-full"
+                    overlay="bg-gradient-to-t from-mk-slate/25 to-transparent"
+                  />
+                </div>
                 <span
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-[15px] font-black text-white shadow-sm"
+                  className="absolute -bottom-5 left-5 flex h-11 w-11 items-center justify-center rounded-lg text-[15px] font-black text-white shadow-[0_4px_12px_rgba(51,71,91,0.28)] ring-2 ring-white"
                   style={{ background: s.logoColor }}
                 >
                   {s.logoMonogram}
                 </span>
-                <span className="min-w-0">
-                  <span className="block font-display text-[15.5px] font-extrabold leading-snug text-mk-slate group-hover:text-mk-teal-700">
-                    {s.name}
-                  </span>
-                  <span className="block truncate font-display text-[12px] font-semibold text-mk-body">
-                    {s.location}
-                  </span>
-                </span>
               </div>
+              <div className="flex grow flex-col p-5 pt-7">
+                <span className="block font-display text-[15.5px] font-extrabold leading-snug text-mk-slate group-hover:text-mk-teal-700">
+                  {s.name}
+                </span>
+                <span className="mt-0.5 block truncate font-display text-[12px] font-semibold text-mk-body">
+                  {s.location}
+                </span>
+                {s.about && (
+                  <span className="mt-2 line-clamp-2 font-display text-[13px] leading-relaxed text-mk-body">
+                    {s.about}
+                  </span>
+                )}
               {/* The tags: count + couponing, the sanctioned differentiator. */}
-              <div className="mt-3.5 flex flex-wrap gap-1.5">
+              <div className="mt-auto flex flex-wrap gap-1.5 pt-3.5">
                 <span className="rounded-full bg-mk-band px-2.5 py-1 font-display text-[12px] font-bold text-mk-teal-text">
                   {s.programCount} {s.programCount === 1 ? 'program' : 'programs'}
                 </span>
@@ -80,9 +96,12 @@ export default function SchoolsPage({ partner, onNavigate }) {
                     Up to {s.bestPct}% off
                   </span>
                 )}
-                <span className="rounded-full border border-mk-line px-2.5 py-1 font-display text-[12px] font-semibold text-mk-body">
-                  {s.accreditation}
-                </span>
+                {s.accreditation && (
+                  <span className="rounded-full border border-mk-line px-2.5 py-1 font-display text-[12px] font-semibold text-mk-body">
+                    {s.accreditation}
+                  </span>
+                )}
+              </div>
               </div>
             </button>
           ))}

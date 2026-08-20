@@ -340,17 +340,43 @@ export default function App({
         )}
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-lg">
-            We found{' '}
-            <span className="font-black text-brand-600">{results.length} programs</span> for you
-            {categoryId && getCategory(categoryId) && (
-              <span className="font-semibold text-ink-500"> in {getCategory(categoryId).label}</span>
+          <div>
+            <p className="text-lg">
+              We found{' '}
+              <span className="font-black text-brand-600">{results.length} programs</span> for you
+              {(() => {
+                const ctx = query.trim()
+                  ? `“${query.trim()}”`
+                  : goalId
+                    ? getGoal(goalId)?.label
+                    : skillId
+                      ? getSkill(skillId)?.label
+                      : categoryId
+                        ? getCategory(categoryId)?.label
+                        : areaId
+                          ? getArea(areaId)?.label
+                          : null
+                return ctx ? <span className="font-semibold text-ink-500"> in {ctx}</span> : null
+              })()}
+            </p>
+            {teasing && (
+              <p className="mt-1 text-[14px] font-semibold text-ink-600">
+                {new Set(results.map((r) => r.schoolId)).size} in-network schools
+                {bestDiscountPercent(results) != null && (
+                  <span className="font-bold text-good-700"> · up to {bestDiscountPercent(results)}% off</span>
+                )}
+              </p>
             )}
-          </p>
+          </div>
 
           {/* Sort as a labeled dropdown — production's own "Sort by:" pattern;
               chips here read as filters. Hidden while gated: sorting a list
               the visitor can't see yet is noise. */}
+          {teasing && (
+            <a href="#/" className="text-[13.5px] font-bold text-brand-600 underline-offset-2 hover:underline">
+              ← Keep exploring subjects
+            </a>
+          )}
           <label className={`flex items-center gap-2 text-[13px] font-semibold text-ink-500 ${teasing ? 'hidden' : ''}`}>
             Sort by:
             <select
@@ -373,50 +399,13 @@ export default function App({
         {teasing ? (
           /*
            * The logged-out grid (2026-08-19 session, replacing the single
-           * teaser panel): a summary card, then obfuscated program cards
+           * teaser panel): obfuscated program cards
            * (discount badge, level, subject; NO name, school, or price), a
            * create-account cell in the row, and any click opens the account
            * flow. Value is teased card by card, per the transcript.
            */
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Summary card: the numbers the notes ask to show. */}
-            <div className="flex flex-col justify-center rounded-[var(--radius-card)] border border-surface-200 bg-surface-50 p-6">
-              <p className="text-[13px] font-bold uppercase tracking-wide text-ink-400">
-                Your results
-              </p>
-              <p className="mt-2 text-[24px] font-black leading-tight text-ink-900">
-                {results.length} {results.length === 1 ? 'program' : 'programs'}
-                {(() => {
-                  const ctx = query.trim()
-                    ? `“${query.trim()}”`
-                    : goalId
-                      ? getGoal(goalId)?.label
-                      : skillId
-                        ? getSkill(skillId)?.label
-                        : categoryId
-                          ? getCategory(categoryId)?.label
-                          : areaId
-                            ? getArea(areaId)?.label
-                            : null
-                  return ctx ? <span className="block text-[15px] font-bold text-ink-500">for {ctx}</span> : null
-                })()}
-              </p>
-              <p className="mt-2 text-[14px] font-semibold text-ink-600">
-                {new Set(results.map((r) => r.schoolId)).size} in-network schools
-              </p>
-              {bestDiscountPercent(results) != null && (
-                <p className="mt-1 text-[14px] font-bold text-good-700">
-                  Up to {bestDiscountPercent(results)}% off
-                </p>
-              )}
-              <p className="mt-3 text-[13px]">
-                <a href="#/" className="font-bold text-brand-600 underline-offset-2 hover:underline">
-                  ← Keep exploring subjects
-                </a>
-              </p>
-            </div>
-
-            {results.slice(0, 2).map((p) => (
+            {results.slice(0, 3).map((p) => (
               <ObfuscatedCard key={p.id} program={p} onGate={onGate} />
             ))}
 
@@ -438,7 +427,7 @@ export default function App({
               </button>
             </div>
 
-            {results.slice(2, 8).map((p) => (
+            {results.slice(3, 8).map((p) => (
               <ObfuscatedCard key={p.id} program={p} onGate={onGate} />
             ))}
 

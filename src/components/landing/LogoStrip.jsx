@@ -50,6 +50,17 @@ export default function LogoStrip({ onSelectSchool, onSeeAll }) {
             </button>
           )}
         </div>
+        {/* The "+N more" tile alone didn't read as a door to the directory —
+            reviewers assumed the full-schools view didn't exist. Explicit CTA. */}
+        <div className="mt-7 text-center">
+          <button
+            type="button"
+            onClick={() => onSeeAll?.()}
+            className="inline-flex items-center justify-center rounded-md border border-mk-teal-600 bg-white px-5 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 transition hover:bg-mk-band"
+          >
+            See all {allSchools.length} schools →
+          </button>
+        </div>
       </div>
     </section>
   )

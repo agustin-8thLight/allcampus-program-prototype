@@ -1,6 +1,8 @@
 /*
  * StepsStrip v2 (2026-08-20 review): "much better looking — use shadows and
- * gradients; the arrows look weird, remove the numbers."
+ * gradients; the arrows look weird, remove the numbers." Follow-up same day:
+ * arrows come back as circular chips with a drop shadow, floating between
+ * cards for layering — a chip reads as a seam, a bare arrow read as clutter.
  *
  * Four elevated cards, order carried by reading direction alone. The light
  * cards run a soft white-to-band gradient with a deep diffuse shadow; the
@@ -10,6 +12,22 @@
  * Presentational: pages pass steps [{icon, title, body, note?, highlight?,
  * cta?: {label, onClick}}]. Gradients stay inside the sampled mk palette.
  */
+
+/* Connector chip: a white circle straddling the gap between two cards.
+   Rendered on every card but the last, only at the 4-up breakpoint — when the
+   grid wraps, reading order carries the sequence and a sideways arrow lies. */
+function ArrowChip() {
+  return (
+    <span
+      aria-hidden
+      className="absolute -right-[26px] top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white text-mk-teal-600 shadow-[0_4px_14px_rgba(51,71,91,0.22)] ring-1 ring-mk-line lg:flex"
+    >
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+        <path d="M4 10h12m0 0l-5-5m5 5l-5 5" />
+      </svg>
+    </span>
+  )
+}
 
 const ART = {
   find: (props) => (
@@ -45,14 +63,15 @@ const ART = {
 export default function StepsStrip({ steps }) {
   return (
     <ol
-      className={`grid grid-cols-1 gap-4 sm:grid-cols-2 ${
+      className={`grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-5 ${
         steps.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
       }`}
     >
-      {steps.map((s) => {
+      {steps.map((s, i) => {
         const Art = ART[s.icon] || ART.find
         return (
-          <li key={s.title} className="h-full">
+          <li key={s.title} className="relative h-full">
+            {i < steps.length - 1 && <ArrowChip />}
             {s.highlight ? (
               /* The account card: dark gradient, white type, the button. */
               <div className="flex h-full flex-col rounded-[var(--radius-card)] bg-gradient-to-br from-mk-teal-600 to-mk-slate p-6 text-white shadow-[0_18px_40px_rgba(51,71,91,0.35)]">

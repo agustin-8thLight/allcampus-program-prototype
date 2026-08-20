@@ -1,4 +1,5 @@
 import { Eyebrow, Heading, Body } from './Section.jsx'
+import StepsStrip from './StepsStrip.jsx'
 import EcosystemStrip from './EcosystemStrip.jsx'
 import { PROGRAMS, money } from '../../data/model.js'
 import { bestDiscountPercent } from '../../data/benefit.js'
@@ -18,32 +19,41 @@ import { hasBenefitAdmin, policyOwner, PREAPPROVAL_RULE } from '../../data/corpo
  * ALL COPY IS DRAFT. Brigid's content doc is pending; the skeleton borrows
  * her Quick Guide's language (its own Step 1 is "find a qualifying program").
  */
-export default function BenefitsAndHow({ partner }) {
+export default function BenefitsAndHow({ partner, joined = false }) {
   const maxPct = bestDiscountPercent(PROGRAMS)
   const reimburses = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
   const trPossible = !reimburses && (partner?.partnerType === 'perks' || !partner?.benefitKnown)
   const owner = policyOwner(partner)
 
+  // The who-does-what facts now live INSIDE the step copy — the four-party
+  // strip is retired (2026-08-20: one diagram, not two) and the journey
+  // carries its content.
   const steps = [
     {
-      t: 'Find a qualifying program',
-      b: 'Search or browse by subject or outcome. Nothing needs approving at this stage.',
+      icon: 'find',
+      title: 'Find a qualifying program',
+      body: 'Search or browse by subject or outcome. Nothing needs approving at this stage, and you are not committing to anything.',
     },
     {
-      t: 'Create a free account',
-      b: 'It attaches your employer pricing, so you see your real cost instead of list prices.',
+      icon: 'account',
+      title: 'Create a free account',
+      highlight: true,
+      body: 'It attaches your employer pricing, so you see school names and your real cost instead of list prices.',
     },
     {
-      t: 'Confirm your benefit',
-      b: reimburses
-        ? `${owner || 'Your employer'} decides eligibility and approves funding. A free specialist call walks you through it first. ${PREAPPROVAL_RULE}`
+      icon: 'confirm',
+      title: 'Confirm your benefit',
+      body: reimburses
+        ? `${owner || 'Your employer'} decides eligibility and approves funding, not AllCampus. A free specialist call walks you through it first.`
         : trPossible
-          ? `If your employer offers tuition reimbursement, they decide eligibility and approvals. A free specialist call helps you check. ${PREAPPROVAL_RULE}`
+          ? 'If your employer offers tuition reimbursement, they decide eligibility and approvals. A free specialist call helps you check.'
           : 'A free specialist call confirms your pricing and next steps, with no obligation.',
+      note: reimburses || trPossible ? PREAPPROVAL_RULE : null,
     },
     {
-      t: 'Apply through AllCampus',
-      b: 'Applying through AllCampus keeps your discount attached; going straight to the school means standard tuition.',
+      icon: 'apply',
+      title: 'Apply through AllCampus',
+      body: 'The schools deliver your program; applying through AllCampus is what keeps your discount attached. Going straight to the school means standard tuition.',
     },
   ]
 
@@ -91,32 +101,19 @@ export default function BenefitsAndHow({ partner }) {
           </div>
         </div>
 
-        {/* How this works: who does what, then what you do */}
-        <h3 className="mt-10 font-display text-[16px] font-extrabold text-mk-slate">Who does what</h3>
-        <div className="mt-4">
-          <EcosystemStrip variant="landing" partner={partner} />
-        </div>
-
-        <h3 className="mt-8 font-display text-[16px] font-extrabold text-mk-slate">
-          What you do, in order
+        {/* Logged out: the journey to signup. Logged in: the account step is
+            stale, so the slot explains the machine instead (the four-party
+            strip, speaking to the specific partner situation). */}
+        <h3 className="mt-10 font-display text-[16px] font-extrabold text-mk-slate">
+          {joined ? 'How it works' : 'What you do, in order'}
         </h3>
-        <ol className="mt-4 grid grid-cols-1 gap-4 rounded-[var(--radius-card)] border border-mk-line bg-white p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
-          {steps.map((s, i) => (
-            <li key={s.t} className="flex gap-3">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-mk-blue-50 font-display text-[13px] font-black text-mk-teal-700 ring-1 ring-mk-blue-200">
-                {i + 1}
-              </span>
-              <span>
-                <span className="block font-display text-[14px] font-extrabold text-mk-slate">
-                  {s.t}
-                </span>
-                <span className="mt-1 block font-display text-[13px] leading-relaxed text-mk-body">
-                  {s.b}
-                </span>
-              </span>
-            </li>
-          ))}
-        </ol>
+        <div className="mt-4">
+          {joined ? (
+            <EcosystemStrip variant="landing" partner={partner} />
+          ) : (
+            <StepsStrip steps={steps} />
+          )}
+        </div>
 
         <p className="mt-4 font-display text-[12px] text-mk-body/70">
           Draft copy. Brigid&rsquo;s content doc is pending; the structure and steps follow her

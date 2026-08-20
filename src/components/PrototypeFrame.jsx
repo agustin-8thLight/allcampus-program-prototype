@@ -3,6 +3,7 @@ import App from '../App.jsx'
 import LandingPage from '../pages/LandingPage.jsx'
 import SchoolPage from '../pages/SchoolPage.jsx'
 import CategoryPage from '../pages/CategoryPage.jsx'
+import SchoolsPage from '../pages/SchoolsPage.jsx'
 import StoryLauncher from './StoryLauncher.jsx'
 import StoryCoach from './StoryCoach.jsx'
 import GateModal from './GateModal.jsx'
@@ -168,6 +169,8 @@ export default function PrototypeFrame() {
         onNavigate={navigate}
       />
     )
+  } else if (route.path === '/schools') {
+    page = <SchoolsPage partner={partner} onNavigate={navigate} />
   } else if (route.path.startsWith('/category/')) {
     // Aug 14 meeting: category tiles open a landing page with skill drill-down.
     page = (
@@ -192,7 +195,9 @@ export default function PrototypeFrame() {
       />
     )
   } else {
-    page = <LandingPage partner={partner} homeVariant={homeVariant} onNavigate={navigate} />
+    page = (
+      <LandingPage partner={partner} homeVariant={homeVariant} joined={joined} onNavigate={navigate} />
+    )
   }
 
   if (bare) return page

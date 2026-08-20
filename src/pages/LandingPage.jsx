@@ -21,7 +21,7 @@ import { Heading, MkButton } from '../components/landing/Section.jsx'
  *  7. Ally: tertiary at the very bottom, generic copy, no promises
  */
 
-export default function LandingPage({ partner, homeVariant = 'current', onNavigate }) {
+export default function LandingPage({ partner, homeVariant = 'current', joined = false, onNavigate }) {
   const goBrowse = (params = {}) => {
     const qs = new URLSearchParams(
       Object.fromEntries(Object.entries(params).filter(([, v]) => v != null && v !== '')),
@@ -43,7 +43,7 @@ export default function LandingPage({ partner, homeVariant = 'current', onNaviga
       {/* 2026-08-19 session: the education-benefit block and the
           how-this-works section combine into one idea. "Here are the two big
           benefits for you, here's how this works." */}
-      <BenefitsAndHow partner={partner} />
+      <BenefitsAndHow partner={partner} joined={joined} />
 
       {/* One discovery band (2026-08-19): outcomes lead as the emotive image
           cards, the four subject tiles ride along as a compact strip inside —
@@ -59,7 +59,10 @@ export default function LandingPage({ partner, homeVariant = 'current', onNaviga
 
       <StoryCards partner={partner} />
 
-      <LogoStrip onSelectSchool={(s) => onNavigate(`/school/${s.id}`)} onSeeAll={() => goBrowse({})} />
+      <LogoStrip
+        onSelectSchool={(s) => onNavigate(`/school/${s.id}`)}
+        onSeeAll={() => onNavigate('/schools')}
+      />
 
       <LandingFaq />
 

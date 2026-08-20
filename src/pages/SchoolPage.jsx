@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import MkHeader from '../components/landing/MkHeader.jsx'
 import EcosystemStrip from '../components/landing/EcosystemStrip.jsx'
+import StepsStrip from '../components/landing/StepsStrip.jsx'
 import AllyEntry from '../components/landing/AllyEntry.jsx'
 import SubjectIcon from '../components/landing/SubjectIcon.jsx'
 import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.jsx'
@@ -71,20 +72,29 @@ export default function SchoolPage({ schoolId, partner, gated = false, onNavigat
   // 2026-08-19 session: partner-aware "how it works for you" steps.
   // Draft copy; Brigid's content doc pending.
   const owner = policyOwner(partner) || 'Your employer'
+  // Logged out: the journey to signup (illustrated strip). Logged in: the
+  // account step is stale, so the same slot explains the machine instead
+  // (the four-party strip, school variant) — 2026-08-20 direction.
   const howSteps = [
     {
+      icon: 'find',
       title: 'Find a qualifying program',
       body: `Browse ${firstWord}'s subjects above. Nothing needs approving at this stage.`,
     },
     {
+      icon: 'account',
       title: 'Create a free account',
+      highlight: true,
       body: 'It attaches your employer pricing, so you see your real cost instead of list prices.',
     },
     {
+      icon: 'confirm',
       title: 'Confirm your benefit',
-      body: `${owner} decides eligibility and approves funding. ${PREAPPROVAL_RULE}`,
+      body: `${owner} decides eligibility and approves funding, not AllCampus.`,
+      note: PREAPPROVAL_RULE,
     },
     {
+      icon: 'apply',
       title: 'Apply through AllCampus',
       body: `Applying through AllCampus keeps your discount attached; going straight to ${firstWord} means standard tuition.`,
     },
@@ -235,35 +245,16 @@ export default function SchoolPage({ schoolId, partner, gated = false, onNavigat
         <Heading size="sm" className="mt-2">
           How it works for you
         </Heading>
-        <ol className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {howSteps.map((step, i) => (
-            <li key={step.title} className="flex gap-3.5">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-mk-blue-50 font-display text-[14px] font-black text-mk-teal-700 ring-1 ring-mk-blue-200">
-                {i + 1}
-              </span>
-              <span>
-                <span className="block font-display text-[15px] font-extrabold text-mk-slate">
-                  {step.title}
-                </span>
-                <span className="mt-1 block font-display text-[13.5px] leading-relaxed text-mk-body">
-                  {step.body}
-                </span>
-              </span>
-            </li>
-          ))}
-        </ol>
+        <div className="mt-6">
+          {gated ? (
+            <StepsStrip steps={howSteps} />
+          ) : (
+            <EcosystemStrip variant="school" schoolName={school.name} partner={partner} />
+          )}
+        </div>
         <p className="mt-5 font-display text-[12px] text-mk-body/60">
           Draft copy. Brigid's content doc pending.
         </p>
-      </section>
-
-      {/* WHY STAY: the value-prop moment, before any outbound school link */}
-      <section className="mx-auto max-w-6xl px-5 pt-14">
-        <Eyebrow>Before you head to {school.name.split(' ')[0]}&rsquo;s site</Eyebrow>
-        <Heading size="sm" className="mb-5 mt-2">
-          Your {school.name.split(' ')[0]} discount comes through AllCampus
-        </Heading>
-        <EcosystemStrip variant="school" schoolName={school.name} partner={partner} />
       </section>
 
       {/* 2026-08-19 session: logged out, NO program grid. The grid is where

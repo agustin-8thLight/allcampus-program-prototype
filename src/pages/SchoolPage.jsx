@@ -26,7 +26,7 @@ import AllyOverlay from '../components/AllyOverlay.jsx'
 // `gated`: with the catalog behind login (Aug 14 decision), school pages must
 // not leak the prices browse withholds. The school's own identity stays: the
 // employer link that brought the visitor here already revealed it.
-export default function SchoolPage({ schoolId, partner, gated = false, onNavigate }) {
+export default function SchoolPage({ schoolId, partner, gated = false, onGate, onNavigate }) {
   const school = getSchool(schoolId)
   if (!school) {
     return (
@@ -86,6 +86,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onNavigat
       title: 'Create a free account',
       highlight: true,
       body: 'It attaches your employer pricing, so you see your real cost instead of list prices.',
+      cta: { label: 'Create a free account', onClick: () => onGate?.('catalog') },
     },
     {
       icon: 'confirm',

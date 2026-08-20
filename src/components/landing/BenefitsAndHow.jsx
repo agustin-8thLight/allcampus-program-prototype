@@ -22,7 +22,7 @@ import { hasBenefitAdmin, policyOwner, PREAPPROVAL_RULE } from '../../data/corpo
  * AllCampus activation line, and the connect/select verbs. Her strings are
  * quoted verbatim, em dashes included. Counts and dollars are mock.
  */
-export default function BenefitsAndHow({ partner, joined = false }) {
+export default function BenefitsAndHow({ partner, joined = false, onGate }) {
   const maxPct = bestDiscountPercent(PROGRAMS)
   const schoolCount = Object.keys(SCHOOLS).length
   const reimburses = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
@@ -46,6 +46,7 @@ export default function BenefitsAndHow({ partner, joined = false }) {
       title: 'Create a free account',
       highlight: true,
       body: 'It attaches your employer pricing, so you see school names and your real cost instead of list prices.',
+      cta: { label: 'Create a free account', onClick: () => onGate?.('catalog') },
     },
     {
       icon: 'confirm',
@@ -77,7 +78,7 @@ export default function BenefitsAndHow({ partner, joined = false }) {
         </Heading>
         <Body className="mt-2 max-w-2xl">
           {reimburses
-            ? `And at select schools, your out-of-pocket cost is $0 — tuition capped to match your ${partner.name} benefit.`
+            ? `And at select schools, your out-of-pocket cost is $0 — tuition capped to match ${/^your /i.test(partner.name) ? 'your employer benefit' : `your ${partner.name} benefit`}.`
             : 'At select schools, you’ll never pay more than $5,250 a year.'}
         </Body>
 

@@ -1,16 +1,14 @@
 /*
- * StepsStrip (2026-08-20): "What you do, in order" upgraded to the visual
- * language the four-party "Who does what" strip used — one rounded container,
- * large line illustrations, numbered columns, connector arrows — and that
- * strip is retired in its favor. One diagram on the page instead of two: the
- * journey itself carries the who-does-what facts inside its step copy.
+ * StepsStrip v2 (2026-08-20 review): "much better looking — use shadows and
+ * gradients; the arrows look weird, remove the numbers."
  *
- * The account step gets the highlight treatment (the strip's old "hinge"
- * pattern): it is the action the page exists to produce.
+ * Four elevated cards, order carried by reading direction alone. The light
+ * cards run a soft white-to-band gradient with a deep diffuse shadow; the
+ * account step is the dark gradient card with a REAL signup button — it is
+ * the action the page exists to produce, and now it looks like it.
  *
- * Illustrations are inline SVG on currentColor, 2.5 stroke, matching the
- * retired strip's style. Presentational: both landing pages (homepage band,
- * school page "How it works for you") pass their own step copy.
+ * Presentational: pages pass steps [{icon, title, body, note?, highlight?,
+ * cta?: {label, onClick}}]. Gradients stay inside the sampled mk palette.
  */
 
 const ART = {
@@ -47,52 +45,53 @@ const ART = {
 export default function StepsStrip({ steps }) {
   return (
     <ol
-      className={`grid grid-cols-1 gap-2 rounded-[var(--radius-card)] border border-mk-line bg-white p-4 sm:grid-cols-2 sm:p-5 ${
+      className={`grid grid-cols-1 gap-4 sm:grid-cols-2 ${
         steps.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
       }`}
     >
-      {steps.map((s, i) => {
+      {steps.map((s) => {
         const Art = ART[s.icon] || ART.find
         return (
-          <li key={s.title} className="relative">
-            <div
-              className={`flex h-full flex-col rounded-[var(--radius-card)] px-5 py-6 ${
-                s.highlight ? 'bg-mk-blue-50 ring-1 ring-mk-blue-200' : ''
-              }`}
-            >
-              <div
-                className={`mx-auto flex h-24 w-24 items-center justify-center rounded-[var(--radius-card)] ${
-                  s.highlight ? 'bg-white text-mk-teal-700 shadow-sm' : 'bg-mk-band text-mk-teal-700'
-                }`}
-              >
-                <Art className="h-14 w-14" />
-              </div>
-              <div className="mt-5 flex items-baseline gap-2">
-                <span
-                  className={`font-display text-[13px] font-extrabold ${
-                    s.highlight ? 'text-mk-teal-700' : 'text-mk-body/60'
-                  }`}
-                >
-                  {i + 1}
-                </span>
-                <span className="font-display text-[19px] font-extrabold leading-snug text-mk-slate">
+          <li key={s.title} className="h-full">
+            {s.highlight ? (
+              /* The account card: dark gradient, white type, the button. */
+              <div className="flex h-full flex-col rounded-[var(--radius-card)] bg-gradient-to-br from-mk-teal-600 to-mk-slate p-6 text-white shadow-[0_18px_40px_rgba(51,71,91,0.35)]">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-white shadow-inner backdrop-blur-sm">
+                  <Art className="h-9 w-9" />
+                </div>
+                <p className="mt-4 font-display text-[19px] font-extrabold leading-snug">
                   {s.title}
-                </span>
-              </div>
-              <p className="mt-2 font-display text-[14px] leading-relaxed text-mk-body">{s.body}</p>
-              {s.note && (
-                <p className="mt-auto pt-3 font-display text-[12.5px] leading-snug text-mk-teal-text">
-                  {s.note}
                 </p>
-              )}
-            </div>
-            {i < steps.length - 1 && (
-              <span
-                aria-hidden
-                className="absolute -right-[9px] top-[74px] z-10 hidden text-[17px] text-mk-teal-600/60 lg:block"
-              >
-                →
-              </span>
+                <p className="mt-2 font-display text-[13.5px] leading-relaxed text-white/85">
+                  {s.body}
+                </p>
+                {s.cta && (
+                  <button
+                    type="button"
+                    onClick={s.cta.onClick}
+                    className="mt-auto w-full rounded-lg bg-white px-4 py-2.5 pt-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-sm transition hover:bg-mk-band"
+                  >
+                    {s.cta.label}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="flex h-full flex-col rounded-[var(--radius-card)] border border-mk-line bg-gradient-to-b from-white to-mk-band/50 p-6 shadow-[0_14px_32px_rgba(51,71,91,0.12)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(51,71,91,0.16)]">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-mk-blue-50 to-mk-band text-mk-teal-700 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_2px_6px_rgba(51,71,91,0.10)]">
+                  <Art className="h-9 w-9" />
+                </div>
+                <p className="mt-4 font-display text-[19px] font-extrabold leading-snug text-mk-slate">
+                  {s.title}
+                </p>
+                <p className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
+                  {s.body}
+                </p>
+                {s.note && (
+                  <p className="mt-auto pt-3 font-display text-[12.5px] leading-snug text-mk-teal-text">
+                    {s.note}
+                  </p>
+                )}
+              </div>
             )}
           </li>
         )

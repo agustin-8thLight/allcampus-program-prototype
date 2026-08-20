@@ -199,7 +199,7 @@ export default function PrototypeFrame() {
     )
   } else {
     page = (
-      <LandingPage partner={partner} homeVariant={homeVariant} joined={joined} onNavigate={navigate} />
+      <LandingPage partner={partner} homeVariant={homeVariant} joined={joined} onGate={requestGate} onNavigate={navigate} />
     )
   }
 

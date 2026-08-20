@@ -75,7 +75,7 @@ export default function AreaSkillSelect({ value, onChange }) {
   }
 
   const pill = (active) =>
-    `rounded-full border px-3 py-1.5 text-left font-display text-[13px] font-semibold transition ${
+    `rounded-full border px-4 py-2.5 text-left font-display text-[13.5px] font-semibold transition ${
       active
         ? 'border-mk-teal-600 bg-mk-band text-mk-teal-700'
         : 'border-mk-line bg-white text-mk-slate hover:border-mk-teal-600 hover:text-mk-teal-700'
@@ -114,8 +114,10 @@ export default function AreaSkillSelect({ value, onChange }) {
           aria-label="Area of study or skill options"
           className="absolute inset-x-3 top-full z-30 mt-2 rounded-[var(--radius-card)] border border-mk-line bg-white shadow-[0_16px_40px_rgba(51,71,91,0.18)] sm:inset-x-5"
         >
-          {/* Tab strip: Popular first and preselected, then the areas. */}
-          <div className="flex gap-1 overflow-x-auto border-b border-mk-line px-2 pt-2">
+          {/* Tab strip: Popular first and preselected, then the areas.
+              Spacing opened up (2026-08-20 review: the tight panel read as
+              cramped). */}
+          <div className="flex gap-2 overflow-x-auto border-b border-mk-line px-4 pt-3">
             {[{ id: 'popular', label: 'Popular' }, ...AREAS].map((t) => {
               const active = tab === t.id
               return (
@@ -123,7 +125,7 @@ export default function AreaSkillSelect({ value, onChange }) {
                   key={t.id}
                   type="button"
                   onClick={() => setTab(t.id)}
-                  className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-t-lg border-b-2 px-3 py-2 font-display text-[13px] font-bold transition ${
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-t-lg border-b-2 px-3.5 py-3 font-display text-[13.5px] font-bold transition ${
                     active
                       ? 'border-mk-teal-600 text-mk-teal-700'
                       : 'border-transparent text-mk-body hover:text-mk-slate'
@@ -137,9 +139,9 @@ export default function AreaSkillSelect({ value, onChange }) {
           </div>
 
           {/* Content: everything shown is immediately pickable. */}
-          <div className="max-h-[300px] overflow-y-auto p-3">
+          <div className="max-h-[340px] overflow-y-auto p-5 sm:p-6">
             {!activeArea ? (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 {GOALS.map((g) => (
                   <button
                     key={g.id}
@@ -155,7 +157,7 @@ export default function AreaSkillSelect({ value, onChange }) {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 <button
                   type="button"
                   onClick={() => commit(`area:${activeArea.id}`)}

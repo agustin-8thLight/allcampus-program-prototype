@@ -1,6 +1,6 @@
 import { Eyebrow, Heading, Body } from './Section.jsx'
 import { SubjectIconTile } from './SubjectIcon.jsx'
-import { goalsForEmployer, categoriesForEmployer, programMatchesCategory, programMatchesGoal } from '../../data/taxonomy.js'
+import { goalsForEmployer, categoriesForEmployer, programMatchesCategory, programMatchesGoal, getSkill } from '../../data/taxonomy.js'
 import { PROGRAMS } from '../../data/model.js'
 import { goalImage } from '../../data/images.js'
 import Img from '../Img.jsx'
@@ -64,28 +64,44 @@ export default function GoalsExplorer({ partner, onSelectGoal, onSelectCategory 
                   </span>
                   <span className="mt-1 block font-display text-[13px] text-mk-body">{g.sub}</span>
 
-                  {/* What actually exists inside this outcome (2026-08-20
-                      review: photo + count alone said nothing about the
-                      contents). Example program titles, no school, no price —
-                      titles alone don't leak the sourceable pair. */}
-                  <span className="mt-3 block space-y-1.5 border-t border-mk-line pt-3">
-                    {PROGRAMS.filter((p) => programMatchesGoal(p, g))
-                      .slice(0, 3)
-                      .map((p) => (
-                        <span key={p.id} className="flex items-center gap-2">
-                          <span className="shrink-0 rounded bg-mk-band px-1.5 py-0.5 font-display text-[10.5px] font-bold uppercase tracking-wide text-mk-teal-text">
-                            {p.degreeLevel}
-                          </span>
-                          <span className="truncate font-display text-[13px] font-semibold text-mk-slate">
-                            {p.name}
-                          </span>
-                        </span>
-                      ))}
+                  {/* What lives inside this outcome (2026-08-20 review,
+                      second pass: program titles read too granular — show the
+                      SKILL labels instead, in the retired Browse-by-subject
+                      block's pill treatment, most-common first). */}
+                  <span className="mt-3 flex flex-wrap gap-1.5 border-t border-mk-line pt-3">
+                    {(() => {
+                      const freq = new Map()
+                      PROGRAMS.filter((p) => programMatchesGoal(p, g)).forEach((p) =>
+                        (p.skillIds || []).forEach((id) => freq.set(id, (freq.get(id) || 0) + 1)),
+                      )
+                      const skills = [...freq.entries()]
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([id]) => getSkill(id))
+                        .filter(Boolean)
+                      const preview = skills.slice(0, 4)
+                      return (
+                        <>
+                          {preview.map((s) => (
+                            <span
+                              key={s.id}
+                              className="rounded-full border border-mk-line bg-white px-2.5 py-1 font-display text-[12.5px] font-bold text-mk-body"
+                            >
+                              {s.label}
+                            </span>
+                          ))}
+                          {skills.length > preview.length && (
+                            <span className="rounded-full px-2 py-1 font-display text-[12.5px] font-bold text-mk-body/70">
+                              +{skills.length - preview.length} more
+                            </span>
+                          )}
+                        </>
+                      )
+                    })()}
                   </span>
 
                   <span className="mt-3 flex items-center justify-between">
                     <span className="font-display text-[12.5px] font-bold text-mk-body">
-                      {n > 3 ? `+${n - 3} more program${n - 3 > 1 ? 's' : ''}` : n > 0 ? `${n} program${n > 1 ? 's' : ''}` : 'Programs coming to catalog'}
+                      {n > 0 ? `${n} program${n > 1 ? 's' : ''}` : 'Programs coming to catalog'}
                       {c > 0 && (
                         <span className="text-mk-green-700"> · {c} fully covered for you</span>
                       )}

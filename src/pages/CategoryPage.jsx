@@ -1,8 +1,11 @@
 import MkHeader from '../components/landing/MkHeader.jsx'
 import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.jsx'
-import SubjectIcon, { SubjectIconTile } from '../components/landing/SubjectIcon.jsx'
+import SubjectIcon from '../components/landing/SubjectIcon.jsx'
+import ProgramCard from '../components/ProgramCard.jsx'
+import Img from '../components/Img.jsx'
 import { PROGRAMS } from '../data/model.js'
 import { bestDiscountPercent, fullyCoveredPrograms } from '../data/benefit.js'
+import { categoryImage } from '../data/images.js'
 import {
   getCategory,
   areasForCategory,
@@ -13,19 +16,19 @@ import {
 } from '../data/taxonomy.js'
 
 /*
- * Category landing page (#/category/:id) — the page the Aug 14 meeting asked
- * for: "clicking a category goes to a landing page where users can drill down
- * by skill" (Terrence confirmed it builds quickly as a dynamic page).
+ * Category landing page (#/category/:id), rebuilt 2026-08-20: "Category
+ * landings need to be real landing pages and not filtered search results."
  *
- * Value messaging about the subject, then the two requested ways in:
- * outcomes ("pick an outcome" tiles, scoped) and skills (the drill-down).
- * NO program cards here — the catalog sits behind login (the meeting's
- * leakage decision), and the header carries the requested tease instead:
- * program count and a discount hint, no school names, no amounts.
+ * The previous version was a utility page — icon header, chips, drill-down —
+ * because the gating era stripped its featured programs. With the catalog
+ * open again this is a full landing: photo hero with the value pitch and
+ * scoped numbers, real program cards ON the page, then the two ways deeper
+ * (outcomes and the skill drill-down the Aug 14 meeting asked for), closed
+ * by the dark CTA bookend the homepage established.
  *
  * Pitch copy is DRAFT for Brigid, same as the category labels.
  */
-export default function CategoryPage({ categoryId, partner, onNavigate }) {
+export default function CategoryPage({ categoryId, partner, joined = true, onNavigate }) {
   const category = getCategory(categoryId)
 
   if (!category) {
@@ -56,64 +59,118 @@ export default function CategoryPage({ categoryId, partner, onNavigate }) {
   const emphasized = (partner?.emphasizedAreaIds || []).some((a) => category.areaIds.includes(a))
   const countForSkill = (id) => inCategory.filter((p) => p.skillIds?.includes(id)).length
 
+  // Featured: best discounts first — the differentiator leads on a landing.
+  const featured = [...inCategory]
+    .sort((a, b) => (b.discount?.percentUsed || 0) - (a.discount?.percentUsed || 0))
+    .slice(0, 6)
+
+  const goBrowse = (extra = '') => onNavigate(`/browse?category=${category.id}${extra}`)
+
   return (
     <div className="min-h-screen bg-white">
       <MkHeader partner={partner} onNavigate={onNavigate} />
 
-      {/* Value header: why THIS subject, with the count + discount tease. */}
-      <section className="border-b border-mk-line bg-mk-surface py-12">
-        <div className="mx-auto max-w-6xl px-5">
+      {/* Photo hero, same treatment as the homepage hero: the page opens as a
+          destination, not a filter view. */}
+      <section className="relative overflow-hidden py-16 text-white">
+        <Img
+          src={categoryImage(category.id)}
+          alt=""
+          hue={category.hue || 206}
+          rounded=""
+          position="absolute"
+          className="inset-0 h-full w-full"
+          overlay="bg-[linear-gradient(112deg,rgba(30,45,58,0.92)_0%,rgba(51,71,91,0.84)_45%,rgba(69,120,140,0.62)_100%)]"
+        />
+        <div className="relative mx-auto max-w-6xl px-5">
           <button
             onClick={() => onNavigate('/')}
-            className="font-display text-[13.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
+            className="font-display text-[13.5px] font-bold text-white/80 underline-offset-2 hover:text-white hover:underline"
           >
             ← All subjects
           </button>
 
-          <div className="mt-5 max-w-2xl">
-            <SubjectIconTile id={category.id} size="lg" className="bg-white" />
-            <div className="mt-4">
-              <Eyebrow>Subject</Eyebrow>
-              <Heading size="lg" className="mt-1">
-                {category.label}
-              </Heading>
-              <Body className="mt-3 text-[16px]">{category.pitch}</Body>
+          <div className="mt-6 max-w-2xl">
+            <p className="font-display text-[12px] font-bold uppercase tracking-[0.16em] text-white/70">
+              Subject
+            </p>
+            <h1 className="mt-2 text-[34px] font-extrabold leading-tight sm:text-[42px]">
+              {category.label}
+            </h1>
+            <p className="mt-3 font-display text-[16px] leading-relaxed text-white/85">
+              {category.pitch}
+            </p>
 
-              {emphasized && (
-                <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 font-display text-[13px] font-bold text-mk-teal-700">
-                  ★ Where {partner.name} employees use their benefit most
-                </p>
+            {emphasized && (
+              <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 font-display text-[13px] font-bold text-white backdrop-blur-sm">
+                ★ Where {partner.name} employees use their benefit most
+              </p>
+            )}
+
+            <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 font-display text-[14px] font-bold">
+              <span>{inCategory.length} {inCategory.length === 1 ? 'program' : 'programs'}</span>
+              <span className="text-white/40" aria-hidden>|</span>
+              <span>{schoolCount} in-network {schoolCount === 1 ? 'university' : 'universities'}</span>
+              {maxPct != null && (
+                <>
+                  <span className="text-white/40" aria-hidden>|</span>
+                  <span>Up to {maxPct}% off</span>
+                </>
               )}
+              {covered > 0 && (
+                <>
+                  <span className="text-white/40" aria-hidden>|</span>
+                  <span>{covered} fully covered by {partner.name} (est.)</span>
+                </>
+              )}
+            </div>
 
-              <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 font-display text-[14px] font-bold text-mk-slate">
-                <span>{inCategory.length} {inCategory.length === 1 ? 'program' : 'programs'}</span>
-                <span className="text-mk-line" aria-hidden>|</span>
-                <span>{schoolCount} in-network {schoolCount === 1 ? 'university' : 'universities'}</span>
-                {maxPct != null && (
-                  <>
-                    <span className="text-mk-line" aria-hidden>|</span>
-                    <span className="text-mk-green-700">Up to {maxPct}% off</span>
-                  </>
-                )}
-                {covered > 0 && (
-                  <>
-                    <span className="text-mk-line" aria-hidden>|</span>
-                    <span className="text-mk-green-700">
-                      {covered} fully covered by {partner.name} (est.)
-                    </span>
-                  </>
-                )}
-              </div>
-
-              <div className="mt-6">
-                <MkButton tone="teal" onClick={() => onNavigate(`/browse?category=${category.id}`)}>
-                  Browse all {inCategory.length} programs
-                </MkButton>
-              </div>
+            <div className="mt-7">
+              <button
+                type="button"
+                onClick={() => goBrowse()}
+                className="inline-flex items-center justify-center rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
+              >
+                Browse all {inCategory.length} programs
+              </button>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Real programs ON the page — a landing sells with the goods. */}
+      {featured.length > 0 && (
+        <section className="mx-auto max-w-6xl px-5 pt-12">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <Eyebrow>Popular in this subject</Eyebrow>
+              <Heading size="sm" className="mt-1.5">
+                Start with these programs
+              </Heading>
+            </div>
+            <button
+              type="button"
+              onClick={() => goBrowse()}
+              className="font-display text-[13.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
+            >
+              See all {inCategory.length} →
+            </button>
+          </div>
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {featured.map((p) => (
+              <ProgramCard
+                key={p.id}
+                program={p}
+                partner={partner}
+                joined={joined}
+                onExplore={(prog) => goBrowse(`&program=${prog.id}`)}
+                onSave={(prog) => goBrowse(`&program=${prog.id}`)}
+                onCompare={(prog) => goBrowse(`&program=${prog.id}`)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Outcomes, scoped to this subject. */}
       {goals.length > 0 && (
@@ -191,6 +248,22 @@ export default function CategoryPage({ categoryId, partner, onNavigate }) {
               </div>
             )
           })}
+        </div>
+      </section>
+
+      {/* Dark CTA bookend, mirroring the homepage close. */}
+      <section className="bg-gradient-to-br from-mk-teal-600 to-mk-slate py-14 text-center">
+        <Heading size="sm" className="text-white">
+          {inCategory.length} {category.label} programs, discounts included
+        </Heading>
+        <div className="mt-5">
+          <button
+            type="button"
+            onClick={() => goBrowse()}
+            className="inline-flex items-center justify-center rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
+          >
+            Browse all programs
+          </button>
         </div>
       </section>
 

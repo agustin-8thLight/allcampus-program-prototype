@@ -77,12 +77,12 @@ export default function ProgramCard({
         {/* Move 5 on the list: the benefit answer, inline. */}
         {benefitKnown && joined && oop != null && (
           <p className="mt-1 text-[13px] font-bold text-good-700">
-            Your est. out-of-pocket: {money(oop)}/yr with the {partner.name} benefit
+            Your est. out-of-pocket: {money(oop)}/yr with {/^your /i.test(partner.name) ? 'your employer benefit' : `the ${partner.name} benefit`}
           </p>
         )}
         {benefitKnown && !joined && (
           <p className="mt-1 text-[13px] font-semibold text-ink-400">
-            Join free to see your price with the {partner.name} benefit
+            Join free to see your price with {/^your /i.test(partner.name) ? 'your employer benefit' : `the ${partner.name} benefit`}
           </p>
         )}
         {start && (

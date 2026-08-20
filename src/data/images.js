@@ -97,7 +97,16 @@ export const SCHOOL_IMAGES = {
   westcliff: U('1583373834259-46cc92173cb7', 1800, 800),
 }
 
+/* Category landing heroes (2026-08-20). Reuses ids already verified above. */
+export const CATEGORY_IMAGES = {
+  'business-leadership': U('1552581234-26160f608093', 1800, 600),
+  'tech-engineering': U('1550751827-4bd374c3f58b', 1800, 600),
+  healthcare: U('1519494026892-80bbd2d6fd0d', 1800, 600),
+  'people-public': U('1509062522246-3755977927d7', 1800, 600),
+}
+
 export const programImage = (id) => PROGRAM_IMAGES[id] || null
+export const categoryImage = (id) => CATEGORY_IMAGES[id] || null
 export const goalImage = (id) => GOAL_IMAGES[id] || null
 export const storyImage = (id) => STORY_IMAGES[id] || null
 export const personaImage = (id) => PERSONA_IMAGES[id] || null

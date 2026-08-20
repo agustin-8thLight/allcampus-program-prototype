@@ -186,6 +186,7 @@ export default function PrototypeFrame() {
         key={route.raw}
         categoryId={route.path.split('/')[2]}
         partner={partner}
+        joined={joined}
         onNavigate={navigate}
       />
     )

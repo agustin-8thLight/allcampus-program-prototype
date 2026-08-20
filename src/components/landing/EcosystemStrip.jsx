@@ -1,33 +1,26 @@
-import { PREAPPROVAL_RULE } from '../../data/corporatePartners.js'
-/*
- * Ecosystem role communication (2026-08-11 meeting, "mental model gap"):
- * users don't understand how employer, AllCampus, and school fit together,
- * and only 20-30% of high-intent users follow through. This strip names the
- * four parties and one plain job each, framing AllCampus as "the vehicle
- * that gets you there."
- *
- * Two variants:
- *  - 'landing'  : neutral "How this works" band.
- *  - 'school'   : the pre-bounce value-prop moment on a school page. Adds
- *                 the explicit retention argument (leaving to enroll
- *                 directly at the school forfeits the AllCampus discount).
- *
- * COPY IS DRAFT: align with Brigid's journey map when she shares it. Her map
- * also formalizes who-to-contact-for-what (employer HR vs AllCampus support
- * vs school admissions); the `contact` line per node sketches that here.
- */
+import { money } from '../../data/model.js'
+import { hasBenefitAdmin } from '../../data/corporatePartners.js'
 
 /*
- * Simple line illustrations, one per ecosystem role. Inline SVG (no assets to
- * license) drawn on currentColor so they inherit the node's accent.
+ * The how-it-works boxes — CONTENT NOW VERBATIM from Brigid's landing-page
+ * content doc (2026-08-20, "Allcampus 'how' for landing pages"). Her model:
+ *
+ *   3 boxes (Employer / AllCampus / In-Network Schools) for every direct type
+ *   and Benefit Partner No TR; 4 boxes (Employer / Benefit Partner /
+ *   AllCampus / In-Network Schools) when an administrator runs the benefit.
+ *   No "You" box. The In-Network Schools box is reused verbatim everywhere;
+ *   the AllCampus box is stable with one sequencing clause present for TR
+ *   types.
+ *
+ * Her strings are quoted exactly, em dashes included: this is client
+ * language of record, not ours to restyle. [$Amount] slots fill from the
+ * partner record (MOCK figures).
+ *
+ * Two variants: 'landing' (the logged-in how-it-works) and 'school' (adds
+ * the pre-bounce discount-lives-here banner).
  */
+
 const Art = {
-  you: (props) => (
-    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" {...props}>
-      <circle cx="32" cy="22" r="9" />
-      <path d="M14 54c0-9.5 8-16 18-16s18 6.5 18 16" />
-    </svg>
-  ),
   employer: (props) => (
     <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" {...props}>
       <path d="M12 54V20l14-8 14 8v34" />
@@ -58,77 +51,68 @@ const Art = {
   ),
 }
 
-/*
- * Node list per partner archetype (Brigid's journey map, 2026-08-13). Role
- * copy follows her wording: the employer funds and (for direct archetypes)
- * qualifies/approves/files; a benefit administrator does that job when one
- * exists; AllCampus is the discount network; the schools deliver.
- *
- * COPY IS DRAFT until Brigid confirms the final map.
- */
+// Brigid's stable boxes (verbatim).
+const ALLCAMPUS_BASE =
+  'AllCampus already secured your discount — it’s just waiting to be activated. Connect with a school through AllCampus to make that happen.'
+const ALLCAMPUS_SEQUENCING =
+  ' Your employer’s reimbursement process requires a school and a program already be selected — so this is where you start.'
+const SCHOOLS_BOX =
+  'Once you’ve connected through AllCampus, the school handles admissions, enrollment, billing, and your discounted tuition.'
+
+function employerBox(partner) {
+  const name = partner?.name || 'Your employer'
+  const amount = partner?.employerReimbursement ? money(partner.employerReimbursement) : null
+  switch (partner?.partnerType) {
+    case 'direct-tr':
+      return `${name} offers a Tuition Reimbursement Benefit${amount ? ` (${amount})` : ''} and access to AllCampus’s discount network. They manage your tuition reimbursement directly. The first step is to select a school and a program.`
+    case 'direct-mixed':
+      return `${name} offers a Tuition Reimbursement Benefit${amount ? ` (${amount})` : ''}, managed directly by ${name} — eligibility depends on your role, so check with HR to confirm yours. Access to AllCampus’s discount network is guaranteed for everyone, regardless of reimbursement eligibility.`
+    case 'direct-no-tr':
+      return `${name} partners with AllCampus to give you access to our discount network. This is to reduce the cost of tuition for you.`
+    case 'benefit-admin':
+      return `${name} offers a Tuition Reimbursement Benefit, administered by ${partner.benefitAdmin?.name || 'your benefit partner'}. You also get access to AllCampus’s discount network — lowering the price before reimbursement is even applied.`
+    case 'perks':
+      return `${name} partners with AllCampus to give you access to our discount network.`
+    default:
+      return 'Your employer may connect you to the AllCampus discount network and, in many cases, a tuition benefit. Tell us who you work for and we’ll check.'
+  }
+}
+
 const NODES = (schoolName, partner) => {
-  const type = partner?.partnerType
-  const admin = partner?.benefitAdmin
-  const employerName = partner?.benefitKnown ? partner.name : 'Your employer'
-  const noTr = type === 'direct-no-tr' || type === 'perks'
-
-  const employerDoes = admin
-    ? `Funds your education benefit and partners with ${admin.name} to administer it.`
-    : noTr
-      ? 'Partners with AllCampus so you get discounted tuition — no reimbursement program here.'
-      : type === 'direct-mixed'
-        ? 'Partners with AllCampus for the discount and runs its own reimbursement program.'
-        : 'Funds your reimbursement and sets how much is covered. Qualification, approval and filing happen here.'
-
-  const employerContact = admin
-    ? null
-    : `Policy, qualification and filing: ${partner?.policyLocation || 'your HR or benefits portal'}`
-
+  const admin = hasBenefitAdmin(partner)
+  const hasTR =
+    partner?.partnerType === 'direct-tr' ||
+    partner?.partnerType === 'direct-mixed' ||
+    partner?.partnerType === 'benefit-admin'
   const nodes = [
-    {
-      key: 'you',
-      art: 'you',
-      label: 'You',
-      does: 'Pick a program and put your education benefit to work.',
-      contact: null,
-    },
     {
       key: 'employer',
       art: 'employer',
-      label: employerName,
-      does: employerDoes,
-      contact: employerContact,
+      label: partner?.name || 'Your Employer',
+      does: employerBox(partner),
     },
   ]
-
   if (admin) {
     nodes.push({
       key: 'admin',
       art: 'benefitAdmin',
-      label: admin.name,
-      does:
-        'Administers your benefit: determines who qualifies, runs pre-approval, processes filings and issues the funds.',
-      contact: `Policy, qualification and filing: ${admin.portalLabel}`,
+      label: partner.benefitAdmin?.name || 'Benefit Partner',
+      does: `${partner.benefitAdmin?.name || 'Your benefit partner'} manages your reimbursement — eligibility, filings, and funds. Their pre-approval process requires a school and a program already be selected.`,
     })
   }
-
   nodes.push(
     {
       key: 'allcampus',
       art: 'allcampus',
       label: 'AllCampus',
-      does: noTr
-        ? 'The tuition discount network. Connecting with an in-network school through AllCampus is what secures your discount.'
-        : 'The tuition discount network — and where you get help. Connecting through AllCampus secures your discount.',
-      contact: 'Program & cost questions: Ally or an Education Benefits Specialist',
+      does: ALLCAMPUS_BASE + (hasTR ? ALLCAMPUS_SEQUENCING : ''),
       highlight: true,
     },
     {
       key: 'school',
       art: 'school',
-      label: schoolName || 'In-network schools',
-      does: 'Manage admissions, enrollment, cost and payment options, and deliver the program.',
-      contact: 'Admissions & enrollment: the school, after you apply',
+      label: schoolName || 'In-Network Schools',
+      does: SCHOOLS_BOX,
     },
   )
   return nodes
@@ -136,7 +120,6 @@ const NODES = (schoolName, partner) => {
 
 export default function EcosystemStrip({ variant = 'landing', schoolName = null, partner = null }) {
   const nodes = NODES(schoolName, partner)
-  const showPreapproval = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
   return (
     <div className="font-display">
       {variant === 'school' && (
@@ -152,21 +135,20 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
         </div>
       )}
 
-      {/* One container holds the whole explanation; the AllCampus column is
-          highlighted in light blue as the hinge of the four parts. */}
-      <ol className={`grid grid-cols-1 gap-2 rounded-3xl border border-mk-line bg-white p-4 sm:grid-cols-2 sm:p-5 ${
-          nodes.length === 5 ? 'lg:grid-cols-5' : 'lg:grid-cols-4'
-        }`}>
+      <ol
+        className={`grid grid-cols-1 gap-2 rounded-[var(--radius-card)] border border-mk-line bg-white p-4 sm:grid-cols-2 sm:p-5 ${
+          nodes.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
+        }`}
+      >
         {nodes.map((n, i) => (
           <li key={n.key} className="relative">
             <div
-              className={`flex h-full flex-col rounded-2xl px-5 py-6 ${
+              className={`flex h-full flex-col rounded-[var(--radius-card)] px-5 py-6 ${
                 n.highlight ? 'bg-mk-blue-50 ring-1 ring-mk-blue-200' : ''
               }`}
             >
-              {/* Illustration: large and centered above the column. */}
               <div
-                className={`mx-auto flex h-24 w-24 items-center justify-center rounded-2xl ${
+                className={`mx-auto flex h-24 w-24 items-center justify-center rounded-[var(--radius-card)] ${
                   n.highlight ? 'bg-white text-mk-teal-700 shadow-sm' : 'bg-mk-band text-mk-teal-700'
                 }`}
               >
@@ -180,18 +162,12 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
                 >
                   {i + 1}
                 </span>
-                <span className="text-[20px] font-extrabold leading-snug text-mk-slate">
+                <span className="text-[19px] font-extrabold leading-snug text-mk-slate">
                   {n.label}
                 </span>
               </div>
               <p className="mt-2 text-[14px] leading-relaxed text-mk-body">{n.does}</p>
-              {n.contact && (
-                <p className="mt-auto pt-3 text-[12.5px] leading-snug text-mk-teal-text">
-                  {n.contact}
-                </p>
-              )}
             </div>
-            {/* Connector between columns, aligned to the illustration row */}
             {i < nodes.length - 1 && (
               <span
                 aria-hidden
@@ -203,13 +179,6 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
           </li>
         ))}
       </ol>
-
-      {/* Sequencing rule from the journey map — the reason search leads. */}
-      {showPreapproval && (
-        <p className="mt-3 text-[13px] text-mk-body">
-          <span className="font-bold text-mk-slate">One sequencing note:</span> {PREAPPROVAL_RULE}
-        </p>
-      )}
     </div>
   )
 }

@@ -78,7 +78,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onNavigat
   const howSteps = [
     {
       icon: 'find',
-      title: 'Find a qualifying program',
+      title: 'Select a school and a program',
       body: `Browse ${firstWord}'s subjects above. Nothing needs approving at this stage.`,
     },
     {
@@ -95,8 +95,8 @@ export default function SchoolPage({ schoolId, partner, gated = false, onNavigat
     },
     {
       icon: 'apply',
-      title: 'Apply through AllCampus',
-      body: `Applying through AllCampus keeps your discount attached; going straight to ${firstWord} means standard tuition.`,
+      title: 'Connect through AllCampus',
+      body: `Once you’ve connected through AllCampus, ${firstWord} handles admissions, enrollment, billing, and your discounted tuition. Going straight to ${firstWord} means standard tuition.`,
     },
   ]
 
@@ -253,7 +253,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onNavigat
           )}
         </div>
         <p className="mt-5 font-display text-[12px] text-mk-body/60">
-          Draft copy. Brigid's content doc pending.
+          Key lines from Brigid's content doc (2026-08-20). Figures are mock.
         </p>
       </section>
 

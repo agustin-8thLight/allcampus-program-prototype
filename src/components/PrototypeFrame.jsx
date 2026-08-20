@@ -34,9 +34,9 @@ import { getUseCase } from '../data/useCases.js'
  */
 function initialEmployer() {
   const e = new URLSearchParams(window.location.search).get('employer')
-  // Default scenario = Brigid's bucket 1 (benefit partner with TR), the
-  // highest-converting group.
-  return CORPORATE_PARTNERS[e] ? e : 'atassist'
+  // Default scenario = Benefit Partner with TR (EdAssist / Tuition.io type),
+  // the highest-converting group.
+  return CORPORATE_PARTNERS[e] ? e : 'edassist'
 }
 
 function initialStory() {

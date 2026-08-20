@@ -128,11 +128,11 @@ export const CORPORATE_PARTNERS = {
     emphasizedAreaIds: ['business', 'healthcare'],
     hiddenAreaIds: [],
   },
-  // Bucket 1: benefit partner that administers TR (At Assist / Tuition IO
-  // type). Record is generic on purpose — the review dropdown shows buckets,
-  // not companies. Figures are MOCK.
-  atassist: {
-    id: 'atassist',
+  // Benefit Partner with TR (EdAssist / Tuition.io type — the transcript's
+  // "At Assist" was EdAssist). Record is generic on purpose: the review
+  // dropdown shows Brigid's type titles, not companies. Figures are MOCK.
+  edassist: {
+    id: 'edassist',
     partnerType: 'benefit-admin',
     benefitAdmin: { name: 'your benefit administrator', portalLabel: 'your benefit portal' },
     policyLocation: 'your benefit portal',
@@ -148,14 +148,14 @@ export const CORPORATE_PARTNERS = {
     emphasizedAreaIds: ['business', 'healthcare'],
     hiddenAreaIds: [],
   },
-  // Bucket 2: benefit partner where eligibility is unknown — generic TR
-  // language, discounts as the certain benefit.
-  'benefit-unknown': {
-    id: 'benefit-unknown',
+  // Benefit Partner No TR (Brigid's doc, 2026-08-20): a benefit partner that
+  // provides the discount network access with no reimbursement attached.
+  'benefit-no-tr': {
+    id: 'benefit-no-tr',
     partnerType: 'perks',
     benefitAdmin: null,
     policyLocation: 'your benefits portal',
-    name: 'Your employer',
+    name: 'Your benefit partner',
     benefitKnown: false,
     employerReimbursement: 0,
     bachelorsReimbursement: 0,
@@ -163,7 +163,7 @@ export const CORPORATE_PARTNERS = {
     minBenefit: 0,
     reimbursementProvider: null,
     policy:
-      'Your employer connects you to AllCampus partner discounts. Tuition reimbursement may also be available — check your benefits portal or ask a specialist.',
+      'Your benefit partner connects you to the AllCampus discount network. Discounts apply to every program; no reimbursement program is attached.',
     emphasizedAreaIds: [],
     hiddenAreaIds: [],
   },
@@ -220,42 +220,41 @@ export const EMPLOYER_STATES = [
 ]
 
 /*
- * Brigid's five partner buckets (2026-08-19 session). These drive the review
- * dropdown INSTEAD of company names — "do the buckets like I've laid out, not
- * the companies." Each bucket points at a representative partner record; the
- * scenario labels are what reviewers see. Bucket 1 (benefit partner with TR,
- * e.g. At Assist / Tuition IO) is the highest-converting group.
+ * Brigid's five partner types, TITLES VERBATIM from her landing-page content
+ * doc (2026-08-20) — these drive the review dropdown instead of company names
+ * and tag the story index. Each points at a representative partner record.
+ * Benefit Partner with TR (EdAssist / Tuition.io) is the highest-converting.
  */
 export const PARTNER_BUCKETS = [
   {
-    id: 'benefit-tr',
-    label: 'Benefit partner with TR',
-    partnerId: 'atassist',
-    tagline: 'Channel partner that administers tuition reimbursement (At Assist / Tuition IO type). Highest converting.',
-  },
-  {
-    id: 'benefit-unknown',
-    label: 'Benefit partner, eligibility unknown',
-    partnerId: 'benefit-unknown',
-    tagline: 'Channel partner where we cannot assume TR — talk about discounts for everyone, TR as a possibility.',
-  },
-  {
     id: 'direct-tr',
-    label: 'Direct partner with TR',
+    label: 'Direct Partner with TR',
     partnerId: 'sheetz',
-    tagline: 'Direct corporate partner funding tuition reimbursement.',
+    tagline: 'Direct corporate partner funding tuition reimbursement; approvals run through the employer.',
   },
   {
     id: 'direct-mixed',
-    label: 'Direct partner, mixed eligibility',
+    label: 'Direct Partner with Mixed Eligibility',
     partnerId: 'texas-roadhouse',
-    tagline: 'Direct partner where some employees are TR-eligible and some are not.',
+    tagline: 'TR eligibility depends on role; the discount network is guaranteed for everyone.',
   },
   {
     id: 'direct-no-tr',
-    label: 'Direct partner, no TR',
+    label: 'Direct Partner with no TR',
     partnerId: 'direct-no-tr',
-    tagline: 'Direct partner offering discounts only; no reimbursement program.',
+    tagline: 'Discount network access only; no reimbursement program.',
+  },
+  {
+    id: 'benefit-tr',
+    label: 'Benefit Partner with TR',
+    partnerId: 'edassist',
+    tagline: 'Reimbursement administered by a benefit partner (EdAssist / Tuition.io type). Highest converting.',
+  },
+  {
+    id: 'benefit-no-tr',
+    label: 'Benefit Partner No TR',
+    partnerId: 'benefit-no-tr',
+    tagline: 'Benefit partner providing discount network access, no reimbursement attached.',
   },
 ]
 

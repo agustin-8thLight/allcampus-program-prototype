@@ -55,12 +55,17 @@ export default function PrototypeFrame() {
   const [route, setRoute] = useState(parseHash)
   const [story, setStory] = useState(initialStory)
   // Session state for the gate + intent branching (move 2 + move 3).
-  const [joined, setJoined] = useState(false)
+  // 2026-08-20 client direction: the logged-in homepage IS the homepage for
+  // every scenario. The bar toggle still shows the logged-out state on demand.
+  const [joined, setJoined] = useState(true)
   const [intent, setIntent] = useState(null)
   const [gate, setGate] = useState(null) // { trigger } | null
   // Gated always (Brigid, Aug 19: drop the gated-vs-open toggle). A running
   // story flips this internally so the walkthroughs keep working; no UI.
-  const [catalogMode, setCatalogMode] = useState('gated')
+  // 2026-08-20 client direction: catalog UN-gated again; login returns to its
+  // pre-Aug-19 moments (Save/Compare + signup CTAs). All gating machinery kept
+  // dormant — this direction has reversed once already.
+  const [catalogMode, setCatalogMode] = useState('open')
   // The two hero versions for Brigid's review live on the URL, not the bar:
   // ?home=navigator swaps the search box for the exposed skills browser.
   const homeVariant =
@@ -98,7 +103,7 @@ export default function PrototypeFrame() {
   const exitStory = () => {
     setStory(null)
     setPhone(false)
-    setCatalogMode('gated')
+    setCatalogMode('open')
     navigate('/stories')
   }
 

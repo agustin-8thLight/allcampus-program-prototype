@@ -74,8 +74,37 @@ export default function BenefitsAndHow({ partner, onGate }) {
   ]
 
   return (
-    <section className="bg-white py-16">
-      <div className="mx-auto max-w-6xl px-5">
+    <>
+      {/* HOW first, as its own visually grouped band: the big picture is the
+          confidence builder, so the journey gets a section of its own on the
+          neutral surface (2026-08-21 review: title + subtitle + breathing
+          room, so the page flows instead of running as one white column). */}
+      <section className="border-y border-mk-line bg-mk-surface py-20">
+        <div className="mx-auto max-w-6xl px-5">
+          <Eyebrow>How it works</Eyebrow>
+          <Heading className="mt-2">One clear path, start to finish</Heading>
+          <Body className="mt-3 max-w-2xl">
+            Most of the confusion is not knowing what happens when. Here is the whole journey up
+            front, and who handles each part, so nothing surprises you later.
+          </Body>
+
+          <h3 className="mt-12 font-display text-[16px] font-extrabold text-mk-slate">
+            What you do, in order
+          </h3>
+          <div className="mt-5">
+            <StepsStrip steps={steps} />
+          </div>
+          <h3 className="mt-12 font-display text-[16px] font-extrabold text-mk-slate">
+            Who does what along the way
+          </h3>
+          <div className="mt-5">
+            <EcosystemStrip variant="landing" partner={partner} />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-6xl px-5">
         {/* Brigid's WHY ALLCAMPUS headline (content doc, 2026-08-20), Version
             A for TR audiences / Version B general — her structure, our mock
             counts (her doc's 50+/1,200+ are production figures). */}
@@ -90,22 +119,8 @@ export default function BenefitsAndHow({ partner, onGate }) {
             : 'At select schools, you’ll never pay more than $5,250 a year.'}
         </Body>
 
-        {/* HOW first: the big picture is the confidence builder. */}
-        <h3 className="mt-9 font-display text-[16px] font-extrabold text-mk-slate">
-          How it works, start to finish
-        </h3>
-        <div className="mt-4">
-          <StepsStrip steps={steps} />
-        </div>
-        <h3 className="mt-9 font-display text-[16px] font-extrabold text-mk-slate">
-          Who does what along the way
-        </h3>
-        <div className="mt-4">
-          <EcosystemStrip variant="landing" partner={partner} />
-        </div>
-
         {/* WHAT: the two big benefits */}
-        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="rounded-[var(--radius-card)] border border-mk-line bg-white p-6 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
             <p className="font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
               For everyone
@@ -187,6 +202,7 @@ export default function BenefitsAndHow({ partner, onGate }) {
         </div>
 
       </div>
-    </section>
+      </section>
+    </>
   )
 }

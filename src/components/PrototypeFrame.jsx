@@ -66,10 +66,9 @@ export default function PrototypeFrame() {
   // pre-Aug-19 moments (Save/Compare + signup CTAs). All gating machinery kept
   // dormant — this direction has reversed once already.
   const [catalogMode, setCatalogMode] = useState('open')
-  // The two hero versions for Brigid's review live on the URL, not the bar:
-  // ?home=navigator swaps the search box for the exposed skills browser.
-  const homeVariant =
-    new URLSearchParams(window.location.search).get('home') === 'navigator' ? 'navigator' : 'current'
+  // 2026-08-21 reset: the pathfinder's education profile. Cleared on a
+  // scenario switch — each scenario is its own partner landing page.
+  const [profile, setProfile] = useState(null)
   // Phone view (E3): auto-enabled for mobile-first stories like Tina's.
   const [phone, setPhone] = useState(false)
   const [intentOpen, setIntentOpen] = useState(false)
@@ -205,7 +204,7 @@ export default function PrototypeFrame() {
     )
   } else {
     page = (
-      <LandingPage partner={partner} homeVariant={homeVariant} joined={joined} onGate={requestGate} onNavigate={navigate} />
+      <LandingPage partner={partner} profile={profile} onProfile={setProfile} onGate={requestGate} onNavigate={navigate} />
     )
   }
 
@@ -232,7 +231,12 @@ export default function PrototypeFrame() {
             value={PARTNER_BUCKETS.find((b) => b.partnerId === employerId)?.id || ''}
             onChange={(e) => {
               const bucket = PARTNER_BUCKETS.find((b) => b.id === e.target.value)
-              if (bucket) setEmployerId(bucket.partnerId)
+              if (bucket) {
+                setEmployerId(bucket.partnerId)
+                // A new scenario is a different partner's landing page — the
+                // education profile belongs to the previous arrival.
+                setProfile(null)
+              }
             }}
             className="max-w-[240px] rounded-lg border border-white/25 bg-ink-900 px-2 py-1.5 text-[13px] font-bold text-white outline-none"
           >
@@ -247,46 +251,11 @@ export default function PrototypeFrame() {
           </select>
         </label>
 
-        {/* Auth-state switch (2026-08-20 review: "Current/Navigator" meant
-            nothing at a glance; the state that actually changes the pages is
-            whether you're logged in). Logged in simulates a completed signup;
-            logged out resets the session. */}
-        <div className="hidden items-center gap-1 rounded-full bg-white/10 p-0.5 lg:flex">
-          <span className="pl-2 pr-1 text-[11px] font-bold uppercase tracking-wide text-white/45">
-            View
-          </span>
-          {[
-            { id: false, label: 'Logged out' },
-            { id: true, label: 'Logged in' },
-          ].map((v) => (
-            <button
-              key={v.label}
-              onClick={() => {
-                setJoined(v.id)
-                if (!v.id) {
-                  setIntent(null)
-                  setGate(null)
-                }
-              }}
-              className={`rounded-full px-2.5 py-1 text-[12px] font-bold transition ${
-                joined === v.id ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
-              }`}
-            >
-              {v.label}
-            </button>
-          ))}
-        </div>
-
         <span className="hidden flex-1 truncate text-[12px] text-white/55 xl:block">
           {story ? `Story: ${story.name} — ${story.title}` : ''}
         </span>
 
         <div className="ml-auto flex items-center gap-2">
-          {joined && (
-            <span className="hidden rounded-full bg-good-700/30 px-2.5 py-1 text-[11px] font-bold text-white/85 lg:block">
-              Joined{intent ? ` · ${intent}` : ''}
-            </span>
-          )}
           <button
             onClick={() => setPhone((v) => !v)}
             title="Preview at a 390px phone viewport"

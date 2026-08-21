@@ -1,27 +1,42 @@
+import { useState } from 'react'
 import MkHeader from '../components/landing/MkHeader.jsx'
-import SearchHero from '../components/landing/SearchHero.jsx'
+import PathfinderHero from '../components/landing/PathfinderHero.jsx'
+import ProfileResults from '../components/landing/ProfileResults.jsx'
+import Pathfinder from '../components/Pathfinder.jsx'
 import AllyEntry from '../components/landing/AllyEntry.jsx'
+import AllyOverlay from '../components/AllyOverlay.jsx'
 import BenefitsAndHow from '../components/landing/BenefitsAndHow.jsx'
-import GoalsExplorer from '../components/landing/GoalsExplorer.jsx'
 import StoryCards from '../components/landing/StoryCards.jsx'
 import LogoStrip from '../components/landing/LogoStrip.jsx'
 import LandingFaq from '../components/landing/LandingFaq.jsx'
-import { Heading, MkButton } from '../components/landing/Section.jsx'
+import { Heading } from '../components/landing/Section.jsx'
 
 /*
- * Landing page (2026-08-19 Brigid session structure):
- *  1. Hero: search card (Current) or the always-open skills navigator
- *     (Navigator variant; search moves to the nav)
- *  2. BenefitsAndHow: the education benefit + how-this-works, combined into
- *     one band ("the two big benefits, here's how this works")
- *  3. Discovery band: outcome image cards + compact subject-tile strip
- *  4. Learner stories
- *  5. Partner school logos (kept, capped)
- *  6. FAQ
- *  7. Ally: tertiary at the very bottom, generic copy, no promises
+ * Landing page (2026-08-21 reset, Brigid's Aug 20 session + follow-up):
+ * each partner has its own landing page, so identity comes from arrival and
+ * nothing is gated. ~80% of enrollees need hand-holding, so the page leads
+ * with ONE action: the pathfinder, which builds an education profile and
+ * personalizes this page in place.
+ *
+ *  1. Hero: value statement + "Let's get started" (pathfinder) + a quiet
+ *     self-serve outlet. With a profile: the profile card floats here.
+ *  2. Profile results (only with a profile): matched programs, outcome lenses
+ *  3. BenefitsAndHow: HOW (journey + who-does-what) -> WHAT (value tiles +
+ *     $5,250 cap callout) -> WHY through AllCampus (leakage line)
+ *  4. Ally, moved up (Brigid: "a little too far down")
+ *  5. Learner stories
+ *  6. Partner school logos + See all schools
+ *  7. FAQ
+ *  8. Dark CTA bookend -> pathfinder
+ *
+ * Retired from this page (v2 candidates, components parked): the search-card
+ * hero, the skills-navigator variant, the outcome-cards + browse-by-subject
+ * band ("supported decision-making beats the browse-by-subject block").
  */
+export default function LandingPage({ partner, profile, onProfile, onGate, onNavigate }) {
+  const [pathfinder, setPathfinder] = useState(null) // null | { step }
+  const [allyOpen, setAllyOpen] = useState(false)
 
-export default function LandingPage({ partner, homeVariant = 'current', joined = false, onGate, onNavigate }) {
   const goBrowse = (params = {}) => {
     const qs = new URLSearchParams(
       Object.fromEntries(Object.entries(params).filter(([, v]) => v != null && v !== '')),
@@ -29,31 +44,27 @@ export default function LandingPage({ partner, homeVariant = 'current', joined =
     onNavigate(`/browse${qs ? `?${qs}` : ''}`)
   }
 
+  const openPathfinder = (step = 'start') => setPathfinder({ step })
+
   return (
     <div className="min-h-screen bg-white">
       <MkHeader partner={partner} onNavigate={onNavigate} />
 
-      <SearchHero
+      <PathfinderHero
         partner={partner}
-        navigator={homeVariant === 'navigator'}
-        onNavigate={onNavigate}
-        onSearch={({ q, area, skill, goal, degree }) => goBrowse({ q, area, skill, goal, degree })}
+        profile={profile}
+        onStart={() => openPathfinder('start')}
+        onEdit={(step) => openPathfinder(step)}
+        onBrowse={() => goBrowse({})}
       />
 
-      {/* 2026-08-19 session: the education-benefit block and the
-          how-this-works section combine into one idea. "Here are the two big
-          benefits for you, here's how this works." */}
-      <BenefitsAndHow partner={partner} joined={joined} onGate={onGate} />
+      {profile && <ProfileResults profile={profile} partner={partner} onNavigate={onNavigate} />}
 
-      {/* One discovery band (2026-08-19): outcomes lead as the emotive image
-          cards, the four subject tiles ride along as a compact strip inside —
-          two entries, one block, no lookalike sections. Tiles open the
-          category landing pages (Aug 14 ask). */}
-      <GoalsExplorer
-        partner={partner}
-        onSelectGoal={(goal) => goBrowse({ goal: goal.id })}
-        onSelectCategory={(c) => onNavigate(`/category/${c.id}`)}
-      />
+      <BenefitsAndHow partner={partner} onGate={onGate} />
+
+      {/* Ally, moved up: the talk-it-through outlet sits right after the
+          how-and-what story, not at the page's tail. */}
+      <AllyEntry partner={partner} />
 
       <StoryCards partner={partner} />
 
@@ -64,24 +75,19 @@ export default function LandingPage({ partner, homeVariant = 'current', joined =
 
       <LandingFaq />
 
-      {/* Ally, tertiary at the very bottom (2026-08-19: "this Alley block is
-          the right one to put at the bottom of the page"). Generic copilot
-          framing, no out-of-pocket promises. */}
-      <AllyEntry partner={partner} />
-
-      {/* Closing CTA: the dark bookend. Mirrors the hero (and the account
-          card's gradient) so the page opens and closes with the same weight,
-          then flows into the slate footer. A pale band here read as an
-          afterthought. */}
+      {/* Closing CTA: the dark bookend, now pointing at the pathfinder. */}
       <section className="bg-gradient-to-br from-mk-teal-600 to-mk-slate py-14 text-center">
-        <Heading size="sm" className="text-white">Unlock your potential</Heading>
+        <Heading size="sm" className="text-white">Let&rsquo;s find your path</Heading>
+        <p className="mx-auto mt-2 max-w-md px-5 font-display text-[14px] text-white/80">
+          Three questions. We map the rest, and nothing is locked in.
+        </p>
         <div className="mt-5">
           <button
             type="button"
-            onClick={() => goBrowse({})}
+            onClick={() => openPathfinder('start')}
             className="inline-flex items-center justify-center rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
           >
-            Explore programs
+            Get started
           </button>
         </div>
       </section>
@@ -89,6 +95,25 @@ export default function LandingPage({ partner, homeVariant = 'current', joined =
       <footer className="bg-mk-slate py-8 text-center font-display text-xs text-white/60">
         AllCampus landing-page prototype, throwaway spec with mock data. Not production.
       </footer>
+
+      <Pathfinder
+        open={!!pathfinder}
+        initialStep={pathfinder?.step || 'start'}
+        partner={partner}
+        onNavigate={onNavigate}
+        onAlly={() => setAllyOpen(true)}
+        onComplete={(p) => {
+          onProfile?.(p)
+          setPathfinder(null)
+          setTimeout(
+            () => document.getElementById('profile-results')?.scrollIntoView({ behavior: 'smooth' }),
+            80,
+          )
+        }}
+        onClose={() => setPathfinder(null)}
+      />
+
+      <AllyOverlay open={allyOpen} partner={partner} onClose={() => setAllyOpen(false)} />
     </div>
   )
 }

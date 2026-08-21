@@ -247,11 +247,17 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
           How it works for you
         </Heading>
         <div className="mt-6">
-          {gated ? (
-            <StepsStrip steps={howSteps} />
-          ) : (
-            <EcosystemStrip variant="school" schoolName={school.name} partner={partner} />
-          )}
+          {/* 2026-08-21 reset: the journey map AND the who-does-what boxes,
+              both always visible. The big picture is the confidence builder. */}
+          <StepsStrip steps={howSteps} />
+          <div className="mt-8">
+            <h3 className="font-display text-[15px] font-extrabold text-mk-slate">
+              Who does what along the way
+            </h3>
+            <div className="mt-3">
+              <EcosystemStrip variant="school" schoolName={school.name} partner={partner} />
+            </div>
+          </div>
         </div>
       </section>
 

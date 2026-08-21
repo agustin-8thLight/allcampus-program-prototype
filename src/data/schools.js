@@ -55,6 +55,8 @@ export const SCHOOLS = {
     name: 'Franklin University',
     logoMonogram: 'FU',
     logoColor: '#1b3a6b',
+    // $5,250/yr out-of-pocket cap (Brigid 8/20: two schools offer this; converts well)
+    tuitionCap: 5250,
     routingType: 'standard',
     partnerHighlight: true,
     accreditation: 'HLC accredited',
@@ -112,6 +114,8 @@ export const SCHOOLS = {
     logoMonogram: 'SN',
     logoColor: '#003366',
     // Direct-handoff school #1 (configured by id, not hardcoded in components).
+    // $5,250/yr out-of-pocket cap (Brigid 8/20: two schools offer this; converts well)
+    tuitionCap: 5250,
     routingType: 'directHandoff',
     partnerHighlight: false,
     accreditation: 'NECHE accredited',

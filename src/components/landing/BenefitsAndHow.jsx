@@ -21,10 +21,18 @@ import { hasBenefitAdmin, policyOwner, PREAPPROVAL_RULE } from '../../data/corpo
  * WHY ALLCAMPUS headline (Version A for TR audiences, Version B general), the
  * AllCampus activation line, and the connect/select verbs. Her strings are
  * quoted verbatim, em dashes included. Counts and dollars are mock.
+ *
+ * 2026-08-21 reset, HOW -> WHAT -> WHY: the big picture is the confidence
+ * builder (her follow-up note), so the journey and the who-does-what boxes
+ * now LEAD; the value tiles and the new $5,250 cap callout follow; the band
+ * closes on the through-AllCampus line (reducing leakage). The logged-in /
+ * logged-out swap is gone: partner landing pages carry identity, both views
+ * always render.
  */
-export default function BenefitsAndHow({ partner, joined = false, onGate }) {
+export default function BenefitsAndHow({ partner, onGate }) {
   const maxPct = bestDiscountPercent(PROGRAMS)
   const schoolCount = Object.keys(SCHOOLS).length
+  const cappedSchools = Object.values(SCHOOLS).filter((s) => s.tuitionCap)
   const reimburses = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
   // 'perks' = Brigid's Benefit Partner No TR: definitely no reimbursement.
   // Only a truly unknown employer gets the "may be available" framing.
@@ -39,13 +47,13 @@ export default function BenefitsAndHow({ partner, joined = false, onGate }) {
     {
       icon: 'find',
       title: 'Select a school and a program',
-      body: 'Search or browse by subject or outcome. Nothing needs approving at this stage, and you are not committing to anything.',
+      body: 'Use the pathfinder or browse the catalog. Nothing needs approving at this stage, and you are not committing to anything.',
     },
     {
       icon: 'account',
       title: 'Create a free account',
       highlight: true,
-      body: 'It attaches your employer pricing, so you see school names and your real cost instead of list prices.',
+      body: 'It saves your matches and attaches your employer pricing, so every cost you see is yours. Nothing is shared with your employer.',
       cta: { label: 'Create a free account', onClick: () => onGate?.('catalog') },
     },
     {
@@ -82,8 +90,22 @@ export default function BenefitsAndHow({ partner, joined = false, onGate }) {
             : 'At select schools, you’ll never pay more than $5,250 a year.'}
         </Body>
 
-        {/* The two big benefits */}
-        <div className="mt-7 grid grid-cols-1 gap-4 md:grid-cols-2">
+        {/* HOW first: the big picture is the confidence builder. */}
+        <h3 className="mt-9 font-display text-[16px] font-extrabold text-mk-slate">
+          How it works, start to finish
+        </h3>
+        <div className="mt-4">
+          <StepsStrip steps={steps} />
+        </div>
+        <h3 className="mt-9 font-display text-[16px] font-extrabold text-mk-slate">
+          Who does what along the way
+        </h3>
+        <div className="mt-4">
+          <EcosystemStrip variant="landing" partner={partner} />
+        </div>
+
+        {/* WHAT: the two big benefits */}
+        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="rounded-[var(--radius-card)] border border-mk-line bg-white p-6 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
             <p className="font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
               For everyone
@@ -117,18 +139,51 @@ export default function BenefitsAndHow({ partner, joined = false, onGate }) {
           </div>
         </div>
 
-        {/* Logged out: the journey to signup. Logged in: the account step is
-            stale, so the slot explains the machine instead (the four-party
-            strip, speaking to the specific partner situation). */}
-        <h3 className="mt-10 font-display text-[16px] font-extrabold text-mk-slate">
-          {joined ? 'How it works' : 'What you do, in order'}
-        </h3>
-        <div className="mt-4">
-          {joined ? (
-            <EcosystemStrip variant="landing" partner={partner} />
-          ) : (
-            <StepsStrip steps={steps} />
-          )}
+        {/* The $5,250 cap callout (Brigid 8/20: "that is so key"). Verbiage
+            varies by scenario: $0 for TR, never-more-than for no-TR, both
+            cases for unknown. */}
+        {cappedSchools.length > 0 && (
+          <div className="mt-4 rounded-[var(--radius-card)] border border-mk-teal-600/40 bg-gradient-to-b from-white to-mk-band/40 p-6 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
+            <p className="font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
+              Worth knowing
+            </p>
+            <p className="mt-2 font-display text-[21px] font-extrabold leading-snug text-mk-slate">
+              {reimburses
+                ? `Your out-of-pocket at ${cappedSchools.length} schools: $0.`
+                : noTr
+                  ? `Never pay more than ${money(5250)} a year at ${cappedSchools.length} schools.`
+                  : `${cappedSchools.length} schools cap tuition at ${money(5250)} a year.`}
+            </p>
+            <p className="mt-2 font-display text-[14px] leading-relaxed text-mk-body">
+              {reimburses
+                ? `These schools cap what you pay at ${money(5250)} a year, the same amount as your reimbursement. Your benefit covers it entirely.`
+                : noTr
+                  ? 'These schools cap what you pay out of pocket, before any discount math even starts.'
+                  : `If your employer reimburses tuition, that cap can mean $0 out of pocket. If not, the cap still holds. Either way you are covered here.`}
+            </p>
+            <span className="mt-3 flex flex-wrap gap-2">
+              {cappedSchools.map((s) => (
+                <span
+                  key={s.id}
+                  className="rounded-full border border-mk-line bg-white px-3 py-1 font-display text-[12.5px] font-bold text-mk-slate"
+                >
+                  {s.name}
+                </span>
+              ))}
+            </span>
+          </div>
+        )}
+
+        {/* WHY through AllCampus: the leakage line, stated plainly. */}
+        <div className="mt-8 rounded-[var(--radius-card)] border-l-4 border-mk-teal-600 bg-mk-surface px-6 py-5">
+          <p className="font-display text-[15px] font-extrabold text-mk-slate">
+            The discount only exists through AllCampus.
+          </p>
+          <p className="mt-1 font-display text-[13.5px] leading-relaxed text-mk-body">
+            Connecting with a school here is what activates your partner pricing. Going straight to
+            the school means standard tuition, and if your employer reimburses, the pre-approval
+            paperwork wants a school and program picked first anyway. Start here, keep both.
+          </p>
         </div>
 
       </div>

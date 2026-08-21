@@ -261,6 +261,7 @@ export function durationYears(p) {
 
 export const QUICK_FILTERS = [
   { id: 'mostAffordable', label: 'Most affordable' },
+  { id: 'highestValue', label: 'Highest value' },
   { id: 'lowestPerCredit', label: 'Lowest cost per credit' },
   { id: 'deferred', label: 'Deferred tuition' },
   { id: 'fastest', label: 'Fastest' },
@@ -269,6 +270,9 @@ export const QUICK_FILTERS = [
 export function applyQuickFilter(programs, activeId) {
   let out = [...programs]
   switch (activeId) {
+    case 'highestValue':
+      out.sort((a, b) => (b.discount?.percentUsed || 0) - (a.discount?.percentUsed || 0))
+      break
     case 'lowestPerCredit':
       out.sort((a, b) => (a.tuitionPerCredit ?? Infinity) - (b.tuitionPerCredit ?? Infinity))
       break

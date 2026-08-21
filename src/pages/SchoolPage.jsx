@@ -83,10 +83,10 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
     },
     {
       icon: 'account',
-      title: 'Create a free account',
+      title: 'Save your profile',
       highlight: true,
-      body: 'It attaches your employer pricing, so you see your real cost instead of list prices.',
-      cta: { label: 'Create a free account', onClick: () => onGate?.('catalog') },
+      body: 'A free account keeps your matches and your employer pricing with you.',
+      cta: { label: 'Save my profile', onClick: () => onGate?.('catalog') },
     },
     {
       icon: 'confirm',
@@ -274,7 +274,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
               )}
             </p>
             <p className="mt-1.5 text-[14.5px] text-mk-body">
-              Create a free account to see every program and your price.
+              Save your profile with a free account to see every program and your price.
             </p>
             <MkButton
               tone="teal"

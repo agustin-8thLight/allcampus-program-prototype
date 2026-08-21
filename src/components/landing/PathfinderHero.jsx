@@ -52,7 +52,7 @@ export default function PathfinderHero({ partner, profile, onStart, onEdit, onBr
                   onClick={() => onStart?.()}
                   className="inline-flex items-center gap-2 rounded-lg bg-white px-10 py-4 text-[17px] font-bold text-mk-teal-700 shadow-[0_14px_36px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:bg-mk-band"
                 >
-                  Let&rsquo;s get started
+                  Start your profile
                   <span aria-hidden>→</span>
                 </button>
                 <p className="mt-3 text-[13px] font-semibold text-white/75">

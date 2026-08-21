@@ -24,16 +24,16 @@ export default function GateModal({ open, partner, trigger = 'save', onJoin, onD
         )}
         <h2 className="text-xl font-black text-ink-900">
           {trigger === 'catalog'
-            ? 'See the schools and YOUR price'
+            ? 'Save your profile'
             : trigger === 'compare'
-              ? 'Compare programs and see YOUR price'
-              : 'Save programs and see YOUR price'}
+              ? 'Compare from your profile'
+              : 'Save it to your profile'}
         </h2>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
-          Create a free account to save and compare programs
+          A free account keeps your profile: your matches, your shortlist
           {benefit
-            ? `, and see exact costs with the ${partner.name} benefit applied.`
-            : ', and keep your shortlist across visits.'}
+            ? `, and your exact costs with the ${/^your /i.test(partner.name) ? 'employer' : partner.name} benefit applied.`
+            : ', and your pricing across visits.'}
         </p>
         <div className="mt-5 flex items-center gap-2">
           <button
@@ -43,7 +43,7 @@ export default function GateModal({ open, partner, trigger = 'save', onJoin, onD
             }}
             className="rounded-lg bg-brand-600 px-4 py-2.5 text-[15px] font-bold text-white transition hover:bg-brand-700"
           >
-            Create free account
+            Save my profile
           </button>
           <button
             onClick={onDismiss}

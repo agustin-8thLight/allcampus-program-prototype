@@ -45,10 +45,10 @@ export function HowItWorks({ partner, onGate }) {
     },
     {
       icon: 'account',
-      title: 'Create a free account',
+      title: 'Save your profile',
       highlight: true,
-      body: 'Saves your matches and attaches your employer pricing. Nothing is shared with your employer.',
-      cta: { label: 'Create a free account', onClick: () => onGate?.('catalog') },
+      body: 'A free account keeps your matches and your employer pricing with you. Nothing is shared with your employer.',
+      cta: { label: 'Save my profile', onClick: () => onGate?.('catalog') },
     },
     {
       icon: 'confirm',

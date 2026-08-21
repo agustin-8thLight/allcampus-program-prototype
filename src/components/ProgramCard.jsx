@@ -15,6 +15,7 @@ export default function ProgramCard({
   partner = null,
   joined = false,
   saved = false,
+  benefitUnsure = false,
   onSave,
   onCompare,
   onExplore,
@@ -74,13 +75,22 @@ export default function ProgramCard({
             )}
           </div>
         )}
+        {/* Benefit-unsure profiles (2026-08-21): floor-led dual pricing.
+            The discounted price is guaranteed; the reimbursement delta wears
+            its condition. $5,250 = the federal tax-free norm, estimate only. */}
+        {benefitUnsure && p.annualEstimatedCost != null && (
+          <p className="mt-1 text-[13px] font-bold text-good-700">
+            Yours regardless: this discounted price. With reimbursement, if you have it: as low as{' '}
+            {money(Math.max(0, p.annualEstimatedCost - 5250))}/yr (est.)
+          </p>
+        )}
         {/* Move 5 on the list: the benefit answer, inline. */}
-        {benefitKnown && joined && oop != null && (
+        {!benefitUnsure && benefitKnown && joined && oop != null && (
           <p className="mt-1 text-[13px] font-bold text-good-700">
             Your est. out-of-pocket: {money(oop)}/yr with {/^your /i.test(partner.name) ? 'your employer benefit' : `the ${partner.name} benefit`}
           </p>
         )}
-        {benefitKnown && !joined && (
+        {!benefitUnsure && benefitKnown && !joined && (
           <p className="mt-1 text-[13px] font-semibold text-ink-400">
             Join free to see your price with {/^your /i.test(partner.name) ? 'your employer benefit' : `the ${partner.name} benefit`}
           </p>

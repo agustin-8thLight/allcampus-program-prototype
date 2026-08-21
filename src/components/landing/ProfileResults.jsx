@@ -24,19 +24,9 @@ export default function ProfileResults({ profile, partner, onNavigate }) {
     [matches, lens],
   )
 
-  const browseParams = () => {
-    const p = new URLSearchParams()
-    if (profile.areaId && profile.areaId !== 'unsure') p.set('area', profile.areaId)
-    const qs = p.toString()
-    return qs ? `?${qs}` : ''
-  }
-
-  const openProgram = (prog) => {
-    const p = new URLSearchParams()
-    if (profile.areaId && profile.areaId !== 'unsure') p.set('area', profile.areaId)
-    p.set('program', prog.id)
-    onNavigate(`/browse?${p.toString()}`)
-  }
+  // The profile itself travels to browse as a prop (PrototypeFrame owns it),
+  // so links stay clean: no params to fall out of sync with the answers.
+  const openProgram = (prog) => onNavigate(`/browse?program=${prog.id}`)
 
   if (!matches.length) return null
 
@@ -74,6 +64,7 @@ export default function ProfileResults({ profile, partner, onNavigate }) {
             program={p}
             partner={partner}
             joined
+            benefitUnsure={profile?.benefit === 'unsure'}
             onExplore={openProgram}
             onSave={openProgram}
             onCompare={openProgram}
@@ -85,7 +76,7 @@ export default function ProfileResults({ profile, partner, onNavigate }) {
         <div className="mt-6">
           <button
             type="button"
-            onClick={() => onNavigate(`/browse${browseParams()}`)}
+            onClick={() => onNavigate('/browse')}
             className="font-display text-[14px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
           >
             See all {matches.length} matching programs →

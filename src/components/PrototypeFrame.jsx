@@ -200,6 +200,7 @@ export default function PrototypeFrame() {
         intent={intent}
         onGate={requestGate}
         onNavigate={navigate}
+        profile={profile}
         catalogMode={catalogMode}
       />
     )

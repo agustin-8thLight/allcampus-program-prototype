@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PROGRAMS, applyQuickFilter } from './data/model.js'
 import { AREAS, getArea, getSkill, getGoal, getCategory, programMatchesGoal, programMatchesCategory } from './data/taxonomy.js'
+import { matchPrograms, startLabel } from './data/pathfinder.js'
 import { isFullyCoveredEstimate, bestDiscountPercent } from './data/benefit.js'
 import { getSchool } from './data/schools.js'
 import ProgramCard from './components/ProgramCard.jsx'
@@ -48,6 +49,9 @@ export default function App({
   intent = null,
   onGate = null,
   onNavigate = null,
+  // The education profile from the pathfinder (2026-08-21): browse applies it
+  // as editable, outcome-language scope. Explicit URL params win over it.
+  profile = null,
   // Aug 14 decision: login before catalog access. 'gated' (default) shows an
   // unauthenticated visitor the match count and a discount hint, then the
   // account prompt — the notes' exact sequence ("prompts login before showing
@@ -62,7 +66,8 @@ export default function App({
   )
   const [areaId, setAreaId] = useState(() => {
     const fromSkill = initialParams?.get('skill') ? getSkill(initialParams.get('skill'))?.areaId : null
-    return initialParams?.get('area') || fromSkill || null
+    const fromProfile = profile?.areaId && profile.areaId !== 'unsure' ? profile.areaId : null
+    return initialParams?.get('area') || fromSkill || fromProfile || null
   })
   const [skillId, setSkillId] = useState(() => initialParams?.get('skill') || null)
   // Goal handoff from the landing Goals block: the relatable outcome label
@@ -76,6 +81,11 @@ export default function App({
   const [coveredOnly, setCoveredOnly] = useState(() => initialParams?.get('covered') === '1')
   const [areaMenuOpen, setAreaMenuOpen] = useState(false)
   const [degreeMenuOpen, setDegreeMenuOpen] = useState(false)
+  // Profile scope: only the starting points that actually constrain results.
+  const [startScope, setStartScope] = useState(() =>
+    profile?.start && ['finish', 'move-up', 'change'].includes(profile.start) ? profile.start : null,
+  )
+  const benefitUnsure = profile?.benefit === 'unsure'
   const [selected, setSelected] = useState(null)
   // The drawer hosts three swappable views, never stacked overlays.
   const [drawerView, setDrawerView] = useState('detail') // 'detail' | 'ally' | 'flow'
@@ -200,11 +210,14 @@ export default function App({
     if (schoolId) matched = matched.filter((p) => p.schoolId === schoolId)
     if (degreeLevel) matched = matched.filter((p) => p.degreeLevel === degreeLevel)
     if (coveredOnly && partner) matched = matched.filter((p) => isFullyCoveredEstimate(p, partner))
+    if (startScope) matched = matchPrograms({ start: startScope }, matched)
     return applyQuickFilter(matched, activeFilter)
-  }, [query, activeFilter, areaId, skillId, goalId, categoryId, schoolId, degreeLevel, coveredOnly, partner])
+  }, [query, activeFilter, areaId, skillId, goalId, categoryId, schoolId, degreeLevel, coveredOnly, startScope, partner])
 
   // Applied-filter chips (taxonomy + landing handoffs), each clearable.
   const appliedFilters = [
+    startScope && { key: 'startScope', label: startLabel(startScope), clear: () => setStartScope(null) },
+    benefitUnsure && { key: 'benefit', label: 'Benefit: planning for both cases', clear: null },
     goalId && { key: 'goal', label: `Goal: ${getGoal(goalId)?.label}`, clear: () => setGoalId(null) },
     skillId && { key: 'skill', label: getSkill(skillId)?.label, clear: () => { setSkillId(null); setAreaId(null) } },
     !skillId && areaId && { key: 'area', label: getArea(areaId)?.label, clear: () => setAreaId(null) },
@@ -486,6 +499,7 @@ export default function App({
                 program={p}
                 partner={partner}
                 joined={joined}
+                benefitUnsure={benefitUnsure}
                 saved={saved.has(p.id)}
                 onSave={onSave}
                 onCompare={onCompare}

@@ -79,7 +79,7 @@ export default function LandingPage({ partner, profile, onProfile, onGate, onNav
 
       {/* Closing CTA: the dark bookend, now pointing at the pathfinder. */}
       <section className="bg-gradient-to-br from-mk-teal-600 to-mk-slate py-14 text-center">
-        <Heading size="sm" className="text-white">Let&rsquo;s find your path</Heading>
+        <Heading size="sm" className="text-white">Start your profile</Heading>
         <p className="mx-auto mt-2 max-w-md px-5 font-display text-[14px] text-white/80">
           Three questions. We map the rest, and nothing is locked in.
         </p>
@@ -89,7 +89,7 @@ export default function LandingPage({ partner, profile, onProfile, onGate, onNav
             onClick={() => openPathfinder('start')}
             className="inline-flex items-center justify-center rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
           >
-            Get started
+            Start your profile
           </button>
         </div>
       </section>

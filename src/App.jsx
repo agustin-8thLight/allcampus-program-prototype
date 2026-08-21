@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { PROGRAMS, QUICK_FILTERS, applyQuickFilter } from './data/model.js'
+import { PROGRAMS, applyQuickFilter } from './data/model.js'
 import { AREAS, getArea, getSkill, getGoal, getCategory, programMatchesGoal, programMatchesCategory } from './data/taxonomy.js'
 import { isFullyCoveredEstimate, bestDiscountPercent } from './data/benefit.js'
 import { getSchool } from './data/schools.js'
 import ProgramCard from './components/ProgramCard.jsx'
+import MkHeader from './components/landing/MkHeader.jsx'
 import EmptyStateAlly from './components/EmptyStateAlly.jsx'
 import ObfuscatedCard from './components/ObfuscatedCard.jsx'
 import { emitStoryEvent } from './data/useCases.js'
@@ -24,10 +25,17 @@ import {
 // university first; course modality last (least useful — nearly all online).
 // Areas of Study is functional (taxonomy.js); the others remain UI stubs.
 // Course Modality removed (Aug 14: all programs online, badge not filter).
-const FILTER_DROPDOWNS = [
-  { label: 'Degree Level', icon: CapIcon },
-  { label: 'Universities', icon: BuildingIcon },
+/* Outcome lenses (2026-08-21 review: "focus on what the value is to the
+   user") — the same value framing as the profile results band. The old
+   decorative Degree Level / Universities dropdowns are gone: universities are
+   searchable, and degree level is a real dropdown below. */
+const BROWSE_LENSES = [
+  { id: 'mostAffordable', label: 'Lowest out-of-pocket' },
+  { id: 'highestValue', label: 'Highest value' },
+  { id: 'fastest', label: 'Quickest' },
+  { id: 'deferred', label: 'Deferred tuition' },
 ]
+const DEGREE_OPTIONS = ['Certificate', 'Associate', "Bachelor's", "Master's"]
 
 // `variant` is supplied by the prototype review frame (PrototypeFrame), which
 // owns the concept switcher and the hash router. `partner` is the demo
@@ -39,6 +47,7 @@ export default function App({
   joined = false,
   intent = null,
   onGate = null,
+  onNavigate = null,
   // Aug 14 decision: login before catalog access. 'gated' (default) shows an
   // unauthenticated visitor the match count and a discount hint, then the
   // account prompt — the notes' exact sequence ("prompts login before showing
@@ -66,6 +75,7 @@ export default function App({
   const [degreeLevel, setDegreeLevel] = useState(() => initialParams?.get('degree') || null)
   const [coveredOnly, setCoveredOnly] = useState(() => initialParams?.get('covered') === '1')
   const [areaMenuOpen, setAreaMenuOpen] = useState(false)
+  const [degreeMenuOpen, setDegreeMenuOpen] = useState(false)
   const [selected, setSelected] = useState(null)
   // The drawer hosts three swappable views, never stacked overlays.
   const [drawerView, setDrawerView] = useState('detail') // 'detail' | 'ally' | 'flow'
@@ -205,18 +215,9 @@ export default function App({
 
   return (
     <div className="min-h-screen bg-surface-50">
-      {/* Global header */}
-      <header className="border-b border-surface-200 bg-surface-0">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
-          <a href="#/" className="flex items-center gap-2 font-black text-brand-700">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-600 text-sm text-white">
-              ac
-            </span>
-            allcampus
-          </a>
-          <div className="h-8 w-8 rounded-full bg-surface-200" aria-hidden />
-        </div>
-      </header>
+      {/* The same header as every other view (2026-08-21 review: the nav
+          must stay consistent across scenarios and pages). */}
+      <MkHeader partner={partner} onNavigate={(path) => (onNavigate ? onNavigate(path) : (window.location.hash = `#${path}`))} />
 
       {/* Hero + search */}
       <div className="bg-gradient-to-b from-brand-50/60 to-surface-50">
@@ -277,19 +278,41 @@ export default function App({
                 </div>
               )}
             </div>
-            {FILTER_DROPDOWNS.map((f) => {
-              const Icon = f.icon
-              return (
-                <button
-                  key={f.label}
-                  className="inline-flex items-center gap-2 rounded-lg border border-surface-200 bg-surface-0 px-3 py-2 text-[13px] font-semibold text-ink-700 hover:border-brand-300"
-                >
-                  <Icon className="text-base text-ink-400" />
-                  {f.label}
-                  <ChevronDownIcon className="text-base text-ink-400" />
-                </button>
-              )
-            })}
+            <div className="relative">
+              <button
+                onClick={() => setDegreeMenuOpen((o) => !o)}
+                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-[13px] font-semibold hover:border-brand-300 ${
+                  degreeLevel
+                    ? 'border-brand-400 bg-brand-50 text-brand-700'
+                    : 'border-surface-200 bg-surface-0 text-ink-700'
+                }`}
+              >
+                <CapIcon className="text-base text-ink-400" />
+                {degreeLevel || 'Degree Level'}
+                <ChevronDownIcon className="text-base text-ink-400" />
+              </button>
+              {degreeMenuOpen && (
+                <div className="absolute left-0 top-full z-30 mt-1 w-48 rounded-lg border border-surface-200 bg-surface-0 py-1 text-left shadow-lg">
+                  <button
+                    onClick={() => { setDegreeLevel(null); setDegreeMenuOpen(false) }}
+                    className="block w-full px-3 py-2 text-left text-[13px] font-semibold text-ink-700 hover:bg-surface-50"
+                  >
+                    All levels
+                  </button>
+                  {DEGREE_OPTIONS.map((d) => (
+                    <button
+                      key={d}
+                      onClick={() => { setDegreeLevel(d); setDegreeMenuOpen(false) }}
+                      className={`block w-full px-3 py-2 text-left text-[13px] hover:bg-surface-50 ${
+                        degreeLevel === d ? 'font-bold text-brand-700' : 'font-semibold text-ink-700'
+                      }`}
+                    >
+                      {d}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="ml-auto flex items-center gap-3">
               <button
                 onClick={() => {
@@ -369,31 +392,32 @@ export default function App({
             )}
           </div>
 
-          {/* Sort as a labeled dropdown — production's own "Sort by:" pattern;
-              chips here read as filters. Hidden while gated: sorting a list
-              the visitor can't see yet is noise. */}
           {teasing && (
             <a href="#/" className="text-[13.5px] font-bold text-brand-600 underline-offset-2 hover:underline">
               ← Keep exploring subjects
             </a>
           )}
-          <label className={`flex items-center gap-2 text-[13px] font-semibold text-ink-500 ${teasing ? 'hidden' : ''}`}>
-            Sort by:
-            <select
-              value={activeFilter}
-              onChange={(e) => {
-                emitStoryEvent('quick-filter', { id: e.target.value })
-                setActiveFilter(e.target.value)
-              }}
-              className="rounded-lg border border-surface-200 bg-surface-0 px-2.5 py-1.5 text-[13px] font-bold text-ink-900 outline-none focus:border-brand-400"
-            >
-              {QUICK_FILTERS.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.label}
-                </option>
-              ))}
-            </select>
-          </label>
+          {/* Value lenses instead of a generic sort: same framing as the
+              profile results band. Deferred tuition narrows; the rest order. */}
+          <div className={`flex flex-wrap gap-2 ${teasing ? 'hidden' : ''}`}>
+            {BROWSE_LENSES.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                onClick={() => {
+                  emitStoryEvent('quick-filter', { id: l.id })
+                  setActiveFilter(l.id)
+                }}
+                className={`rounded-full border px-3.5 py-1.5 text-[12.5px] font-bold transition ${
+                  activeFilter === l.id
+                    ? 'border-brand-600 bg-brand-600 text-white'
+                    : 'border-surface-200 bg-surface-0 text-ink-700 hover:border-brand-400'
+                }`}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {teasing ? (

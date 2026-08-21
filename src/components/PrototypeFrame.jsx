@@ -199,6 +199,7 @@ export default function PrototypeFrame() {
         joined={joined}
         intent={intent}
         onGate={requestGate}
+        onNavigate={navigate}
         catalogMode={catalogMode}
       />
     )

@@ -15,7 +15,8 @@ export default function StoryCards({ partner }) {
   const partnerSpecific = partner?.benefitKnown && storiesForPartner(partner.id) !== storiesForPartner(null)
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16">
+    <section className="bg-mk-surface pb-16">
+      <div className="mx-auto max-w-6xl px-5">
       <Eyebrow>Learner stories</Eyebrow>
       <Heading className="mt-2">People like you, already using their benefit</Heading>
       {partnerSpecific && (
@@ -57,6 +58,7 @@ export default function StoryCards({ partner }) {
             </blockquote>
           </figure>
         ))}
+      </div>
       </div>
     </section>
   )

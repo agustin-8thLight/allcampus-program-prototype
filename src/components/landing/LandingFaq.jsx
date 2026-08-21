@@ -27,7 +27,8 @@ const FAQS = [
 
 export default function LandingFaq() {
   return (
-    <section className="mx-auto max-w-4xl px-5 py-16">
+    <section className="bg-mk-surface pb-20 pt-4">
+      <div className="mx-auto max-w-4xl px-5">
       <div className="text-center">
         <Eyebrow>FAQs</Eyebrow>
         <Heading className="mt-1">Your questions, answered</Heading>
@@ -45,6 +46,7 @@ export default function LandingFaq() {
             <p className="mt-2 font-display text-[14px] leading-relaxed text-mk-body">{f.a}</p>
           </details>
         ))}
+      </div>
       </div>
     </section>
   )

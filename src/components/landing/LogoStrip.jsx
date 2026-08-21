@@ -13,7 +13,7 @@ export default function LogoStrip({ onSelectSchool, onSeeAll }) {
   const schools = allSchools.slice(0, 10)
   const remaining = allSchools.length - schools.length
   return (
-    <section className="border-y border-mk-line bg-white py-12">
+    <section className="bg-mk-surface py-12">
       <div className="mx-auto max-w-6xl px-5">
         <p className="mb-6 text-center font-display text-[12px] font-bold uppercase tracking-[0.16em] text-mk-body">
           {allSchools.length} partner universities, one application path

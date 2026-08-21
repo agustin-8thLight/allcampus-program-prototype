@@ -5,7 +5,7 @@ import ProfileResults from '../components/landing/ProfileResults.jsx'
 import Pathfinder from '../components/Pathfinder.jsx'
 import AllyEntry from '../components/landing/AllyEntry.jsx'
 import AllyOverlay from '../components/AllyOverlay.jsx'
-import BenefitsAndHow from '../components/landing/BenefitsAndHow.jsx'
+import { HowItWorks, WhyAllCampus } from '../components/landing/BenefitsAndHow.jsx'
 import StoryCards from '../components/landing/StoryCards.jsx'
 import LogoStrip from '../components/landing/LogoStrip.jsx'
 import LandingFaq from '../components/landing/LandingFaq.jsx'
@@ -21,13 +21,13 @@ import { Heading } from '../components/landing/Section.jsx'
  *  1. Hero: value statement + "Let's get started" (pathfinder) + a quiet
  *     self-serve outlet. With a profile: the profile card floats here.
  *  2. Profile results (only with a profile): matched programs, outcome lenses
- *  3. Ally, high on the page (moved twice up from the old tail position)
- *  4. BenefitsAndHow: HOW (journey + who-does-what) -> WHAT (value tiles +
- *     $5,250 cap callout) -> WHY through AllCampus (leakage line)
- *  5. Learner stories
- *  6. Partner school logos + See all schools
- *  7. FAQ
- *  8. Dark CTA bookend -> pathfinder
+ *  3. How it works (white)
+ *  4. Ally (white)
+ *  5. Why AllCampus (grey opens here): value tiles + $5,250 cap callout +
+ *     the through-AllCampus leakage line
+ *  6. Learner stories (grey)
+ *  7. Partner school logos + See all schools (grey)
+ *  8. FAQ (grey), then the dark CTA bookend -> pathfinder, footer
  *
  * Retired from this page (v2 candidates, components parked): the search-card
  * hero, the skills-navigator variant, the outcome-cards + browse-by-subject
@@ -60,11 +60,13 @@ export default function LandingPage({ partner, profile, onProfile, onGate, onNav
 
       {profile && <ProfileResults profile={profile} partner={partner} onNavigate={onNavigate} />}
 
-      {/* Ally, moved up again (2026-08-21 review): the talk-it-through
-          outlet now sits directly under the hero, ahead of the How band. */}
+      <HowItWorks partner={partner} onGate={onGate} />
+
+      {/* Ally between How and Why (2026-08-21 order): once you've seen the
+          path, the talk-it-through outlet is the natural next question. */}
       <AllyEntry partner={partner} />
 
-      <BenefitsAndHow partner={partner} onGate={onGate} />
+      <WhyAllCampus partner={partner} />
 
       <StoryCards partner={partner} />
 

@@ -7,42 +7,36 @@ import { bestDiscountPercent } from '../../data/benefit.js'
 import { hasBenefitAdmin, policyOwner, PREAPPROVAL_RULE } from '../../data/corporatePartners.js'
 
 /*
- * BenefitsAndHow (2026-08-19 session): "the education benefit and how this
- * works, maybe we could combine them somehow into one idea. Here are the two
- * big benefits for you, here's how this works." One band replaces the two
- * separate ones (BenefitBlock + the how-this-works strip section).
+ * The How band and the Why AllCampus band (2026-08-21 review: split into two
+ * components so Ally can sit between them; How stays on white, Why AllCampus
+ * opens the grey region that runs through stories, schools, and FAQ).
  *
- * Narrative rule from the session: logged out, speak generically; the bucket
- * decides how concrete the TR half gets. Discounts are the benefit for
- * everyone; TR is concrete for TR buckets, a possibility for
- * unknown-eligibility buckets, honestly absent for no-TR.
+ * Narrative rule (Brigid's Aug 20 session + follow-up): the big picture is
+ * the confidence builder, so HOW leads the page; WHAT (value tiles + the
+ * $5,250 cap callout) and WHY-through-AllCampus (the leakage line) follow.
  *
  * COPY OF RECORD: Brigid's landing-page content doc (2026-08-20) supplies the
  * WHY ALLCAMPUS headline (Version A for TR audiences, Version B general), the
  * AllCampus activation line, and the connect/select verbs. Her strings are
  * quoted verbatim, em dashes included. Counts and dollars are mock.
- *
- * 2026-08-21 reset, HOW -> WHAT -> WHY: the big picture is the confidence
- * builder (her follow-up note), so the journey and the who-does-what boxes
- * now LEAD; the value tiles and the new $5,250 cap callout follow; the band
- * closes on the through-AllCampus line (reducing leakage). The logged-in /
- * logged-out swap is gone: partner landing pages carry identity, both views
- * always render.
  */
-export default function BenefitsAndHow({ partner, onGate }) {
-  const maxPct = bestDiscountPercent(PROGRAMS)
-  const schoolCount = Object.keys(SCHOOLS).length
-  const cappedSchools = Object.values(SCHOOLS).filter((s) => s.tuitionCap)
+
+function partnerState(partner) {
   const reimburses = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
   // 'perks' = Brigid's Benefit Partner No TR: definitely no reimbursement.
   // Only a truly unknown employer gets the "may be available" framing.
-  const noTr = !reimburses && (partner?.partnerType === 'perks' || partner?.partnerType === 'direct-no-tr' || (partner?.benefitKnown && !reimburses))
-  const trPossible = !reimburses && !noTr
+  const noTr =
+    !reimburses &&
+    (partner?.partnerType === 'perks' ||
+      partner?.partnerType === 'direct-no-tr' ||
+      (partner?.benefitKnown && !reimburses))
+  return { reimburses, noTr, trPossible: !reimburses && !noTr }
+}
+
+export function HowItWorks({ partner, onGate }) {
+  const { reimburses, trPossible } = partnerState(partner)
   const owner = policyOwner(partner)
 
-  // The who-does-what facts now live INSIDE the step copy — the four-party
-  // strip is retired (2026-08-20: one diagram, not two) and the journey
-  // carries its content.
   const steps = [
     {
       icon: 'find',
@@ -74,37 +68,41 @@ export default function BenefitsAndHow({ partner, onGate }) {
   ]
 
   return (
-    <>
-      {/* HOW first, as its own visually grouped band: the big picture is the
-          confidence builder, so the journey gets a section of its own on the
-          neutral surface (2026-08-21 review: title + subtitle + breathing
-          room, so the page flows instead of running as one white column). */}
-      <section className="border-y border-mk-line bg-mk-surface py-20">
-        <div className="mx-auto max-w-6xl px-5">
-          <Eyebrow>How it works</Eyebrow>
-          <Heading className="mt-2">One clear path, start to finish</Heading>
-          <Body className="mt-3 max-w-2xl">
-            Most of the confusion is not knowing what happens when. Here is the whole journey up
-            front, and who handles each part, so nothing surprises you later.
-          </Body>
+    <section className="bg-white py-20">
+      <div className="mx-auto max-w-6xl px-5">
+        <Eyebrow>How it works</Eyebrow>
+        <Heading className="mt-2">One clear path, start to finish</Heading>
+        <Body className="mt-3 max-w-2xl">
+          Most of the confusion is not knowing what happens when. Here is the whole journey up
+          front, and who handles each part, so nothing surprises you later.
+        </Body>
 
-          <h3 className="mt-12 font-display text-[16px] font-extrabold text-mk-slate">
-            What you do, in order
-          </h3>
-          <div className="mt-5">
-            <StepsStrip steps={steps} />
-          </div>
-          <h3 className="mt-12 font-display text-[16px] font-extrabold text-mk-slate">
-            Who does what along the way
-          </h3>
-          <div className="mt-5">
-            <EcosystemStrip variant="landing" partner={partner} />
-          </div>
+        <h3 className="mt-12 font-display text-[16px] font-extrabold text-mk-slate">
+          What you do, in order
+        </h3>
+        <div className="mt-5">
+          <StepsStrip steps={steps} />
         </div>
-      </section>
+        <h3 className="mt-12 font-display text-[16px] font-extrabold text-mk-slate">
+          Who does what along the way
+        </h3>
+        <div className="mt-5">
+          <EcosystemStrip variant="landing" partner={partner} />
+        </div>
+      </div>
+    </section>
+  )
+}
 
-      <section className="bg-white py-20">
-        <div className="mx-auto max-w-6xl px-5">
+export function WhyAllCampus({ partner }) {
+  const { reimburses, noTr, trPossible } = partnerState(partner)
+  const maxPct = bestDiscountPercent(PROGRAMS)
+  const schoolCount = Object.keys(SCHOOLS).length
+  const cappedSchools = Object.values(SCHOOLS).filter((s) => s.tuitionCap)
+
+  return (
+    <section className="border-t border-mk-line bg-mk-surface py-20">
+      <div className="mx-auto max-w-6xl px-5">
         {/* Brigid's WHY ALLCAMPUS headline (content doc, 2026-08-20), Version
             A for TR audiences / Version B general — her structure, our mock
             counts (her doc's 50+/1,200+ are production figures). */}
@@ -189,8 +187,9 @@ export default function BenefitsAndHow({ partner, onGate }) {
           </div>
         )}
 
-        {/* WHY through AllCampus: the leakage line, stated plainly. */}
-        <div className="mt-8 rounded-[var(--radius-card)] border-l-4 border-mk-teal-600 bg-mk-surface px-6 py-5">
+        {/* WHY through AllCampus: the leakage line, stated plainly. White on
+            the grey ground so it still reads as its own element. */}
+        <div className="mt-8 rounded-[var(--radius-card)] border-l-4 border-mk-teal-600 bg-white px-6 py-5 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
           <p className="font-display text-[15px] font-extrabold text-mk-slate">
             The discount only exists through AllCampus.
           </p>
@@ -200,9 +199,7 @@ export default function BenefitsAndHow({ partner, onGate }) {
             paperwork wants a school and program picked first anyway. Start here, keep both.
           </p>
         </div>
-
       </div>
-      </section>
-    </>
+    </section>
   )
 }

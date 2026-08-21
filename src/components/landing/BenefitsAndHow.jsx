@@ -41,13 +41,13 @@ export function HowItWorks({ partner, onGate }) {
     {
       icon: 'find',
       title: 'Select a school and a program',
-      body: 'Use the pathfinder or browse the catalog. Nothing needs approving at this stage, and you are not committing to anything.',
+      body: 'Use the pathfinder or browse the catalog. Nothing needs approving yet.',
     },
     {
       icon: 'account',
       title: 'Create a free account',
       highlight: true,
-      body: 'It saves your matches and attaches your employer pricing, so every cost you see is yours. Nothing is shared with your employer.',
+      body: 'Saves your matches and attaches your employer pricing. Nothing is shared with your employer.',
       cta: { label: 'Create a free account', onClick: () => onGate?.('catalog') },
     },
     {
@@ -73,8 +73,7 @@ export function HowItWorks({ partner, onGate }) {
         <Eyebrow>How it works</Eyebrow>
         <Heading className="mt-2">One clear path, start to finish</Heading>
         <Body className="mt-3 max-w-2xl">
-          Most of the confusion is not knowing what happens when. Here is the whole journey up
-          front, and who handles each part, so nothing surprises you later.
+          The whole journey up front, and who handles each part.
         </Body>
 
         <h3 className="mt-12 font-display text-[16px] font-extrabold text-mk-slate">
@@ -195,8 +194,7 @@ export function WhyAllCampus({ partner }) {
           </p>
           <p className="mt-1 font-display text-[13.5px] leading-relaxed text-mk-body">
             Connecting with a school here is what activates your partner pricing. Going straight to
-            the school means standard tuition, and if your employer reimburses, the pre-approval
-            paperwork wants a school and program picked first anyway. Start here, keep both.
+            the school means standard tuition.
           </p>
         </div>
       </div>

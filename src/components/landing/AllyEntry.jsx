@@ -55,8 +55,7 @@ export default function AllyEntry({ partner }) {
             </Heading>
             <Body className="mt-2 max-w-xl">
               Ally helps you narrow things down: what to study, which credential fits, and how a
-              program works around a full-time job. For the specifics of your employer&rsquo;s
-              benefit, the section below lays it out, and a specialist can confirm your numbers.
+              program works around a full-time job.
             </Body>
           </div>
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-mk-purple text-lg text-white">

@@ -21,7 +21,7 @@ export default function PathfinderHero({ partner, profile, onStart, onEdit, onBr
 
   return (
     <section className="relative font-display">
-      <div className={`relative pt-16 text-white ${profile ? 'pb-24' : 'pb-16'}`}>
+      <div className={`relative pt-24 text-white sm:pt-28 ${profile ? 'pb-28' : 'pb-24'}`}>
         <Img
           src={heroImage(partner?.id)}
           alt=""
@@ -39,32 +39,32 @@ export default function PathfinderHero({ partner, profile, onStart, onEdit, onBr
           <h1 className="mt-3 max-w-2xl text-[36px] font-extrabold leading-tight sm:text-[44px]">
             Going back to school is confusing. Using your benefit shouldn&rsquo;t be.
           </h1>
-          <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-white/85">
-            AllCampus is how{known && !/^your /i.test(partner.name) ? ` ${partner.name} people` : ' you'} get discounted tuition
-            {reimburses ? ' and real help using the reimbursement benefit' : ''} at accredited
-            universities. We&rsquo;ll walk you through it, one clear step at a time.
+          <p className="mt-4 max-w-xl text-[16.5px] leading-relaxed text-white/85">
+            Discounted tuition{reimburses ? ', your reimbursement benefit,' : ''} and real help
+            using {reimburses ? 'both' : 'it'}. We&rsquo;ll walk you through it.
           </p>
 
           {!profile && (
             <>
-              <div className="mt-8 flex flex-wrap items-center gap-4">
+              <div className="mt-10">
                 <button
                   type="button"
                   onClick={() => onStart?.()}
-                  className="inline-flex items-center justify-center rounded-md bg-white px-7 py-3 text-[15px] font-bold text-mk-teal-700 shadow-[0_10px_28px_rgba(0,0,0,0.22)] transition hover:bg-mk-band"
+                  className="inline-flex items-center gap-2 rounded-lg bg-white px-10 py-4 text-[17px] font-bold text-mk-teal-700 shadow-[0_14px_36px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:bg-mk-band"
                 >
                   Let&rsquo;s get started
+                  <span aria-hidden>→</span>
                 </button>
-                <span className="text-[13px] font-semibold text-white/75">
+                <p className="mt-3 text-[13px] font-semibold text-white/75">
                   3 questions, about a minute. No account needed.
-                </span>
+                </p>
               </div>
               <button
                 type="button"
                 onClick={() => onBrowse?.()}
-                className="mt-5 block text-[13.5px] font-bold text-white/80 underline-offset-2 hover:text-white hover:underline"
+                className="mt-6 block text-[13.5px] font-bold text-white/80 underline-offset-2 hover:text-white hover:underline"
               >
-                I know what I&rsquo;m looking for, take me to the programs →
+                Browse all programs →
               </button>
             </>
           )}
@@ -115,8 +115,7 @@ export default function PathfinderHero({ partner, profile, onStart, onEdit, onBr
               />
             </div>
             <p className="mt-3 text-[13px] font-semibold text-mk-body">
-              {matchPrograms(profile, PROGRAMS).length} programs fit this profile. They&rsquo;re right
-              below, and every answer here stays editable.
+              {matchPrograms(profile, PROGRAMS).length} programs fit this profile. They&rsquo;re right below.
             </p>
           </div>
         </div>

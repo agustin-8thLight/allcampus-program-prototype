@@ -47,8 +47,7 @@ export default function ProfileResults({ profile, partner, onNavigate }) {
         Programs that fit what you told us
       </Heading>
       <Body className="mt-2 max-w-2xl">
-        Every one of these works with your answers, discount included. Pick a lens for what matters
-        most to you, and change any answer above whenever you like.
+        Every one works with your answers, discount included. Pick a lens for what matters most.
       </Body>
 
       <div className="mt-5 flex flex-wrap gap-2">

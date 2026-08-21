@@ -76,7 +76,7 @@ export default function App({
   // Category scope from the category landing page's CTA (kept as plain scope
   // text in the count line, deliberately not a dismissible chip).
   const [categoryId] = useState(() => initialParams?.get('category') || null)
-  const [schoolId] = useState(() => initialParams?.get('school') || null)
+  const [schoolId] = useState(() => initialParams?.get('school') || profile?.schoolId || null)
   const [degreeLevel, setDegreeLevel] = useState(() => initialParams?.get('degree') || null)
   const [coveredOnly, setCoveredOnly] = useState(() => initialParams?.get('covered') === '1')
   const [areaMenuOpen, setAreaMenuOpen] = useState(false)

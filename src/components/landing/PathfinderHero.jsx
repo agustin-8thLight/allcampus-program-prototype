@@ -3,6 +3,7 @@ import { heroImage } from '../../data/images.js'
 import { PROGRAMS, money } from '../../data/model.js'
 import { bestDiscountPercent } from '../../data/benefit.js'
 import { getArea } from '../../data/taxonomy.js'
+import { SCHOOLS } from '../../data/schools.js'
 import { startLabel, matchPrograms } from '../../data/pathfinder.js'
 
 /*
@@ -93,15 +94,23 @@ export default function PathfinderHero({ partner, profile, onStart, onEdit, onBr
                 value={startLabel(profile.start) || 'Just exploring'}
                 onEdit={() => onEdit?.('start')}
               />
-              <ProfileCell
-                label="Field"
-                value={
-                  profile.areaId && profile.areaId !== 'unsure'
-                    ? getArea(profile.areaId)?.label
-                    : 'Open to anything'
-                }
-                onEdit={() => onEdit?.('area')}
-              />
+              {profile.schoolId ? (
+                <ProfileCell
+                  label="School"
+                  value={SCHOOLS[profile.schoolId]?.name}
+                  onEdit={() => onEdit?.('school')}
+                />
+              ) : (
+                <ProfileCell
+                  label="Field"
+                  value={
+                    profile.areaId && profile.areaId !== 'unsure'
+                      ? getArea(profile.areaId)?.label
+                      : 'Open to anything'
+                  }
+                  onEdit={() => onEdit?.('area')}
+                />
+              )}
               <ProfileCell
                 label="Benefit"
                 value={

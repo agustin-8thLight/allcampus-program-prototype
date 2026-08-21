@@ -136,7 +136,7 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
       )}
 
       <ol
-        className={`grid grid-cols-1 gap-2 rounded-[var(--radius-card)] border border-mk-line bg-white p-4 sm:grid-cols-2 sm:p-5 ${
+        className={`grid grid-cols-1 gap-2 sm:grid-cols-2 ${
           nodes.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
         }`}
       >

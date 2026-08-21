@@ -59,6 +59,9 @@ export function startLabel(id) {
  */
 export function matchPrograms(profile, programs) {
   let out = programs
+  if (profile?.schoolId) {
+    out = out.filter((p) => p.schoolId === profile.schoolId)
+  }
   if (profile?.areaId && profile.areaId !== 'unsure') {
     out = out.filter((p) => p.areaId === profile.areaId)
   }

@@ -152,10 +152,7 @@ export default function Pathfinder({ open, partner, initialStep = 'start', onCom
                 <button
                   key={s.id}
                   type="button"
-                  onClick={() => {
-                    onNavigate?.(`/school/${s.id}`)
-                    onClose?.()
-                  }}
+                  onClick={() => pick({ schoolId: s.id }, 'benefit')}
                   className="flex w-full items-center gap-3 rounded-xl border border-mk-line bg-white px-4 py-3 text-left transition hover:border-mk-teal-600"
                 >
                   <span
@@ -172,7 +169,7 @@ export default function Pathfinder({ open, partner, initialStep = 'start', onCom
                       In the network{pct != null ? ` · up to ${pct}% off` : ''}
                     </span>
                   </span>
-                  <span className="ml-auto font-display text-[13px] font-bold text-mk-teal-700">See it →</span>
+                  <span className="ml-auto font-display text-[13px] font-bold text-mk-teal-700">Select →</span>
                 </button>
               )
             })}
@@ -188,7 +185,7 @@ export default function Pathfinder({ open, partner, initialStep = 'start', onCom
           </button>
         )}
         <NextLine>
-          Pick your school to jump straight to its page, discount included. Not listed? We&rsquo;ll show
+          Pick your school and we keep building your profile around it. Not listed? We&rsquo;ll show
           you what&rsquo;s close, never a dead end.
         </NextLine>
       </>
@@ -318,11 +315,23 @@ export default function Pathfinder({ open, partner, initialStep = 'start', onCom
         />
         <div className="mt-5 space-y-2">
           <SummaryRow label="Starting point" value={startLabel(answers.start) || 'Just exploring'} onEdit={() => setStep('start')} />
+          {answers.schoolId && (
+            <SummaryRow
+              label="School"
+              value={SCHOOLS[answers.schoolId]?.name}
+              onEdit={() => {
+                setSchoolMiss(false)
+                setStep('school')
+              }}
+            />
+          )}
+          {!answers.schoolId && (
           <SummaryRow
             label="Field"
             value={answers.areaId && answers.areaId !== 'unsure' ? getArea(answers.areaId)?.label : 'Open to anything'}
             onEdit={() => setStep('area')}
           />
+          )}
           <SummaryRow
             label="Benefit"
             value={

@@ -21,9 +21,9 @@ import { Heading } from '../components/landing/Section.jsx'
  *  1. Hero: value statement + "Let's get started" (pathfinder) + a quiet
  *     self-serve outlet. With a profile: the profile card floats here.
  *  2. Profile results (only with a profile): matched programs, outcome lenses
- *  3. BenefitsAndHow: HOW (journey + who-does-what) -> WHAT (value tiles +
+ *  3. Ally, high on the page (moved twice up from the old tail position)
+ *  4. BenefitsAndHow: HOW (journey + who-does-what) -> WHAT (value tiles +
  *     $5,250 cap callout) -> WHY through AllCampus (leakage line)
- *  4. Ally, moved up (Brigid: "a little too far down")
  *  5. Learner stories
  *  6. Partner school logos + See all schools
  *  7. FAQ
@@ -60,11 +60,11 @@ export default function LandingPage({ partner, profile, onProfile, onGate, onNav
 
       {profile && <ProfileResults profile={profile} partner={partner} onNavigate={onNavigate} />}
 
-      <BenefitsAndHow partner={partner} onGate={onGate} />
-
-      {/* Ally, moved up: the talk-it-through outlet sits right after the
-          how-and-what story, not at the page's tail. */}
+      {/* Ally, moved up again (2026-08-21 review): the talk-it-through
+          outlet now sits directly under the hero, ahead of the How band. */}
       <AllyEntry partner={partner} />
+
+      <BenefitsAndHow partner={partner} onGate={onGate} />
 
       <StoryCards partner={partner} />
 

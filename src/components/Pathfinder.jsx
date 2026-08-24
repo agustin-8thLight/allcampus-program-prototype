@@ -67,8 +67,8 @@ export default function Pathfinder({ open, partner, initialStep = 'start', onCom
     setStep(next)
   }
 
-  const finish = (patch = {}) => {
-    onComplete?.({ ...answers, ...patch })
+  const finish = (patch = {}, opts = null) => {
+    onComplete?.({ ...answers, ...patch }, opts)
   }
 
   const schoolHits = schoolQuery.trim()
@@ -348,10 +348,16 @@ export default function Pathfinder({ open, partner, initialStep = 'start', onCom
           {matchPrograms(answers, PROGRAMS).length} of {PROGRAMS.length} programs fit this profile,
           every one discounted through AllCampus.
         </p>
-        <div className="mt-5">
-          <PrimaryBtn onClick={() => finish()}>Show my matches</PrimaryBtn>
+        {/* 8/21 decision: the sign-up ask lives at profile completion, so the
+            profile can attach to a user — but it never blocks the matches. */}
+        <div className="mt-5 flex flex-wrap gap-2.5">
+          <PrimaryBtn onClick={() => finish({}, { save: true })}>Save my profile &amp; see matches</PrimaryBtn>
+          <GhostBtn onClick={() => finish()}>Skip for now, show my matches</GhostBtn>
         </div>
-        <NextLine>Next: your matches appear right on this page, with filters for value and speed.</NextLine>
+        <NextLine>
+          Saving attaches this profile to a free account, so your matches and pricing follow you.
+          Skipping is fine, you can save any time.
+        </NextLine>
       </>
     ),
   }

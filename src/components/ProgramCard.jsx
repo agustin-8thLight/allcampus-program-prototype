@@ -28,6 +28,9 @@ export default function ProgramCard({
     cost.primaryLabel === 'Per credit' ? 'per credit' : cost.primaryLabel === 'Total program cost' ? 'total' : null
 
   const benefitKnown = partner?.benefitKnown && partner.employerReimbursement > 0
+  // 8/21 meeting decision: compare is OFF for now, not deleted — revisit
+  // after the overhaul. Flip this to bring the button back.
+  const COMPARE_ENABLED = false
   const oop = benefitKnown ? estimatedOutOfPocket(p, partner) : null
 
   const explore = () => onExplore?.(p)
@@ -84,15 +87,11 @@ export default function ProgramCard({
             {money(Math.max(0, p.annualEstimatedCost - 5250))}/yr (est.)
           </p>
         )}
-        {/* Move 5 on the list: the benefit answer, inline. */}
-        {!benefitUnsure && benefitKnown && joined && oop != null && (
+        {/* Move 5 on the list: the benefit answer, inline. Open catalog
+            (8/21): the price is visible without an account. */}
+        {!benefitUnsure && benefitKnown && oop != null && (
           <p className="mt-1 text-[13px] font-bold text-good-700">
             Your est. out-of-pocket: {money(oop)}/yr with {/^your /i.test(partner.name) ? 'your employer benefit' : `the ${partner.name} benefit`}
-          </p>
-        )}
-        {!benefitUnsure && benefitKnown && !joined && (
-          <p className="mt-1 text-[13px] font-semibold text-ink-400">
-            Join free to see your price with {/^your /i.test(partner.name) ? 'your employer benefit' : `the ${partner.name} benefit`}
           </p>
         )}
         {start && (
@@ -142,16 +141,18 @@ export default function ProgramCard({
           >
             {saved ? '♥ Saved' : '♡ Save'}
           </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              onCompare?.(p)
-            }}
-            className="rounded-full border border-surface-200 px-2.5 py-1 text-[12px] font-bold text-ink-500 transition hover:border-brand-300 hover:text-ink-900"
-          >
-            ⇄ Compare
-          </button>
+          {COMPARE_ENABLED && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                onCompare?.(p)
+              }}
+              className="rounded-full border border-surface-200 px-2.5 py-1 text-[12px] font-bold text-ink-500 transition hover:border-brand-300 hover:text-ink-900"
+            >
+              ⇄ Compare
+            </button>
+          )}
         </span>
       </div>
     </div>

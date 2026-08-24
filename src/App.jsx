@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PROGRAMS, applyQuickFilter } from './data/model.js'
-import { AREAS, getArea, getSkill, getGoal, getCategory, programMatchesGoal, programMatchesCategory } from './data/taxonomy.js'
+import { AREAS, getArea, getSkill, getGoal, getCategory, skillsForArea, programMatchesGoal, programMatchesCategory } from './data/taxonomy.js'
 import { matchPrograms, startLabel } from './data/pathfinder.js'
 import { isFullyCoveredEstimate, bestDiscountPercent } from './data/benefit.js'
 import { getSchool } from './data/schools.js'
@@ -211,6 +211,11 @@ export default function App({
     if (degreeLevel) matched = matched.filter((p) => p.degreeLevel === degreeLevel)
     if (coveredOnly && partner) matched = matched.filter((p) => isFullyCoveredEstimate(p, partner))
     if (startScope) matched = matchPrograms({ start: startScope }, matched)
+    // 'Fully covered for you' is a dynamic lens: filter + affordability order.
+    if (activeFilter === 'fullyCovered' && partner) {
+      matched = matched.filter((p) => isFullyCoveredEstimate(p, partner))
+      return applyQuickFilter(matched, 'mostAffordable')
+    }
     return applyQuickFilter(matched, activeFilter)
   }, [query, activeFilter, areaId, skillId, goalId, categoryId, schoolId, degreeLevel, coveredOnly, startScope, partner])
 
@@ -344,6 +349,26 @@ export default function App({
               </button>
             </div>
           </div>
+
+          {/* Subcategory chips mirror the profile's drill-down (8/21 meeting:
+              filters = profile inputs). Appear once an area is chosen. */}
+          {areaId && !skillId && (
+            <div className="mx-auto mt-3 flex max-w-4xl flex-wrap items-center justify-center gap-2">
+              {skillsForArea(areaId).map((s) => {
+                const n = PROGRAMS.filter((p) => p.skillIds?.includes(s.id)).length
+                if (!n) return null
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => setSkillId(s.id)}
+                    className="rounded-full border border-surface-200 bg-surface-0 px-3 py-1.5 text-[12.5px] font-bold text-ink-700 transition hover:border-brand-400 hover:text-brand-700"
+                  >
+                    {s.label} <span className="font-semibold text-ink-400">{n}</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -395,6 +420,11 @@ export default function App({
                 return ctx ? <span className="font-semibold text-ink-500"> in {ctx}</span> : null
               })()}
             </p>
+            {!teasing && (
+              <p className="mt-0.5 text-[13.5px] font-bold text-brand-700">
+                Every discount here is already negotiated. Connect through AllCampus to activate it.
+              </p>
+            )}
             {teasing && (
               <p className="mt-1 text-[14px] font-semibold text-ink-600">
                 {new Set(results.map((r) => r.schoolId)).size} in-network schools
@@ -413,7 +443,14 @@ export default function App({
           {/* Value lenses instead of a generic sort: same framing as the
               profile results band. Deferred tuition narrows; the rest order. */}
           <div className={`flex flex-wrap gap-2 ${teasing ? 'hidden' : ''}`}>
-            {BROWSE_LENSES.map((l) => (
+            {[
+              ...BROWSE_LENSES,
+              // Dynamic per the 8/21 meeting: only when the benefit can
+              // actually zero programs out (shows/hides on user benefits).
+              ...(partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
+                ? [{ id: 'fullyCovered', label: 'Fully covered for you' }]
+                : []),
+            ].map((l) => (
               <button
                 key={l.id}
                 type="button"

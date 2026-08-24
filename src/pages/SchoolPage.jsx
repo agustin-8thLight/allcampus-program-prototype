@@ -141,6 +141,11 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
               <h1 className="mt-1.5 text-[34px] font-black leading-tight sm:text-[44px]">
                 Up to {bestPct}% off tuition at {school.name}
               </h1>
+              {/* 8/21 meeting: "connect through AllCampus to activate your
+                  discount" as the bolded next step, everywhere. */}
+              <p className="mt-3 text-[15.5px] font-extrabold text-white">
+                The discount already exists. Connect through AllCampus to activate it.
+              </p>
             </div>
           )}
           {bestPct != null ? (

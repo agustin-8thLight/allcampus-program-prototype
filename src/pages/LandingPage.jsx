@@ -104,9 +104,12 @@ export default function LandingPage({ partner, profile, onProfile, onGate, onNav
         partner={partner}
         onNavigate={onNavigate}
         onAlly={() => setAllyOpen(true)}
-        onComplete={(p) => {
+        onComplete={(p, opts) => {
           onProfile?.(p)
           setPathfinder(null)
+          // 8/21 decision: sign-up gate at profile completion (attaches the
+          // profile to a user), skippable — matches show either way.
+          if (opts?.save) onGate?.('catalog')
           setTimeout(
             () => document.getElementById('profile-results')?.scrollIntoView({ behavior: 'smooth' }),
             80,

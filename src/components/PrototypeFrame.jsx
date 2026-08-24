@@ -55,9 +55,11 @@ export default function PrototypeFrame() {
   const [route, setRoute] = useState(parseHash)
   const [story, setStory] = useState(initialStory)
   // Session state for the gate + intent branching (move 2 + move 3).
-  // 2026-08-20 client direction: the logged-in homepage IS the homepage for
-  // every scenario. The bar toggle still shows the logged-out state on demand.
-  const [joined, setJoined] = useState(true)
+  // Identity comes from the partner landing page, not auth (8/21). `joined`
+  // only marks a completed signup, so the save-profile conversion moments
+  // (steps CTA, Save, profile completion) can actually fire. Nothing is
+  // gated on it in phase 1.
+  const [joined, setJoined] = useState(false)
   const [intent, setIntent] = useState(null)
   const [gate, setGate] = useState(null) // { trigger } | null
   // Gated always (Brigid, Aug 19: drop the gated-vs-open toggle). A running
@@ -69,6 +71,16 @@ export default function PrototypeFrame() {
   // 2026-08-21 reset: the pathfinder's education profile. Cleared on a
   // scenario switch — each scenario is its own partner landing page.
   const [profile, setProfile] = useState(null)
+  // 8/21 meeting: phase-one (open) and phase-two (obfuscated until account)
+  // as SIBLING variants for A/B testing. Phase 2 re-arms the dormant gating.
+  const [phase, setPhase] = useState(1)
+  const applyPhase = (ph) => {
+    setPhase(ph)
+    setCatalogMode(ph === 2 ? 'gated' : 'open')
+    setJoined(false)
+    setGate(null)
+    setIntent(null)
+  }
   // Phone view (E3): auto-enabled for mobile-first stories like Tina's.
   const [phone, setPhone] = useState(false)
   const [intentOpen, setIntentOpen] = useState(false)
@@ -102,7 +114,7 @@ export default function PrototypeFrame() {
   const exitStory = () => {
     setStory(null)
     setPhone(false)
-    setCatalogMode('open')
+    setCatalogMode(phase === 2 ? 'gated' : 'open')
     navigate('/stories')
   }
 
@@ -252,6 +264,22 @@ export default function PrototypeFrame() {
             ))}
           </select>
         </label>
+
+        {/* A/B siblings (8/21): Phase 1 = open catalog; Phase 2 = program
+            details obfuscated until an account exists. */}
+        <div className="hidden items-center gap-1 rounded-full bg-white/10 p-0.5 lg:flex">
+          {[1, 2].map((ph) => (
+            <button
+              key={ph}
+              onClick={() => applyPhase(ph)}
+              className={`rounded-full px-2.5 py-1 text-[12px] font-bold transition ${
+                phase === ph ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Phase {ph}
+            </button>
+          ))}
+        </div>
 
         <span className="hidden flex-1 truncate text-[12px] text-white/55 xl:block">
           {story ? `Story: ${story.name} — ${story.title}` : ''}

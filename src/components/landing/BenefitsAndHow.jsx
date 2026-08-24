@@ -190,10 +190,10 @@ export function WhyAllCampus({ partner }) {
             the grey ground so it still reads as its own element. */}
         <div className="mt-8 rounded-[var(--radius-card)] border-l-4 border-mk-teal-600 bg-white px-6 py-5 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
           <p className="font-display text-[15px] font-extrabold text-mk-slate">
-            The discount only exists through AllCampus.
+            Your discount already exists. Connect through AllCampus to activate it.
           </p>
           <p className="mt-1 font-display text-[13.5px] leading-relaxed text-mk-body">
-            Connecting with a school here is what activates your partner pricing. Going straight to
+            Connecting with a school here is what turns on your partner pricing. Going straight to
             the school means standard tuition.
           </p>
         </div>

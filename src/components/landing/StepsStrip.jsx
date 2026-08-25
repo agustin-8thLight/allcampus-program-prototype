@@ -74,11 +74,16 @@ export default function StepsStrip({ steps }) {
             {i < steps.length - 1 && <ArrowChip />}
             {s.highlight ? (
               /* The account card: dark gradient, white type, the button. */
-              <div className="flex h-full flex-col rounded-[var(--radius-card)] bg-gradient-to-br from-mk-teal-600 to-mk-slate p-6 text-white shadow-[0_18px_40px_rgba(51,71,91,0.35)]">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-white shadow-inner backdrop-blur-sm">
-                  <Art className="h-9 w-9" />
+              <div className="flex h-full flex-col rounded-[var(--radius-card)] bg-gradient-to-br from-mk-teal-600 to-mk-slate p-5 text-white shadow-[0_18px_40px_rgba(51,71,91,0.35)]">
+                <div className="flex items-center justify-between">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-white shadow-inner backdrop-blur-sm">
+                    <Art className="h-9 w-9" />
+                  </div>
+                  <span className="font-display text-[34px] font-black leading-none text-white/25">
+                    {i + 1}
+                  </span>
                 </div>
-                <p className="mt-4 font-display text-[19px] font-extrabold leading-snug">
+                <p className="mt-3.5 font-display text-[17.5px] font-extrabold leading-snug">
                   {s.title}
                 </p>
                 <p className="mt-2 font-display text-[13.5px] leading-relaxed text-white/85">
@@ -95,11 +100,16 @@ export default function StepsStrip({ steps }) {
                 )}
               </div>
             ) : (
-              <div className="flex h-full flex-col rounded-[var(--radius-card)] border border-mk-line bg-gradient-to-b from-white to-mk-band/50 p-6 shadow-[0_14px_32px_rgba(51,71,91,0.12)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(51,71,91,0.16)]">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-mk-blue-50 to-mk-band text-mk-teal-700 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_2px_6px_rgba(51,71,91,0.10)]">
-                  <Art className="h-9 w-9" />
+              <div className="flex h-full flex-col rounded-[var(--radius-card)] border border-mk-line bg-gradient-to-b from-white to-mk-band/50 p-5 shadow-[0_14px_32px_rgba(51,71,91,0.12)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(51,71,91,0.16)]">
+                <div className="flex items-center justify-between">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-mk-blue-50 to-mk-band text-mk-teal-700 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_2px_6px_rgba(51,71,91,0.10)]">
+                    <Art className="h-9 w-9" />
+                  </div>
+                  <span className="font-display text-[34px] font-black leading-none text-mk-band">
+                    {i + 1}
+                  </span>
                 </div>
-                <p className="mt-4 font-display text-[19px] font-extrabold leading-snug text-mk-slate">
+                <p className="mt-3.5 font-display text-[17.5px] font-extrabold leading-snug text-mk-slate">
                   {s.title}
                 </p>
                 <p className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">

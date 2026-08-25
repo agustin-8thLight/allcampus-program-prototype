@@ -21,6 +21,9 @@ export default function Img({
   // the caller positions it with inset classes). Must be explicit: passing
   // `absolute` via className loses to Tailwind's `relative` in stylesheet order.
   position = 'relative',
+  // object-position for the photo. Portraits framed head-and-shoulders lose
+  // the face to a centered crop in a short slot, so callers pass 'top'.
+  focus = 'center',
 }) {
   const [failed, setFailed] = useState(false)
   const gradient = `linear-gradient(135deg, hsl(${hue} 55% 48%), hsl(${(hue + 28) % 360} 60% 32%))`
@@ -36,7 +39,9 @@ export default function Img({
           alt={alt}
           loading={eager ? 'eager' : 'lazy'}
           onError={() => setFailed(true)}
-          className="absolute inset-0 h-full w-full object-cover"
+          className={`absolute inset-0 h-full w-full object-cover ${
+            focus === 'top' ? 'object-[center_22%]' : 'object-center'
+          }`}
         />
       )}
       {overlay && <div className={`absolute inset-0 ${overlay}`} aria-hidden />}

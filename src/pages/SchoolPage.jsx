@@ -79,25 +79,25 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
     {
       icon: 'find',
       title: 'Select a school and a program',
-      body: `Browse ${firstWord}'s subjects above. Nothing needs approving at this stage.`,
+      body: `Browse ${firstWord}\u2019s subjects below. Nothing needs approving yet.`,
     },
     {
       icon: 'account',
       title: 'Save your profile',
       highlight: true,
-      body: 'A free account keeps your matches and your employer pricing with you.',
+      body: 'Keeps your matches and your pricing with you. Nothing goes to your employer.',
       cta: { label: 'Save my profile', onClick: () => onGate?.('catalog') },
     },
     {
       icon: 'confirm',
       title: 'Confirm your benefit',
-      body: `${owner} decides eligibility and approves funding, not AllCampus.`,
+      body: `${owner} approves the funding, not AllCampus. A free specialist call helps.`,
       note: PREAPPROVAL_RULE,
     },
     {
       icon: 'apply',
       title: 'Connect through AllCampus',
-      body: `Once you’ve connected through AllCampus, ${firstWord} handles admissions, enrollment, billing, and your discounted tuition. Going straight to ${firstWord} means standard tuition.`,
+      body: `${firstWord} then handles admissions, enrollment, billing, and your discounted tuition.`,
       note: 'This is the step that activates your discount. It’s already yours.',
     },
   ]
@@ -111,9 +111,11 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
     <div className="min-h-screen bg-white">
       <MkHeader partner={partner} onNavigate={onNavigate} />
 
-      {/* School hero, mirrors the live school-page pattern: slate band,
-          white logo circle, heading, highlights, actions. */}
-      <section className="relative py-14 text-white">
+      {/* School hero (2026-08-25 polish): was eight stacked text blocks in a
+          single column. Now two columns — the discount claim and the actions
+          on the left, the school's own identity as a facts card on the right,
+          so the photograph has room to read as a photograph. */}
+      <section className="relative py-16 text-white">
         <Img
           src={schoolImage(school.id)}
           alt=""
@@ -122,73 +124,105 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
           eager
           position="absolute"
           className="inset-0 h-full w-full"
-          overlay="bg-[linear-gradient(112deg,rgba(38,57,74,0.93)_0%,rgba(51,71,91,0.85)_60%,rgba(59,90,112,0.70)_100%)]"
+          overlay="bg-[linear-gradient(104deg,rgba(26,40,52,0.94)_0%,rgba(33,52,68,0.86)_40%,rgba(51,71,91,0.55)_72%,rgba(69,120,140,0.32)_100%)]"
         />
         <div className="relative mx-auto max-w-6xl px-5 font-display">
-          <span
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-[20px] font-black"
-            style={{ color: school.logoColor }}
-          >
-            {school.logoMonogram}
-          </span>
-          {/* 2026-08-19 session: the page led with the school and buried the
-              discount. Client direction was the opposite: "20% off at
-              Franklin" is the reason this page exists, so it goes first. */}
-          {bestPct != null && (
-            <div className="mt-6">
-              <p className="text-[12.5px] font-bold uppercase tracking-[0.14em] text-white/70">
-                AllCampus partner pricing
-              </p>
-              <h1 className="mt-1.5 text-[34px] font-black leading-tight sm:text-[44px]">
-                {discountLabel(programs)} tuition at {school.name}
-              </h1>
-              {/* 8/21 meeting: "connect through AllCampus to activate your
-                  discount" as the bolded next step, everywhere. */}
-              <p className="mt-3 text-[15.5px] font-extrabold text-white">
-                The discount already exists. Connect through AllCampus to activate it.
-              </p>
+          <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+            {/* LEFT: why this page exists. */}
+            <div>
+              {/* 2026-08-19 session: the page led with the school and buried the
+                  discount. Client direction was the opposite: "20% off at
+                  Franklin" is the reason this page exists, so it goes first. */}
+              {bestPct != null ? (
+                <>
+                  <p className="text-[12.5px] font-bold uppercase tracking-[0.14em] text-white/70">
+                    AllCampus partner pricing
+                  </p>
+                  <h1 className="mt-2 text-[34px] font-black leading-tight sm:text-[46px]">
+                    {discountLabel(programs)} tuition at {school.name}
+                  </h1>
+                  {/* 8/21 meeting: "connect through AllCampus to activate your
+                      discount" as the bolded next step, everywhere. */}
+                  <p className="mt-3 max-w-lg text-[15.5px] font-extrabold leading-relaxed text-white">
+                    The discount already exists. Connect through AllCampus to activate it.
+                  </p>
+                </>
+              ) : (
+                <h1 className="text-[34px] font-extrabold leading-tight sm:text-[42px]">
+                  {school.name}
+                </h1>
+              )}
+              <div className="mt-7 flex flex-wrap gap-3">
+                <MkButton tone="green" onClick={() => goBrowse({ school: school.id })}>
+                  View {firstWord} programs
+                </MkButton>
+                <MkButton tone="ghostLight" onClick={() => goBrowse({})}>
+                  Explore all programs
+                </MkButton>
+              </div>
+              <ul className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/20 pt-6">
+                {[
+                  `${programs.length} program${programs.length === 1 ? '' : 's'} in the network`,
+                  ...(bestPct != null ? [`${discountLabel(programs)} tuition`] : []),
+                  'Built for working adults',
+                ].map((t) => (
+                  <li
+                    key={t}
+                    className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[12.5px] font-bold text-white/90 backdrop-blur-sm"
+                  >
+                    {t}
+                  </li>
+                ))}
+              </ul>
             </div>
-          )}
-          {bestPct != null ? (
-            <p className="mt-4 text-[20px] font-extrabold leading-tight sm:text-[24px]">
-              {school.name}
-            </p>
-          ) : (
-            <h1 className="mt-5 text-[34px] font-extrabold leading-tight sm:text-[42px]">
-              {school.name}
-            </h1>
-          )}
-          <p className="mt-2 max-w-2xl text-[15.5px] leading-relaxed text-white/85">
-            {school.about}
-          </p>
-          <ul className="mt-4 space-y-1 text-[14.5px] text-white/90">
-            {school.highlights.map((h) => (
-              <li key={h}>• {h}</li>
-            ))}
-          </ul>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <MkButton tone="green" onClick={() => goBrowse({ school: school.id })}>
-              View {school.name.split(' ')[0]} programs
-            </MkButton>
-            <MkButton tone="ghostLight" onClick={() => goBrowse({})}>
-              Explore all programs
-            </MkButton>
+
+            {/* RIGHT: the school's own identity, as a card rather than four
+                more lines of white text on a photo. */}
+            <div className="rounded-2xl bg-white/95 p-6 text-mk-slate shadow-[0_14px_40px_rgba(0,0,0,0.28)] backdrop-blur-sm">
+              <div className="flex items-center gap-3.5">
+                <span
+                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-[18px] font-black text-white"
+                  style={{ background: school.logoColor }}
+                >
+                  {school.logoMonogram}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-[11px] font-bold uppercase tracking-[0.14em] text-mk-body/60">
+                    About the school
+                  </span>
+                  <span className="mt-0.5 block text-[19px] font-extrabold leading-snug">
+                    {school.name}
+                  </span>
+                </span>
+              </div>
+              <p className="mt-4 text-[14px] leading-relaxed text-mk-body">{school.about}</p>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {school.highlights.map((h) => (
+                  <li
+                    key={h}
+                    className="rounded-full border border-mk-line bg-mk-band px-3 py-1.5 text-[12.5px] font-semibold text-mk-slate"
+                  >
+                    {h}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Compact benefit banner: the landing module's promise, in one line,
               at the moment a channel visitor arrives. */}
-          <div className="mt-7 flex flex-col gap-3 rounded-xl border border-white/25 bg-white/10 p-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-8 flex flex-col gap-3 rounded-xl border border-white/25 bg-white/10 p-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
             <p className="text-[14.5px] leading-relaxed text-white/95">
               {benefitKnown ? (
                 <>
                   Your <strong>{/^your /i.test(partner.name) ? 'employer' : partner.name}</strong> benefit, up to{' '}
                   <strong>{money(partner.employerReimbursement)}/year</strong>, applies at{' '}
-                  {school.name.split(' ')[0]}.{' '}
+                  {firstWord}.{' '}
                   <span className="text-white/70">Estimate; confirm with your benefits administrator.</span>
                 </>
               ) : (
                 <>
-                  Every {school.name.split(' ')[0]} program here carries AllCampus partner pricing.{' '}
+                  Every {firstWord} program here carries AllCampus partner pricing.{' '}
                   <span className="text-white/70">No employer benefit required.</span>
                 </>
               )}
@@ -198,7 +232,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
               onClick={() => setAllyOpen(true)}
               className="shrink-0 rounded-lg bg-mk-purple px-4 py-2.5 text-[14px] font-bold text-white transition hover:opacity-90"
             >
-              {benefitKnown ? 'See what you’d pay ✦' : 'Ask Ally about costs ✦'}
+              {benefitKnown ? 'See what you\u2019d pay \u2726' : 'Ask Ally about costs \u2726'}
             </button>
           </div>
         </div>
@@ -245,25 +279,30 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
           <Heading size="sm" className="mt-2">
             Programs by subject
           </Heading>
-          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* 2026-08-25 polish: at one or two skills per area these cards
+              stretched to a shared row height and read as mostly empty. Three
+              compact self-sizing columns instead, icon inline with the label. */}
+          <div className="mt-5 grid grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {areaMenu.map(({ area, skills }) => (
               <div
                 key={area.id}
-                className="rounded-[var(--radius-card)] border border-mk-line bg-white p-5"
+                className="rounded-[var(--radius-card)] border border-mk-line bg-white p-4 transition hover:border-mk-teal-600/50 hover:shadow-[0_4px_16px_rgba(69,120,140,0.10)]"
               >
-                <div className="flex items-center gap-3">
-                  <SubjectIcon id={area.id} className="h-7 w-7 shrink-0 text-mk-teal-700" />
-                  <span className="font-display text-[16px] font-extrabold text-mk-slate">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mk-band text-mk-teal-700">
+                    <SubjectIcon id={area.id} className="h-5 w-5" />
+                  </span>
+                  <span className="font-display text-[15px] font-extrabold text-mk-slate">
                     {area.label}
                   </span>
                 </div>
-                <div className="mt-3.5 flex flex-wrap gap-2">
+                <div className="mt-3 flex flex-wrap gap-2">
                   {skills.map(({ skill, count }) => (
                     <button
                       key={skill.id}
                       type="button"
                       onClick={() => onNavigate(`/browse?school=${school.id}&skill=${skill.id}`)}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-mk-line bg-mk-band px-3.5 py-1.5 font-display text-[13.5px] font-semibold text-mk-slate transition hover:border-mk-teal-600 hover:text-mk-teal-700"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-mk-line bg-mk-surface px-3 py-1.5 font-display text-[13px] font-semibold text-mk-slate transition hover:border-mk-teal-600 hover:bg-white hover:text-mk-teal-700"
                     >
                       {skill.label}
                       <span className="font-bold text-mk-teal-700">{count}</span>
@@ -329,7 +368,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
         <Heading size="sm" className="mt-2">
           {programs.length} program{programs.length === 1 ? '' : 's'} in the AllCampus network
         </Heading>
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mt-5 grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
           {programs.map((p) => {
             const oop = partner?.benefitKnown ? estimatedOutOfPocket(p, partner) : null
             return (

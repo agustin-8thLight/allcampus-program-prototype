@@ -35,6 +35,7 @@ export default function StoryCards({ partner }) {
                 alt={s.name}
                 hue={s.hue}
                 rounded=""
+                focus="top"
                 className="h-52 w-full"
                 overlay="bg-gradient-to-t from-mk-slate/80 via-mk-slate/10 to-transparent"
               />

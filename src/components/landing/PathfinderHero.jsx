@@ -31,7 +31,7 @@ export default function PathfinderHero({ partner, profile, onStart, onEdit, onBr
           eager
           position="absolute"
           className="inset-0 h-full w-full"
-          overlay="bg-[linear-gradient(112deg,rgba(30,45,58,0.93)_0%,rgba(51,71,91,0.84)_45%,rgba(69,120,140,0.62)_100%)]"
+          overlay="bg-[linear-gradient(104deg,rgba(26,40,52,0.94)_0%,rgba(33,52,68,0.86)_38%,rgba(51,71,91,0.52)_70%,rgba(69,120,140,0.30)_100%)]"
         />
         <div className="relative mx-auto max-w-6xl px-5">
           <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-white/70">
@@ -65,8 +65,26 @@ export default function PathfinderHero({ partner, profile, onStart, onEdit, onBr
                 onClick={() => onBrowse?.()}
                 className="mt-6 block text-[13.5px] font-bold text-white/80 underline-offset-2 hover:text-white hover:underline"
               >
-                Browse all programs →
+                Browse all programs &rarr;
               </button>
+
+              {/* Proof row (2026-08-25 polish): the network numbers used to
+                  live only in the Why section's body copy, three screens
+                  down. They belong beside the first decision. */}
+              <ul className="mt-9 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/20 pt-6">
+                {[
+                  `${Object.keys(SCHOOLS).length} partner universities`,
+                  `${PROGRAMS.length} programs`,
+                  maxPct != null ? `Up to ${maxPct}% off tuition` : 'Negotiated tuition discounts',
+                ].map((t) => (
+                  <li
+                    key={t}
+                    className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[12.5px] font-bold text-white/90 backdrop-blur-sm"
+                  >
+                    {t}
+                  </li>
+                ))}
+              </ul>
             </>
           )}
         </div>

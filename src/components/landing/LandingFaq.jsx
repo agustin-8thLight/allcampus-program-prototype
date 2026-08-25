@@ -28,12 +28,13 @@ const FAQS = [
 export default function LandingFaq() {
   return (
     <section className="bg-mk-surface pb-20 pt-4">
-      <div className="mx-auto max-w-4xl px-5">
-      <div className="text-center">
+      <div className="mx-auto max-w-6xl px-5">
+      {/* Left-aligned: hierarchy by weight and size, not centering. */}
+      <div>
         <Eyebrow>FAQs</Eyebrow>
         <Heading className="mt-1">Your questions, answered</Heading>
       </div>
-      <div className="mt-7 space-y-2.5">
+      <div className="mt-7 max-w-3xl space-y-2.5">
         {FAQS.map((f) => (
           <details
             key={f.q}

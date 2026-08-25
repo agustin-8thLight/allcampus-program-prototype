@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { money } from '../../data/model.js'
 import { hasBenefitAdmin } from '../../data/corporatePartners.js'
 
@@ -89,6 +90,7 @@ const NODES = (schoolName, partner) => {
       key: 'employer',
       art: 'employer',
       label: partner?.name || 'Your Employer',
+      role: hasTR ? 'Funds your tuition benefit' : 'Opens the discount network to you',
       does: employerBox(partner),
     },
   ]
@@ -97,6 +99,7 @@ const NODES = (schoolName, partner) => {
       key: 'admin',
       art: 'benefitAdmin',
       label: partner.benefitAdmin?.name || 'Benefit Partner',
+      role: 'Approves and pays the reimbursement',
       does: `${partner.benefitAdmin?.name || 'Your benefit partner'} manages your reimbursement — eligibility, filings, and funds. Their pre-approval process requires a school and a program already be selected.`,
     })
   }
@@ -105,6 +108,7 @@ const NODES = (schoolName, partner) => {
       key: 'allcampus',
       art: 'allcampus',
       label: 'AllCampus',
+      role: 'Holds your discount, and activates it',
       does: ALLCAMPUS_BASE + (hasTR ? ALLCAMPUS_SEQUENCING : ''),
       highlight: true,
     },
@@ -112,6 +116,7 @@ const NODES = (schoolName, partner) => {
       key: 'school',
       art: 'school',
       label: schoolName || 'In-Network Schools',
+      role: 'Teaches the program, bills the tuition',
       does: SCHOOLS_BOX,
     },
   )
@@ -120,6 +125,12 @@ const NODES = (schoolName, partner) => {
 
 export default function EcosystemStrip({ variant = 'landing', schoolName = null, partner = null }) {
   const nodes = NODES(schoolName, partner)
+  // 2026-08-25 polish: the four verbatim paragraphs were the densest text on
+  // both pages, and they repeat between them. Brigid's strings are copy of
+  // record, so nothing is cut: at rest each node shows an illustration, a
+  // name, and a short role line, and one control reveals the full wording.
+  const [detail, setDetail] = useState(false)
+
   return (
     <div className="font-display">
       {variant === 'school' && (
@@ -136,49 +147,68 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
       )}
 
       <ol
-        className={`grid grid-cols-1 gap-2 sm:grid-cols-2 ${
+        className={`grid grid-cols-1 items-start gap-3 sm:grid-cols-2 ${
           nodes.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
         }`}
       >
         {nodes.map((n, i) => (
           <li key={n.key} className="relative">
             <div
-              className={`flex h-full flex-col rounded-[var(--radius-card)] px-5 py-6 ${
-                n.highlight ? 'bg-mk-blue-50 ring-1 ring-mk-blue-200' : ''
+              className={`flex h-full flex-col items-center rounded-[var(--radius-card)] px-4 py-5 text-center ${
+                n.highlight ? 'bg-mk-blue-50 ring-1 ring-mk-blue-200' : 'bg-mk-surface/70'
               }`}
             >
               <div
-                className={`mx-auto flex h-24 w-24 items-center justify-center rounded-[var(--radius-card)] ${
-                  n.highlight ? 'bg-white text-mk-teal-700 shadow-sm' : 'bg-mk-band text-mk-teal-700'
+                className={`flex h-16 w-16 items-center justify-center rounded-full ${
+                  n.highlight
+                    ? 'bg-white text-mk-teal-700 shadow-[0_4px_14px_rgba(51,71,91,0.14)]'
+                    : 'bg-white text-mk-teal-600 shadow-[0_2px_8px_rgba(51,71,91,0.08)]'
                 }`}
               >
-                {Art[n.art] ? Art[n.art]({ className: 'h-14 w-14' }) : null}
+                {Art[n.art] ? Art[n.art]({ className: 'h-8 w-8' }) : null}
               </div>
-              <div className="mt-5 flex items-baseline gap-2">
-                <span
-                  className={`text-[13px] font-extrabold ${
-                    n.highlight ? 'text-mk-teal-700' : 'text-mk-body/60'
-                  }`}
-                >
-                  {i + 1}
-                </span>
-                <span className="text-[19px] font-extrabold leading-snug text-mk-slate">
-                  {n.label}
-                </span>
-              </div>
-              <p className="mt-2 text-[14px] leading-relaxed text-mk-body">{n.does}</p>
+              <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.12em] text-mk-body/55">
+                Step {i + 1}
+              </p>
+              <p className="mt-0.5 text-[16px] font-extrabold leading-snug text-mk-slate">
+                {n.label}
+              </p>
+              <p
+                className={`mt-1 text-[13px] font-semibold leading-snug ${
+                  n.highlight ? 'text-mk-teal-700' : 'text-mk-body'
+                }`}
+              >
+                {n.role}
+              </p>
+              {detail && (
+                <p className="mt-3 border-t border-mk-line pt-3 text-left text-[13px] leading-relaxed text-mk-body">
+                  {n.does}
+                </p>
+              )}
             </div>
             {i < nodes.length - 1 && (
               <span
                 aria-hidden
-                className="absolute -right-[9px] top-[74px] z-10 hidden text-[17px] text-mk-teal-600/60 lg:block"
+                className="absolute -right-[9px] top-[48px] z-10 hidden text-[17px] text-mk-teal-600/50 lg:block"
               >
-                →
+                &rarr;
               </span>
             )}
           </li>
         ))}
       </ol>
+
+      <button
+        type="button"
+        onClick={() => setDetail((v) => !v)}
+        aria-expanded={detail}
+        className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
+      >
+        {detail ? 'Hide the detail' : 'Read what each one does'}
+        <span aria-hidden className={`text-[15px] leading-none transition ${detail ? 'rotate-180' : ''}`}>
+          &#8964;
+        </span>
+      </button>
     </div>
   )
 }

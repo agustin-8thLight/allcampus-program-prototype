@@ -45,11 +45,14 @@ export default function AllyEntry({ partner }) {
   const open = (seed = null) => setOverlay({ seed })
 
   return (
-    <section className="mx-auto max-w-4xl px-5 py-14">
-      <div className="rounded-2xl border border-mk-line bg-white p-6 shadow-sm sm:p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="min-w-0">
-            <Eyebrow tone="purple">✦ AI copilot</Eyebrow>
+    <section className="border-y border-mk-line bg-mk-band/50 py-14">
+      <div className="mx-auto max-w-6xl px-5">
+        {/* 2026-08-25 polish: the card used to float alone on white, so a
+            demoted feature read as an orphan. It is now a banded two-column
+            block: copy left, an illustrated panel right. */}
+        <div className="grid grid-cols-1 items-stretch overflow-hidden rounded-2xl border border-mk-line bg-white shadow-[0_2px_12px_rgba(51,71,91,0.06)] lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+          <div className="p-6 sm:p-8">
+            <Eyebrow tone="purple">&#10022; AI copilot</Eyebrow>
             <Heading size="sm" className="mt-2">
               Not sure where to start? Talk it through with Ally.
             </Heading>
@@ -57,39 +60,44 @@ export default function AllyEntry({ partner }) {
               Ally helps you narrow things down: what to study, which credential fits, and how a
               program works around a full-time job.
             </Body>
-          </div>
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-mk-purple text-lg text-white">
-            ✦
-          </span>
-        </div>
 
-        {/* Question chips ARE the entry — no fake chat transcript above them.
-            The previous version mocked up a conversation, which oversells how
-            much Ally currently knows. */}
-        <div className="mt-5 flex flex-wrap gap-2">
-          {PREVIEW_QUESTIONS.map((x) => (
+            {/* Question chips ARE the entry — no fake chat transcript above
+                them. The previous version mocked up a conversation, which
+                oversells how much Ally currently knows. */}
+            <div className="mt-5 flex flex-wrap gap-2">
+              {PREVIEW_QUESTIONS.map((x) => (
+                <button
+                  key={x.id}
+                  type="button"
+                  onClick={() => open(x.id)}
+                  className="rounded-full border border-mk-line bg-white px-3.5 py-2 font-display text-[13px] font-bold text-mk-slate transition hover:border-mk-purple hover:text-mk-purple"
+                >
+                  {x.q}
+                </button>
+              ))}
+            </div>
+
             <button
-              key={x.id}
               type="button"
-              onClick={() => open(x.id)}
-              className="rounded-full border border-mk-line bg-white px-3.5 py-2 font-display text-[13px] font-bold text-mk-slate transition hover:border-mk-purple hover:text-mk-purple"
+              onClick={() => open()}
+              className="mt-5 inline-flex items-center gap-2 rounded-lg bg-mk-purple px-5 py-2.5 font-display text-[14px] font-bold text-white shadow-[0_8px_20px_rgba(123,97,196,0.28)] transition hover:opacity-90"
             >
-              {x.q}
+              Open Ally
+              <span aria-hidden>&#10022;</span>
             </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => open()}
-            className="rounded-full bg-mk-purple px-4 py-2 font-display text-[13px] font-bold text-white transition hover:opacity-90"
-          >
-            Open Ally
-          </button>
-        </div>
 
-        <p className="mt-4 font-display text-[11.5px] text-mk-body/70">
-          Ally is an AI assistant and can make mistakes. It doesn&rsquo;t confirm eligibility or
-          approve funding. Your employer or benefits administrator does that.
-        </p>
+            <p className="mt-4 font-display text-[11.5px] leading-relaxed text-mk-body/70">
+              Ally is an AI assistant and can make mistakes. It doesn&rsquo;t confirm eligibility or
+              approve funding. Your employer or benefits administrator does that.
+            </p>
+          </div>
+
+          {/* Illustrated panel: a conversation shape, drawn rather than faked
+              with sample answers. */}
+          <div className="relative hidden overflow-hidden bg-gradient-to-br from-mk-purple to-[#4a3a86] lg:block">
+            <AllyArt />
+          </div>
+        </div>
       </div>
 
       <AllyOverlay
@@ -99,5 +107,36 @@ export default function AllyEntry({ partner }) {
         onClose={() => setOverlay(null)}
       />
     </section>
+  )
+}
+
+/* Line illustration: stacked speech shapes and a spark. Decorative only. */
+function AllyArt() {
+  return (
+    <svg
+      viewBox="0 0 320 300"
+      aria-hidden
+      className="absolute inset-0 h-full w-full"
+      preserveAspectRatio="xMidYMid slice"
+    >
+      <g fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round">
+        <g opacity="0.16" strokeWidth="1.2">
+          <circle cx="160" cy="150" r="118" />
+          <circle cx="160" cy="150" r="86" />
+        </g>
+        <g opacity="0.9" strokeWidth="2">
+          <path d="M62 92h132a12 12 0 0 1 12 12v46a12 12 0 0 1-12 12h-84l-26 22v-22H62a12 12 0 0 1-12-12v-46a12 12 0 0 1 12-12z" />
+          <path d="M78 116h84M78 134h56" opacity="0.6" />
+        </g>
+        <g opacity="0.75" strokeWidth="2">
+          <path d="M152 176h96a10 10 0 0 1 10 10v34a10 10 0 0 1-10 10h-18l-20 18v-18h-58a10 10 0 0 1-10-10v-34a10 10 0 0 1 10-10z" />
+          <path d="M170 196h60M170 212h38" opacity="0.6" />
+        </g>
+        <g opacity="0.95" strokeWidth="2.4">
+          <path d="M246 54l6 18 18 6-18 6-6 18-6-18-18-6 18-6 6-18z" />
+          <path d="M58 216l4 11 11 4-11 4-4 11-4-11-11-4 11-4 4-11z" opacity="0.7" />
+        </g>
+      </g>
+    </svg>
   )
 }

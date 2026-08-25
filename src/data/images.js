@@ -58,7 +58,10 @@ export const PERSONA_IMAGES = {
 
 /* Marketing heroes. Partner-specific where it helps the story land. */
 export const HERO_IMAGES = {
-  default: U('1523240795612-9a054b0db644', 1800, 900), // adults collaborating
+  /* 2026-08-25: the previous default read as teenagers in a library, which is
+     the wrong audience for an employer-benefit page. Two colleagues at a
+     laptop, subjects right of frame so the headline has clear ground. */
+  default: U('1531482615713-2afd69097998', 1800, 900), // colleagues at work
   sheetz: U('1556742049-0cfed4f6a45d', 1800, 900), // retail and service team
   'texas-roadhouse': U('1552566626-52f8b828add9', 1800, 900), // restaurant staff
   boeing: U('1581092918056-0c4c3acd3789', 1800, 900), // industrial technician
@@ -103,6 +106,57 @@ export const CATEGORY_IMAGES = {
   'tech-engineering': U('1550751827-4bd374c3f58b', 1800, 600),
   healthcare: U('1519494026892-80bbd2d6fd0d', 1800, 600),
   'people-public': U('1509062522246-3755977927d7', 1800, 600),
+}
+
+/* Editorial photo for the Why-AllCampus band (2026-08-25 polish). Reuses an
+   id already verified above. */
+export const WHY_IMAGE = U('1552581234-26160f608093', 900, 1100)
+
+/*
+ * Subject photography for program thumbnails (2026-08-25 polish).
+ *
+ * The catalog's own imageUrl field draws from a 28-image pool that includes
+ * the same head-and-shoulders portraits used for learner stories and personas.
+ * The result: 25 programs showed a stranger's face as their subject thumbnail,
+ * and one face appeared BOTH as a testimonial and as a program tile. These
+ * area-keyed photographs replace only those portrait hits, so the pool's
+ * variety survives everywhere else. All ids eyeballed on a contact sheet.
+ */
+const PORTRAIT_IDS = new Set([
+  '1494790108377-be9c29b29330',
+  '1507003211169-0a1dd7228f2d',
+  '1573496359142-b8d87734a5a2',
+  '1519085360753-af0119f7cbe7',
+  '1580489944761-15a19d654956',
+  '1531427186611-ecfd6d936c79',
+  '1573497019940-1c28c88b4f3e',
+])
+
+const AREA_PROGRAM_IMAGES = {
+  business: ['1454165804606-c3d57bc86b40', '1552581234-26160f608093'],
+  it: ['1522071820081-009f0129c71c', '1551288049-bebda4e38f71'],
+  engineering: ['1567789884554-0b844b597180', '1581092918056-0c4c3acd3789'],
+  healthcare: ['1631217868264-e5b90bb7e133', '1519494026892-80bbd2d6fd0d'],
+  education: ['1509062522246-3755977927d7', '1497215728101-856f4ea42174'],
+  'justice-legal': ['1589829545856-d10d557cf95f', '1436450412740-6b988f486c6b'],
+  'liberal-arts': ['1481627834876-b7833e8f5570', '1505664194779-8beaceb93744'],
+  'social-work': ['1544027993-37dbfe43562a', '1552664730-d307ca884978'],
+}
+
+/* Is this url one of the portraits that shouldn't stand in for a subject? */
+export const isPortraitUrl = (url) => {
+  if (!url) return false
+  const m = /photo-([\w-]+)/.exec(url)
+  return !!m && PORTRAIT_IDS.has(m[1])
+}
+
+/* Deterministic pick so a program keeps the same photo across renders. */
+export const areaProgramImage = (areaId, seed = '') => {
+  const options = AREA_PROGRAM_IMAGES[areaId]
+  if (!options) return null
+  let h = 0
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) % 9973
+  return U(options[h % options.length])
 }
 
 export const programImage = (id) => PROGRAM_IMAGES[id] || null

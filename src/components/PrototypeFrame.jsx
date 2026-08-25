@@ -198,6 +198,8 @@ export default function PrototypeFrame() {
         categoryId={route.path.split('/')[2]}
         partner={partner}
         joined={joined}
+        gated={catalogMode === 'gated' && !joined}
+        onGate={requestGate}
         onNavigate={navigate}
       />
     )
@@ -218,7 +220,7 @@ export default function PrototypeFrame() {
     )
   } else {
     page = (
-      <LandingPage partner={partner} profile={profile} onProfile={setProfile} onGate={requestGate} onNavigate={navigate} />
+      <LandingPage partner={partner} profile={profile} onProfile={setProfile} gated={catalogMode === 'gated' && !joined} onGate={requestGate} onNavigate={navigate} />
     )
   }
 

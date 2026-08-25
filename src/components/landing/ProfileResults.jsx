@@ -3,6 +3,8 @@ import { Eyebrow, Heading, Body } from './Section.jsx'
 import ProgramCard from '../ProgramCard.jsx'
 import { PROGRAMS, applyQuickFilter } from '../../data/model.js'
 import { matchPrograms } from '../../data/pathfinder.js'
+import { isFullyCoveredEstimate } from '../../data/benefit.js'
+import ObfuscatedCard from '../ObfuscatedCard.jsx'
 
 /*
  * ProfileResults (2026-08-21): the recommendations band that appears once the
@@ -16,13 +18,19 @@ const LENSES = [
   { id: 'mostAffordable', label: 'Lowest out-of-pocket' },
 ]
 
-export default function ProfileResults({ profile, partner, onNavigate }) {
+export default function ProfileResults({ profile, partner, gated = false, onGate, onNavigate }) {
   const [lens, setLens] = useState('match')
   const matches = useMemo(() => matchPrograms(profile, PROGRAMS), [profile])
-  const shown = useMemo(
-    () => (lens === 'match' ? matches : applyQuickFilter(matches, lens)).slice(0, 6),
-    [matches, lens],
-  )
+  // Joe's ask: fully-covered visibility, dynamic — only when the benefit can
+  // actually zero programs out (same condition as browse).
+  const reimburses = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
+  const lenses = [...LENSES, ...(reimburses ? [{ id: 'fullyCovered', label: 'Fully covered for you' }] : [])]
+  const shown = useMemo(() => {
+    if (lens === 'fullyCovered') {
+      return applyQuickFilter(matches.filter((p) => isFullyCoveredEstimate(p, partner)), 'mostAffordable').slice(0, 6)
+    }
+    return (lens === 'match' ? matches : applyQuickFilter(matches, lens)).slice(0, 6)
+  }, [matches, lens, partner])
 
   // The profile itself travels to browse as a prop (PrototypeFrame owns it),
   // so links stay clean: no params to fall out of sync with the answers.
@@ -41,7 +49,7 @@ export default function ProfileResults({ profile, partner, onNavigate }) {
       </Body>
 
       <div className="mt-5 flex flex-wrap gap-2">
-        {LENSES.map((l) => (
+        {lenses.map((l) => (
           <button
             key={l.id}
             type="button"
@@ -58,18 +66,22 @@ export default function ProfileResults({ profile, partner, onNavigate }) {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {shown.map((p) => (
-          <ProgramCard
-            key={p.id}
-            program={p}
-            partner={partner}
-            joined
-            benefitUnsure={profile?.benefit === 'unsure'}
-            onExplore={openProgram}
-            onSave={openProgram}
-            onCompare={openProgram}
-          />
-        ))}
+        {shown.map((p) =>
+          gated ? (
+            <ObfuscatedCard key={p.id} program={p} onGate={onGate} />
+          ) : (
+            <ProgramCard
+              key={p.id}
+              program={p}
+              partner={partner}
+              joined
+              benefitUnsure={profile?.benefit === 'unsure'}
+              onExplore={openProgram}
+              onSave={openProgram}
+              onCompare={openProgram}
+            />
+          ),
+        )}
       </div>
 
       {matches.length > shown.length && (

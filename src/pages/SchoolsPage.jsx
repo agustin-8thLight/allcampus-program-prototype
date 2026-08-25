@@ -2,7 +2,7 @@ import MkHeader from '../components/landing/MkHeader.jsx'
 import { Eyebrow, Heading, Body } from '../components/landing/Section.jsx'
 import { SCHOOLS } from '../data/schools.js'
 import { PROGRAMS } from '../data/model.js'
-import { bestDiscountPercent } from '../data/benefit.js'
+import { bestDiscountPercent, discountLabel } from '../data/benefit.js'
 import { schoolImage } from '../data/images.js'
 import Img from '../components/Img.jsx'
 
@@ -19,7 +19,7 @@ import Img from '../components/Img.jsx'
 export default function SchoolsPage({ partner, onNavigate }) {
   const schools = Object.values(SCHOOLS).map((s) => {
     const programs = PROGRAMS.filter((p) => p.schoolId === s.id)
-    return { ...s, programCount: programs.length, bestPct: bestDiscountPercent(programs) }
+    return { ...s, programCount: programs.length, bestPct: bestDiscountPercent(programs), discountTag: discountLabel(programs) }
   })
 
   return (
@@ -93,7 +93,7 @@ export default function SchoolsPage({ partner, onNavigate }) {
                 </span>
                 {s.bestPct != null && (
                   <span className="rounded-full bg-good-50 px-2.5 py-1 font-display text-[12px] font-bold text-good-700">
-                    Up to {s.bestPct}% off
+                    {s.discountTag}
                   </span>
                 )}
                 {s.accreditation && (

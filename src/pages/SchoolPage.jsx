@@ -6,7 +6,7 @@ import AllyEntry from '../components/landing/AllyEntry.jsx'
 import SubjectIcon from '../components/landing/SubjectIcon.jsx'
 import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.jsx'
 import { PROGRAMS, money, resolveCost, startDateDisplay } from '../data/model.js'
-import { estimatedOutOfPocket, bestDiscountPercent } from '../data/benefit.js'
+import { estimatedOutOfPocket, bestDiscountPercent, discountLabel } from '../data/benefit.js'
 import { getArea, getSkill } from '../data/taxonomy.js'
 import { policyOwner, PREAPPROVAL_RULE } from '../data/corporatePartners.js'
 import { getSchool } from '../data/schools.js'
@@ -98,6 +98,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
       icon: 'apply',
       title: 'Connect through AllCampus',
       body: `Once you’ve connected through AllCampus, ${firstWord} handles admissions, enrollment, billing, and your discounted tuition. Going straight to ${firstWord} means standard tuition.`,
+      note: 'This is the step that activates your discount. It’s already yours.',
     },
   ]
 
@@ -139,7 +140,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
                 AllCampus partner pricing
               </p>
               <h1 className="mt-1.5 text-[34px] font-black leading-tight sm:text-[44px]">
-                Up to {bestPct}% off tuition at {school.name}
+                {discountLabel(programs)} tuition at {school.name}
               </h1>
               {/* 8/21 meeting: "connect through AllCampus to activate your
                   discount" as the bolded next step, everywhere. */}
@@ -180,7 +181,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
             <p className="text-[14.5px] leading-relaxed text-white/95">
               {benefitKnown ? (
                 <>
-                  Your <strong>{partner.name}</strong> benefit, up to{' '}
+                  Your <strong>{/^your /i.test(partner.name) ? 'employer' : partner.name}</strong> benefit, up to{' '}
                   <strong>{money(partner.employerReimbursement)}/year</strong>, applies at{' '}
                   {school.name.split(' ')[0]}.{' '}
                   <span className="text-white/70">Estimate; confirm with your benefits administrator.</span>
@@ -203,6 +204,37 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
         </div>
       </section>
 
+      {/* HOW IT WORKS FOR YOU — moved up (8/25: school pages mirror the
+          landing's order: hero -> How -> Ally -> programs on grey). */}
+      <section className="bg-white py-16">
+        <div className="mx-auto max-w-6xl px-5">
+        <Eyebrow>Your path from here</Eyebrow>
+        <Heading className="mt-2">
+          How it works for you
+        </Heading>
+        <Body className="mt-3 max-w-2xl">
+          The whole journey at {firstWord}, and who handles each part.
+        </Body>
+        <div className="mt-8">
+          {/* 2026-08-21 reset: the journey map AND the who-does-what boxes,
+              both always visible. The big picture is the confidence builder. */}
+          <StepsStrip steps={howSteps} />
+          <div className="mt-8">
+            <h3 className="font-display text-[15px] font-extrabold text-mk-slate">
+              Who does what along the way
+            </h3>
+            <div className="mt-3">
+              <EcosystemStrip variant="school" schoolName={school.name} partner={partner} />
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <AllyEntry partner={partner} />
+
+      {/* Programs region opens the grey ground, like the landing. */}
+      <div className="border-t border-mk-line bg-mk-surface pb-10">
       {/* SUBJECTS MENU (2026-08-19 session): the visual browse surface that
           replaces the program grid for logged-out visitors. Areas the school
           covers, with skill chips that carry program counts and route into
@@ -244,28 +276,6 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
         </section>
       )}
 
-      {/* HOW IT WORKS FOR YOU (2026-08-19 session): the benefit mechanics as
-          four partner-aware steps, replacing the BenefitBlock module. */}
-      <section className="mx-auto max-w-6xl px-5 pt-16">
-        <Eyebrow>Your path from here</Eyebrow>
-        <Heading size="sm" className="mt-2">
-          How it works for you
-        </Heading>
-        <div className="mt-6">
-          {/* 2026-08-21 reset: the journey map AND the who-does-what boxes,
-              both always visible. The big picture is the confidence builder. */}
-          <StepsStrip steps={howSteps} />
-          <div className="mt-8">
-            <h3 className="font-display text-[15px] font-extrabold text-mk-slate">
-              Who does what along the way
-            </h3>
-            <div className="mt-3">
-              <EcosystemStrip variant="school" schoolName={school.name} partner={partner} />
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* 2026-08-19 session: logged out, NO program grid. The grid is where
           leakage happens; the subjects menu above is the browse surface, and
           this compact tease routes to the gated browse teaser instead. */}
@@ -275,7 +285,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
             <p className="text-[18px] font-extrabold text-mk-slate">
               {programs.length} program{programs.length === 1 ? '' : 's'} at {firstWord}
               {bestPct != null && (
-                <span className="text-mk-green-700"> · up to {bestPct}% off</span>
+                <span className="text-mk-green-700"> · {discountLabel(programs)}</span>
               )}
             </p>
             <p className="mt-1.5 text-[14.5px] text-mk-body">
@@ -376,8 +386,26 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
         </div>
       </section>
       )}
+      </div>
 
-      <AllyEntry partner={partner} />
+      {/* Dark CTA bookend, mirroring the landing close. */}
+      <section className="bg-gradient-to-br from-mk-teal-600 to-mk-slate py-14 text-center">
+        <Heading size="sm" className="text-white">
+          Your {firstWord} discount is already yours
+        </Heading>
+        <p className="mx-auto mt-2 max-w-md px-5 font-display text-[14px] text-white/80">
+          Connect through AllCampus to activate it.
+        </p>
+        <div className="mt-5">
+          <button
+            type="button"
+            onClick={() => goBrowse({ school: school.id })}
+            className="inline-flex items-center justify-center rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
+          >
+            See all {programs.length} programs
+          </button>
+        </div>
+      </section>
 
       <AllyOverlay
         open={allyOpen}

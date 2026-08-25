@@ -106,7 +106,7 @@ export default function StepsStrip({ steps }) {
                   {s.body}
                 </p>
                 {s.note && (
-                  <p className="mt-auto pt-3 font-display text-[12.5px] leading-snug text-mk-teal-text">
+                  <p className="mt-auto pt-3 font-display text-[12.5px] font-bold leading-snug text-mk-teal-text">
                     {s.note}
                   </p>
                 )}

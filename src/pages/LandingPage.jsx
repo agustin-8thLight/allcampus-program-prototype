@@ -33,9 +33,9 @@ import { Heading } from '../components/landing/Section.jsx'
  * hero, the skills-navigator variant, the outcome-cards + browse-by-subject
  * band ("supported decision-making beats the browse-by-subject block").
  */
-export default function LandingPage({ partner, profile, onProfile, onGate, onNavigate }) {
+export default function LandingPage({ partner, profile, onProfile, gated = false, onGate, onNavigate }) {
   const [pathfinder, setPathfinder] = useState(null) // null | { step }
-  const [allyOpen, setAllyOpen] = useState(false)
+  const [allyOpen, setAllyOpen] = useState(null) // null | { school?: string }
 
   const goBrowse = (params = {}) => {
     const qs = new URLSearchParams(
@@ -58,7 +58,7 @@ export default function LandingPage({ partner, profile, onProfile, onGate, onNav
         onBrowse={() => goBrowse({})}
       />
 
-      {profile && <ProfileResults profile={profile} partner={partner} onNavigate={onNavigate} />}
+      {profile && <ProfileResults profile={profile} partner={partner} gated={gated} onGate={onGate} onNavigate={onNavigate} />}
 
       <HowItWorks partner={partner} onGate={onGate} />
 
@@ -103,7 +103,7 @@ export default function LandingPage({ partner, profile, onProfile, onGate, onNav
         initialStep={pathfinder?.step || 'start'}
         partner={partner}
         onNavigate={onNavigate}
-        onAlly={() => setAllyOpen(true)}
+        onAlly={(school) => setAllyOpen({ school })}
         onComplete={(p, opts) => {
           onProfile?.(p)
           setPathfinder(null)
@@ -118,7 +118,7 @@ export default function LandingPage({ partner, profile, onProfile, onGate, onNav
         onClose={() => setPathfinder(null)}
       />
 
-      <AllyOverlay open={allyOpen} partner={partner} onClose={() => setAllyOpen(false)} />
+      <AllyOverlay open={!!allyOpen} partner={partner} seedContext={allyOpen} onClose={() => setAllyOpen(null)} />
     </div>
   )
 }

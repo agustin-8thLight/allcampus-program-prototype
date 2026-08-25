@@ -2,9 +2,10 @@ import MkHeader from '../components/landing/MkHeader.jsx'
 import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.jsx'
 import SubjectIcon from '../components/landing/SubjectIcon.jsx'
 import ProgramCard from '../components/ProgramCard.jsx'
+import ObfuscatedCard from '../components/ObfuscatedCard.jsx'
 import Img from '../components/Img.jsx'
 import { PROGRAMS } from '../data/model.js'
-import { bestDiscountPercent, fullyCoveredPrograms } from '../data/benefit.js'
+import { bestDiscountPercent, fullyCoveredPrograms, discountLabel } from '../data/benefit.js'
 import { categoryImage } from '../data/images.js'
 import {
   getCategory,
@@ -28,7 +29,7 @@ import {
  *
  * Pitch copy is DRAFT for Brigid, same as the category labels.
  */
-export default function CategoryPage({ categoryId, partner, joined = true, onNavigate }) {
+export default function CategoryPage({ categoryId, partner, joined = true, gated = false, onGate, onNavigate }) {
   const category = getCategory(categoryId)
 
   if (!category) {
@@ -114,7 +115,7 @@ export default function CategoryPage({ categoryId, partner, joined = true, onNav
               {maxPct != null && (
                 <>
                   <span className="text-white/40" aria-hidden>|</span>
-                  <span>Up to {maxPct}% off</span>
+                  <span>{discountLabel(inCategory)}</span>
                 </>
               )}
               {covered > 0 && (
@@ -138,6 +139,16 @@ export default function CategoryPage({ categoryId, partner, joined = true, onNav
         </div>
       </section>
 
+      {/* 8/21 (Brigid): this section needs the connect-to-qualify reminder. */}
+      <section className="mx-auto max-w-6xl px-5 pt-10">
+        <div className="rounded-[var(--radius-card)] border-l-4 border-mk-teal-600 bg-mk-surface px-6 py-4">
+          <p className="font-display text-[14.5px] font-extrabold text-mk-slate">
+            The discount is already in place. You already qualify. Connect through AllCampus to
+            activate it.
+          </p>
+        </div>
+      </section>
+
       {/* Real programs ON the page — a landing sells with the goods. */}
       {featured.length > 0 && (
         <section className="mx-auto max-w-6xl px-5 pt-12">
@@ -157,17 +168,21 @@ export default function CategoryPage({ categoryId, partner, joined = true, onNav
             </button>
           </div>
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((p) => (
-              <ProgramCard
-                key={p.id}
-                program={p}
-                partner={partner}
-                joined={joined}
-                onExplore={(prog) => goBrowse(`&program=${prog.id}`)}
-                onSave={(prog) => goBrowse(`&program=${prog.id}`)}
-                onCompare={(prog) => goBrowse(`&program=${prog.id}`)}
-              />
-            ))}
+            {featured.map((p) =>
+              gated ? (
+                <ObfuscatedCard key={p.id} program={p} onGate={onGate} />
+              ) : (
+                <ProgramCard
+                  key={p.id}
+                  program={p}
+                  partner={partner}
+                  joined={joined}
+                  onExplore={(prog) => goBrowse(`&program=${prog.id}`)}
+                  onSave={(prog) => goBrowse(`&program=${prog.id}`)}
+                  onCompare={(prog) => goBrowse(`&program=${prog.id}`)}
+                />
+              ),
+            )}
           </div>
         </section>
       )}

@@ -64,6 +64,8 @@ export function HowItWorks({ partner, onGate }) {
       icon: 'apply',
       title: 'Connect with a school through AllCampus',
       body: 'Once you’ve connected through AllCampus, the school handles admissions, enrollment, billing, and your discounted tuition. Going straight to the school means standard tuition.',
+      // Brigid, 8/21: activation bolded as the next step inside the journey.
+      note: 'This is the step that activates your discount. It’s already yours.',
     },
   ]
 

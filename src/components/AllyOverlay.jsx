@@ -105,7 +105,7 @@ function buildScript(partner) {
   ]
 }
 
-export default function AllyOverlay({ open, partner, seedQuestionId = null, onClose }) {
+export default function AllyOverlay({ open, partner, seedQuestionId = null, seedContext = null, onClose }) {
   const script = useMemo(() => buildScript(partner), [partner])
   const [messages, setMessages] = useState([])
   const [typing, setTyping] = useState(false)
@@ -156,7 +156,29 @@ export default function AllyOverlay({ open, partner, seedQuestionId = null, onCl
         followups: ['narrow', 'fit', 'outcomes'],
       },
     ])
-    if (seedQuestionId && !seeded.current) {
+    if (seedContext?.school && !seeded.current) {
+      // Pathfinder school-miss handoff (Brigid: "teach Ally to present
+      // similar options or drive this group to me"). Scripted preview.
+      seeded.current = true
+      const picks = [...PROGRAMS]
+        .sort((a, b) => (b.discount?.percentUsed || 0) - (a.discount?.percentUsed || 0))
+        .filter((v, i, arr) => arr.findIndex((x) => x.schoolId === v.schoolId) === i)
+        .slice(0, 3)
+      setTimeout(() => {
+        setMessages((m) => [
+          ...m,
+          { role: 'user', text: `Is ${seedContext.school} in the network?` },
+          {
+            role: 'ally',
+            text: `Not yet, and I'd rather be straight about that. Your discount only works inside the network, though — and some close fits are strong: ${picks
+              .map((pr) => `${pr.name} at ${pr.school?.name}${pr.discount?.percentUsed ? ` (${pr.discount.percentUsed}% off)` : ''}`)
+              .join('; ')}. I can narrow these to your goal, or a free specialist call can map it with you.`,
+            followups: ['narrow', 'benefit'],
+            cta: { label: 'See close matches', to: '/browse' },
+          },
+        ])
+      }, 550)
+    } else if (seedQuestionId && !seeded.current) {
       seeded.current = true
       setTimeout(() => ask(seedQuestionId), 450)
     }

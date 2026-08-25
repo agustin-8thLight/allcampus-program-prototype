@@ -74,6 +74,19 @@ export function bestSavingsProgram(programs) {
 }
 
 /** Largest discount percentage across the catalog. */
+/**
+ * "Up to" only when we must (Brigid, 8/21 transcript: be specific wherever we
+ * can). One shared percentage across the set -> state it plainly.
+ */
+export function discountLabel(programs) {
+  const pcts = programs
+    .map((p) => p.discount?.percentUsed)
+    .filter((v) => typeof v === 'number')
+  if (!pcts.length) return null
+  const max = Math.max(...pcts)
+  return new Set(pcts).size === 1 ? `${max}% off` : `Up to ${max}% off`
+}
+
 export function bestDiscountPercent(programs) {
   const pcts = programs
     .map((p) => p.discount?.percentUsed)

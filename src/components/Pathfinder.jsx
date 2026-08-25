@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { PROGRAMS, money } from '../data/model.js'
 import { SCHOOLS } from '../data/schools.js'
-import { bestDiscountPercent } from '../data/benefit.js'
+import { bestDiscountPercent, discountLabel } from '../data/benefit.js'
 import { START_OPTIONS, BENEFIT_OPTIONS, AREA_OPTIONS, startLabel, matchPrograms } from '../data/pathfinder.js'
 import { getArea } from '../data/taxonomy.js'
 import { SubjectIconTile } from './landing/SubjectIcon.jsx'
@@ -122,7 +122,7 @@ export default function Pathfinder({ open, partner, initialStep = 'start', onCom
           <PrimaryBtn onClick={() => setStep('area')}>Show me close matches</PrimaryBtn>
           <GhostBtn
             onClick={() => {
-              onAlly?.()
+              onAlly?.(schoolQuery.trim())
               onClose?.()
             }}
           >
@@ -147,7 +147,7 @@ export default function Pathfinder({ open, partner, initialStep = 'start', onCom
         {schoolHits.length > 0 && (
           <div className="mt-3 space-y-2">
             {schoolHits.map((s) => {
-              const pct = bestDiscountPercent(PROGRAMS.filter((p) => p.schoolId === s.id))
+              const tag = discountLabel(PROGRAMS.filter((p) => p.schoolId === s.id))
               return (
                 <button
                   key={s.id}
@@ -166,7 +166,7 @@ export default function Pathfinder({ open, partner, initialStep = 'start', onCom
                       {s.name}
                     </span>
                     <span className="block font-display text-[12px] font-bold text-mk-green-700">
-                      In the network{pct != null ? ` · up to ${pct}% off` : ''}
+                      In the network{tag ? ` · ${tag.toLowerCase()}` : ''}
                     </span>
                   </span>
                   <span className="ml-auto font-display text-[13px] font-bold text-mk-teal-700">Select →</span>

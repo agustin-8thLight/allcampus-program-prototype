@@ -64,7 +64,13 @@ export default function ProgramDrawerView({
             </button>
           </div>
         ) : (
-          <PrimaryCta program={program} onPrimaryCta={onPrimaryCta} />
+          <div>
+            {/* 8/21: the bolded activation reminder at the conversion point. */}
+            <p className="mb-2 text-center text-[12.5px] font-bold text-brand-700">
+              Your discount is already yours. Connecting here is what activates it.
+            </p>
+            <PrimaryCta program={program} onPrimaryCta={onPrimaryCta} />
+          </div>
         )}
       </div>
     </div>

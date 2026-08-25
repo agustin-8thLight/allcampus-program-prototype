@@ -4,7 +4,7 @@
  * lockup: "allcampus + {partner}").
  */
 
-export default function MkHeader({ partner, onNavigate }) {
+export default function MkHeader({ partner, onNavigate, joined = false, onGate }) {
   const cobrand = partner?.benefitKnown ? partner.name : null
   const mark = partner?.name?.trim()?.[0] || ''
   return (
@@ -53,7 +53,28 @@ export default function MkHeader({ partner, onNavigate }) {
           <button type="button" onClick={() => onNavigate('/browse')} className="hover:text-mk-slate">
             Browse programs
           </button>
-          <div className="h-8 w-8 rounded-full bg-mk-band" aria-hidden />
+          {/* 2026-08-25 direction: the account lives up here, so the page body
+              can drive one action (the survey) without competing with it. */}
+          {joined ? (
+            <div className="h-8 w-8 rounded-full bg-mk-band" aria-hidden />
+          ) : (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => onGate?.('catalog')}
+                className="hover:text-mk-slate"
+              >
+                Log in
+              </button>
+              <button
+                type="button"
+                onClick={() => onGate?.('catalog')}
+                className="rounded-md bg-mk-teal-600 px-4 py-2 text-[13.5px] font-bold text-white transition hover:bg-mk-teal-700"
+              >
+                Sign up
+              </button>
+            </div>
+          )}
         </nav>
       </div>
     </header>

@@ -159,6 +159,9 @@ export const areaProgramImage = (areaId, seed = '') => {
   return U(options[h % options.length])
 }
 
+/* Ally band (2026-08-25): someone working a decision through, not a diagram. */
+export const ALLY_IMAGE = U('1522071820081-009f0129c71c', 900, 800)
+
 export const programImage = (id) => PROGRAM_IMAGES[id] || null
 export const categoryImage = (id) => CATEGORY_IMAGES[id] || null
 export const goalImage = (id) => GOAL_IMAGES[id] || null

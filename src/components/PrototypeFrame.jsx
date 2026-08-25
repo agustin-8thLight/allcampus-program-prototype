@@ -184,12 +184,14 @@ export default function PrototypeFrame() {
       <SchoolPage
         schoolId={schoolId}
         partner={partner}
+        joined={joined}
         gated={catalogMode === 'gated' && !joined}
+        onGate={requestGate}
         onNavigate={navigate}
       />
     )
   } else if (route.path === '/schools') {
-    page = <SchoolsPage partner={partner} onNavigate={navigate} />
+    page = <SchoolsPage partner={partner} joined={joined} onGate={requestGate} onNavigate={navigate} />
   } else if (route.path.startsWith('/category/')) {
     // Aug 14 meeting: category tiles open a landing page with skill drill-down.
     page = (

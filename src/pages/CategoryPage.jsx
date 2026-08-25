@@ -35,7 +35,7 @@ export default function CategoryPage({ categoryId, partner, joined = true, gated
   if (!category) {
     return (
       <div className="min-h-screen bg-white">
-        <MkHeader partner={partner} onNavigate={onNavigate} />
+        <MkHeader partner={partner} onNavigate={onNavigate} joined={joined} onGate={onGate} />
         <div className="mx-auto max-w-3xl px-5 py-20">
           <Heading>We don&rsquo;t have that category</Heading>
           <Body className="mt-3">
@@ -69,7 +69,7 @@ export default function CategoryPage({ categoryId, partner, joined = true, gated
 
   return (
     <div className="min-h-screen bg-white">
-      <MkHeader partner={partner} onNavigate={onNavigate} />
+      <MkHeader partner={partner} onNavigate={onNavigate} joined={joined} onGate={onGate} />
 
       {/* Photo hero, same treatment as the homepage hero: the page opens as a
           destination, not a filter view. */}

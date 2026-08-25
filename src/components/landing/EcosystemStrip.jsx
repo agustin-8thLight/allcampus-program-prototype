@@ -153,24 +153,21 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
       >
         {nodes.map((n, i) => (
           <li key={n.key} className="relative">
-            <div
-              className={`flex h-full flex-col items-center rounded-[var(--radius-card)] px-4 py-5 text-center ${
-                n.highlight ? 'bg-mk-blue-50 ring-1 ring-mk-blue-200' : 'bg-mk-surface/70'
-              }`}
-            >
+            {/* 2026-08-25: the step labels and the boxed highlight both went.
+                A single tinted card floating among borderless ones read as a
+                glitch, and the arrows already carry the sequence. AllCampus
+                keeps emphasis through its icon and its line, not a box. */}
+            <div className="flex h-full flex-col items-center px-4 py-5 text-center">
               <div
-                className={`flex h-16 w-16 items-center justify-center rounded-full ${
+                className={`flex h-16 w-16 items-center justify-center rounded-full border ${
                   n.highlight
-                    ? 'bg-white text-mk-teal-700 shadow-[0_4px_14px_rgba(51,71,91,0.14)]'
-                    : 'bg-white text-mk-teal-600 shadow-[0_2px_8px_rgba(51,71,91,0.08)]'
+                    ? 'border-mk-blue-200 bg-mk-blue-50 text-mk-teal-700'
+                    : 'border-mk-line bg-white text-mk-teal-600'
                 }`}
               >
                 {Art[n.art] ? Art[n.art]({ className: 'h-8 w-8' }) : null}
               </div>
-              <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.12em] text-mk-body/55">
-                Step {i + 1}
-              </p>
-              <p className="mt-0.5 text-[16px] font-extrabold leading-snug text-mk-slate">
+              <p className="mt-3.5 text-[16px] font-extrabold leading-snug text-mk-slate">
                 {n.label}
               </p>
               <p
@@ -189,7 +186,7 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
             {i < nodes.length - 1 && (
               <span
                 aria-hidden
-                className="absolute -right-[9px] top-[48px] z-10 hidden text-[17px] text-mk-teal-600/50 lg:block"
+                className="absolute -right-[7px] top-[52px] z-10 hidden text-[17px] text-mk-teal-600/45 lg:block"
               >
                 &rarr;
               </span>

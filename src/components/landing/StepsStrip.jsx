@@ -9,8 +9,11 @@
  * account step is the dark gradient card with a REAL signup button — it is
  * the action the page exists to produce, and now it looks like it.
  *
- * Presentational: pages pass steps [{icon, title, body, note?, highlight?,
+ * Presentational: pages pass steps [{icon, title, body, highlight?,
  * cta?: {label, onClick}}]. Gradients stay inside the sampled mk palette.
+ *
+ * 2026-08-25: step numerals removed (reading order already carries them) and
+ * the second description per card went with them — one card, one sentence.
  */
 
 /* Connector chip: a white circle straddling the gap between two cards.
@@ -75,13 +78,8 @@ export default function StepsStrip({ steps }) {
             {s.highlight ? (
               /* The account card: dark gradient, white type, the button. */
               <div className="flex h-full flex-col rounded-[var(--radius-card)] bg-gradient-to-br from-mk-teal-600 to-mk-slate p-5 text-white shadow-[0_18px_40px_rgba(51,71,91,0.35)]">
-                <div className="flex items-center justify-between">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-white shadow-inner backdrop-blur-sm">
-                    <Art className="h-9 w-9" />
-                  </div>
-                  <span className="font-display text-[34px] font-black leading-none text-white/25">
-                    {i + 1}
-                  </span>
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-white shadow-inner backdrop-blur-sm">
+                  <Art className="h-9 w-9" />
                 </div>
                 <p className="mt-3.5 font-display text-[17.5px] font-extrabold leading-snug">
                   {s.title}
@@ -101,13 +99,8 @@ export default function StepsStrip({ steps }) {
               </div>
             ) : (
               <div className="flex h-full flex-col rounded-[var(--radius-card)] border border-mk-line bg-gradient-to-b from-white to-mk-band/50 p-5 shadow-[0_14px_32px_rgba(51,71,91,0.12)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(51,71,91,0.16)]">
-                <div className="flex items-center justify-between">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-mk-blue-50 to-mk-band text-mk-teal-700 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_2px_6px_rgba(51,71,91,0.10)]">
-                    <Art className="h-9 w-9" />
-                  </div>
-                  <span className="font-display text-[34px] font-black leading-none text-mk-band">
-                    {i + 1}
-                  </span>
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-mk-blue-50 to-mk-band text-mk-teal-700 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_2px_6px_rgba(51,71,91,0.10)]">
+                  <Art className="h-9 w-9" />
                 </div>
                 <p className="mt-3.5 font-display text-[17.5px] font-extrabold leading-snug text-mk-slate">
                   {s.title}
@@ -115,11 +108,6 @@ export default function StepsStrip({ steps }) {
                 <p className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
                   {s.body}
                 </p>
-                {s.note && (
-                  <p className="mt-auto pt-3 font-display text-[12.5px] font-bold leading-snug text-mk-teal-text">
-                    {s.note}
-                  </p>
-                )}
               </div>
             )}
           </li>

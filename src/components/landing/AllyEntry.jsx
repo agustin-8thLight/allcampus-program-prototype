@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Eyebrow, Heading, Body } from './Section.jsx'
 import AllyOverlay from '../AllyOverlay.jsx'
+import Img from '../Img.jsx'
+import { ALLY_IMAGE } from '../../data/images.js'
 
 /*
  * Ally on the landing page. REPOSITIONED 2026-08-14.
@@ -45,11 +47,12 @@ export default function AllyEntry({ partner }) {
   const open = (seed = null) => setOverlay({ seed })
 
   return (
-    <section className="border-y border-mk-line bg-mk-band/50 py-14">
+    <section className="bg-white pb-16 pt-4">
       <div className="mx-auto max-w-6xl px-5">
-        {/* 2026-08-25 polish: the card used to float alone on white, so a
-            demoted feature read as an orphan. It is now a banded two-column
-            block: copy left, an illustrated panel right. */}
+        {/* 2026-08-25: a two-column card, copy left and a photograph right.
+            Earlier passes gave this its own tinted band and a drawn panel;
+            both were removed — the band added a stripe the page didn't need,
+            and a photo of someone thinking it through beats a diagram. */}
         <div className="grid grid-cols-1 items-stretch overflow-hidden rounded-2xl border border-mk-line bg-white shadow-[0_2px_12px_rgba(51,71,91,0.06)] lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
           <div className="p-6 sm:p-8">
             <Eyebrow tone="purple">&#10022; AI copilot</Eyebrow>
@@ -93,10 +96,14 @@ export default function AllyEntry({ partner }) {
             </p>
           </div>
 
-          {/* Illustrated panel: a conversation shape, drawn rather than faked
-              with sample answers. */}
-          <div className="relative hidden overflow-hidden bg-gradient-to-br from-mk-purple to-[#4a3a86] lg:block">
-            <AllyArt />
+          <div className="relative hidden lg:block">
+            <Img
+              src={ALLY_IMAGE}
+              alt=""
+              hue={268}
+              rounded=""
+              className="h-full w-full"
+            />
           </div>
         </div>
       </div>
@@ -108,36 +115,5 @@ export default function AllyEntry({ partner }) {
         onClose={() => setOverlay(null)}
       />
     </section>
-  )
-}
-
-/* Line illustration: stacked speech shapes and a spark. Decorative only. */
-function AllyArt() {
-  return (
-    <svg
-      viewBox="0 0 320 300"
-      aria-hidden
-      className="absolute inset-0 h-full w-full"
-      preserveAspectRatio="xMidYMid slice"
-    >
-      <g fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round">
-        <g opacity="0.16" strokeWidth="1.2">
-          <circle cx="160" cy="150" r="118" />
-          <circle cx="160" cy="150" r="86" />
-        </g>
-        <g opacity="0.9" strokeWidth="2">
-          <path d="M62 92h132a12 12 0 0 1 12 12v46a12 12 0 0 1-12 12h-84l-26 22v-22H62a12 12 0 0 1-12-12v-46a12 12 0 0 1 12-12z" />
-          <path d="M78 116h84M78 134h56" opacity="0.6" />
-        </g>
-        <g opacity="0.75" strokeWidth="2">
-          <path d="M152 176h96a10 10 0 0 1 10 10v34a10 10 0 0 1-10 10h-18l-20 18v-18h-58a10 10 0 0 1-10-10v-34a10 10 0 0 1 10-10z" />
-          <path d="M170 196h60M170 212h38" opacity="0.6" />
-        </g>
-        <g opacity="0.95" strokeWidth="2.4">
-          <path d="M246 54l6 18 18 6-18 6-6 18-6-18-18-6 18-6 6-18z" />
-          <path d="M58 216l4 11 11 4-11 4-4 11-4-11-11-4 11-4 4-11z" opacity="0.7" />
-        </g>
-      </g>
-    </svg>
   )
 }

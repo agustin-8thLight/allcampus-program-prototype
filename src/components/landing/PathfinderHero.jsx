@@ -11,17 +11,16 @@ import { startLabel, matchPrograms } from '../../data/pathfinder.js'
  * statement, one primary action, and a quiet self-serve outlet for the
  * minority who know exactly what they want.
  *
- * 2026-08-25 direction: the action this page pushes is SIGNING UP, so the
- * account is the primary button and the pathfinder steps down to a real
- * second option — visible and labelled, not a whisper. This deliberately
- * revises the Aug 20/21 "lead with ONE action (the pathfinder)" decision;
- * the pathfinder is now the way in for anyone not ready to commit.
+ * 2026-08-25, second pass: the hero drives ONE action, the three questions.
+ * Sign up and log in moved to the header, which is what freed the hero to
+ * stop competing with itself — an earlier version had an account button, a
+ * survey link, and a browse link stacked under the headline.
  *
  * With a profile set, the floating card slot (where the search card used to
  * hang) holds the education profile instead: answers echoed, each editable,
  * the Amazon "here's everything we know about you, is this true?" moment.
  */
-export default function PathfinderHero({ partner, profile, joined = false, onSignup, onStart, onEdit, onBrowse }) {
+export default function PathfinderHero({ partner, profile, joined = false, onSignup, onStart, onEdit }) {
   const known = !!partner?.benefitKnown
   const reimburses = known && (partner?.employerReimbursement ?? 0) > 0
   const maxPct = bestDiscountPercent(PROGRAMS)
@@ -58,41 +57,18 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
               <div className="mt-10">
                 <button
                   type="button"
-                  onClick={() => (joined ? onBrowse?.() : onSignup?.())}
+                  onClick={() => onStart?.()}
                   className="inline-flex items-center gap-2 rounded-lg bg-white px-10 py-4 text-[17px] font-bold text-mk-teal-700 shadow-[0_14px_36px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:bg-mk-band"
                 >
-                  {joined ? 'Browse all programs' : 'Create your free account'}
+                  Answer 3 questions
                   <span aria-hidden>→</span>
                 </button>
                 <p className="mt-3 text-[13px] font-semibold text-white/75">
-                  {joined
-                    ? 'Your matches and your pricing are saved.'
-                    : 'Free, and it keeps your employer pricing with you.'}
+                  About a minute, and we&rsquo;ll show you what fits.
                 </p>
               </div>
-              {/* The two lower-commitment routes, in commitment order. */}
-              <div className="mt-7 flex flex-col items-start gap-2.5">
-                {!joined && (
-                  <button
-                    type="button"
-                    onClick={() => onStart?.()}
-                    className="text-[14px] font-bold text-white underline-offset-2 hover:underline"
-                  >
-                    Not sure yet? Answer 3 questions &rarr;
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => onBrowse?.()}
-                  className="text-[13.5px] font-bold text-white/75 underline-offset-2 hover:text-white hover:underline"
-                >
-                  Browse all programs &rarr;
-                </button>
-              </div>
 
-              {/* Proof row (2026-08-25 polish): the network numbers used to
-                  live only in the Why section's body copy, three screens
-                  down. They belong beside the first decision. */}
+              {/* Proof row: the network numbers, beside the first decision. */}
               <ul className="mt-9 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/20 pt-6">
                 {[
                   `${Object.keys(SCHOOLS).length} partner universities`,
@@ -174,7 +150,7 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
                   onClick={() => onSignup?.()}
                   className="inline-flex items-center gap-2 rounded-lg bg-mk-teal-600 px-4 py-2.5 text-[13.5px] font-bold text-white transition hover:bg-mk-teal-700"
                 >
-                  Save this with a free account
+                  Save this to your account
                   <span aria-hidden>&rarr;</span>
                 </button>
               )}

@@ -8,7 +8,7 @@ import { Heading, Body, MkButton } from '../components/landing/Section.jsx'
 import { PROGRAMS, money, resolveCost, startDateDisplay } from '../data/model.js'
 import { estimatedOutOfPocket, bestDiscountPercent, discountLabel } from '../data/benefit.js'
 import { getArea, getSkill } from '../data/taxonomy.js'
-import { policyOwner, PREAPPROVAL_RULE } from '../data/corporatePartners.js'
+import { policyOwner } from '../data/corporatePartners.js'
 import { getSchool } from '../data/schools.js'
 import { schoolImage } from '../data/images.js'
 import Img from '../components/Img.jsx'
@@ -26,7 +26,7 @@ import AllyOverlay from '../components/AllyOverlay.jsx'
 // `gated`: with the catalog behind login (Aug 14 decision), school pages must
 // not leak the prices browse withholds. The school's own identity stays: the
 // employer link that brought the visitor here already revealed it.
-export default function SchoolPage({ schoolId, partner, gated = false, onGate, onNavigate }) {
+export default function SchoolPage({ schoolId, partner, joined = false, gated = false, onGate, onNavigate }) {
   const school = getSchool(schoolId)
   if (!school) {
     return (
@@ -92,13 +92,11 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
       icon: 'confirm',
       title: 'Confirm your benefit',
       body: `${owner} approves the funding, not AllCampus. A free specialist call helps.`,
-      note: PREAPPROVAL_RULE,
     },
     {
       icon: 'apply',
       title: 'Connect through AllCampus',
       body: `${firstWord} then handles admissions, enrollment, billing, and your discounted tuition.`,
-      note: 'This is the step that activates your discount. It’s already yours.',
     },
   ]
 
@@ -109,7 +107,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
 
   return (
     <div className="min-h-screen bg-white">
-      <MkHeader partner={partner} onNavigate={onNavigate} />
+      <MkHeader partner={partner} onNavigate={onNavigate} joined={joined} onGate={onGate} />
 
       {/* School hero (2026-08-25 polish): was eight stacked text blocks in a
           single column. Now two columns — the discount claim and the actions

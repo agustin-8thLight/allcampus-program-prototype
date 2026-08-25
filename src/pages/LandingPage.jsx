@@ -48,7 +48,7 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
 
   return (
     <div className="min-h-screen bg-white">
-      <MkHeader partner={partner} onNavigate={onNavigate} />
+      <MkHeader partner={partner} onNavigate={onNavigate} joined={joined} onGate={onGate} />
 
       <PathfinderHero
         partner={partner}
@@ -57,7 +57,6 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
         onSignup={() => onGate?.('catalog')}
         onStart={() => openPathfinder('start')}
         onEdit={(step) => openPathfinder(step)}
-        onBrowse={() => goBrowse({})}
       />
 
       {profile && <ProfileResults profile={profile} partner={partner} gated={gated} onGate={onGate} onNavigate={onNavigate} />}
@@ -84,31 +83,17 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
           pathfinder sits underneath as the way in for anyone not ready. */}
       <section className="bg-gradient-to-br from-mk-teal-600 to-mk-slate py-14 text-center">
         <Heading size="sm" className="text-white">
-          {joined ? 'Pick up where you left off' : 'Create your free account'}
+          {joined ? 'Pick up where you left off' : 'Three questions, and we map the rest'}
         </Heading>
-        <p className="mx-auto mt-2 max-w-md px-5 font-display text-[14px] text-white/80">
-          {joined
-            ? 'Your matches and your pricing are saved.'
-            : 'Keeps your matches and your employer pricing with you.'}
-        </p>
-        <div className="mt-5 flex flex-col items-center gap-3">
+        <div className="mt-5">
           <button
             type="button"
-            onClick={() => (joined ? goBrowse({}) : onGate?.('catalog'))}
+            onClick={() => (joined ? goBrowse({}) : openPathfinder('start'))}
             className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
           >
-            {joined ? 'Browse all programs' : 'Create your free account'}
+            {joined ? 'Browse all programs' : 'Answer 3 questions'}
             <span aria-hidden>&rarr;</span>
           </button>
-          {!joined && (
-            <button
-              type="button"
-              onClick={() => openPathfinder('start')}
-              className="font-display text-[13px] font-bold text-white/80 underline-offset-2 hover:text-white hover:underline"
-            >
-              Not sure yet? Answer 3 questions &rarr;
-            </button>
-          )}
         </div>
       </section>
 

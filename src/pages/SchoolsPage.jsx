@@ -16,7 +16,7 @@ import Img from '../components/Img.jsx'
  *
  * Linked from the homepage schools block.
  */
-export default function SchoolsPage({ partner, onNavigate }) {
+export default function SchoolsPage({ partner, joined = false, onGate, onNavigate }) {
   const schools = Object.values(SCHOOLS).map((s) => {
     const programs = PROGRAMS.filter((p) => p.schoolId === s.id)
     return { ...s, programCount: programs.length, bestPct: bestDiscountPercent(programs), discountTag: discountLabel(programs) }
@@ -24,7 +24,7 @@ export default function SchoolsPage({ partner, onNavigate }) {
 
   return (
     <div className="min-h-screen bg-white">
-      <MkHeader partner={partner} onNavigate={onNavigate} />
+      <MkHeader partner={partner} onNavigate={onNavigate} joined={joined} onGate={onGate} />
 
       <section className="border-b border-mk-line bg-mk-surface py-12">
         <div className="mx-auto max-w-6xl px-5">

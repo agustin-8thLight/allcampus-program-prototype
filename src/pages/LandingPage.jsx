@@ -22,18 +22,18 @@ import { Heading } from '../components/landing/Section.jsx'
  *     self-serve outlet. With a profile: the profile card floats here.
  *  2. Profile results (only with a profile): matched programs, outcome lenses
  *  3. How it works (white)
- *  4. Ally (white)
- *  5. Why AllCampus (grey opens here): value tiles + $5,250 cap callout +
- *     the through-AllCampus leakage line
- *  6. Learner stories (grey)
+ *  4. Why AllCampus (grey opens here): the value card, who-does-what, and
+ *     the through-AllCampus activation line
+ *  5. Learner stories (grey)
+ *  6. Ally (grey, secondary weight)
  *  7. Partner school logos + See all schools (grey)
- *  8. FAQ (grey), then the dark CTA bookend -> pathfinder, footer
+ *  8. FAQ (grey), then the dark CTA bookend -> the three questions, footer
  *
  * Retired from this page (v2 candidates, components parked): the search-card
  * hero, the skills-navigator variant, the outcome-cards + browse-by-subject
  * band ("supported decision-making beats the browse-by-subject block").
  */
-export default function LandingPage({ partner, profile, onProfile, joined = false, gated = false, onGate, onNavigate }) {
+export default function LandingPage({ partner, profile, onProfile, joined = false, onGate, onNavigate }) {
   const [pathfinder, setPathfinder] = useState(null) // null | { step }
   const [allyOpen, setAllyOpen] = useState(null) // null | { school?: string }
 
@@ -59,17 +59,18 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
         onEdit={(step) => openPathfinder(step)}
       />
 
-      {profile && <ProfileResults profile={profile} partner={partner} gated={gated} onGate={onGate} onNavigate={onNavigate} />}
+      {profile && <ProfileResults profile={profile} partner={partner} onGate={onGate} onNavigate={onNavigate} />}
 
       <HowItWorks partner={partner} onGate={onGate} />
-
-      {/* Ally between How and Why (2026-08-21 order): once you've seen the
-          path, the talk-it-through outlet is the natural next question. */}
-      <AllyEntry partner={partner} />
 
       <WhyAllCampus partner={partner} />
 
       <StoryCards partner={partner} />
+
+      {/* Ally sits AFTER the stories (2026-08-25): secondary weight, secondary
+          position. Someone who has read the path, the value, and other
+          people's outcomes and still isn't sure is exactly who it's for. */}
+      <AllyEntry partner={partner} />
 
       <LogoStrip
         onSelectSchool={(s) => onNavigate(`/school/${s.id}`)}
@@ -83,7 +84,7 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
           pathfinder sits underneath as the way in for anyone not ready. */}
       <section className="bg-gradient-to-br from-mk-teal-600 to-mk-slate py-14 text-center">
         <Heading size="sm" className="text-white">
-          {joined ? 'Pick up where you left off' : 'Three questions, and we map the rest'}
+          {joined ? 'Your matches are saved' : 'Three questions, and you\u2019ll see what fits'}
         </Heading>
         <div className="mt-5">
           <button

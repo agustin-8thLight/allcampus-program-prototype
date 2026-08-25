@@ -4,7 +4,6 @@ import ProgramCard from '../ProgramCard.jsx'
 import { PROGRAMS, applyQuickFilter } from '../../data/model.js'
 import { matchPrograms } from '../../data/pathfinder.js'
 import { isFullyCoveredEstimate } from '../../data/benefit.js'
-import ObfuscatedCard from '../ObfuscatedCard.jsx'
 
 /*
  * ProfileResults (2026-08-21): the recommendations band that appears once the
@@ -18,7 +17,7 @@ const LENSES = [
   { id: 'mostAffordable', label: 'Lowest out-of-pocket' },
 ]
 
-export default function ProfileResults({ profile, partner, gated = false, onGate, onNavigate }) {
+export default function ProfileResults({ profile, partner, onGate, onNavigate }) {
   const [lens, setLens] = useState('match')
   const matches = useMemo(() => matchPrograms(profile, PROGRAMS), [profile])
   // Joe's ask: fully-covered visibility, dynamic — only when the benefit can
@@ -66,22 +65,18 @@ export default function ProfileResults({ profile, partner, gated = false, onGate
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {shown.map((p) =>
-          gated ? (
-            <ObfuscatedCard key={p.id} program={p} onGate={onGate} />
-          ) : (
-            <ProgramCard
-              key={p.id}
-              program={p}
-              partner={partner}
-              joined
-              benefitUnsure={profile?.benefit === 'unsure'}
-              onExplore={openProgram}
-              onSave={openProgram}
-              onCompare={openProgram}
-            />
-          ),
-        )}
+        {shown.map((p) => (
+          <ProgramCard
+            key={p.id}
+            program={p}
+            partner={partner}
+            joined
+            benefitUnsure={profile?.benefit === 'unsure'}
+            onExplore={openProgram}
+            onSave={openProgram}
+            onCompare={openProgram}
+          />
+        ))}
       </div>
 
       {matches.length > shown.length && (

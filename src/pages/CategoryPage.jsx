@@ -2,7 +2,6 @@ import MkHeader from '../components/landing/MkHeader.jsx'
 import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.jsx'
 import SubjectIcon from '../components/landing/SubjectIcon.jsx'
 import ProgramCard from '../components/ProgramCard.jsx'
-import ObfuscatedCard from '../components/ObfuscatedCard.jsx'
 import Img from '../components/Img.jsx'
 import { PROGRAMS } from '../data/model.js'
 import { bestDiscountPercent, fullyCoveredPrograms, discountLabel } from '../data/benefit.js'
@@ -29,7 +28,7 @@ import {
  *
  * Pitch copy is DRAFT for Brigid, same as the category labels.
  */
-export default function CategoryPage({ categoryId, partner, joined = true, gated = false, onGate, onNavigate }) {
+export default function CategoryPage({ categoryId, partner, joined = true, onGate, onNavigate }) {
   const category = getCategory(categoryId)
 
   if (!category) {
@@ -168,10 +167,7 @@ export default function CategoryPage({ categoryId, partner, joined = true, gated
             </button>
           </div>
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((p) =>
-              gated ? (
-                <ObfuscatedCard key={p.id} program={p} onGate={onGate} />
-              ) : (
+            {featured.map((p) => (
                 <ProgramCard
                   key={p.id}
                   program={p}
@@ -181,8 +177,7 @@ export default function CategoryPage({ categoryId, partner, joined = true, gated
                   onSave={(prog) => goBrowse(`&program=${prog.id}`)}
                   onCompare={(prog) => goBrowse(`&program=${prog.id}`)}
                 />
-              ),
-            )}
+            ))}
           </div>
         </section>
       )}

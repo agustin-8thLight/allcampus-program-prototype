@@ -7,7 +7,6 @@ import { getSchool } from './data/schools.js'
 import ProgramCard from './components/ProgramCard.jsx'
 import MkHeader from './components/landing/MkHeader.jsx'
 import EmptyStateAlly from './components/EmptyStateAlly.jsx'
-import ObfuscatedCard from './components/ObfuscatedCard.jsx'
 import { emitStoryEvent } from './data/useCases.js'
 import Drawer from './components/Drawer.jsx'
 import ProgramDrawerView from './components/ProgramDrawerView.jsx'
@@ -52,13 +51,6 @@ export default function App({
   // The education profile from the pathfinder (2026-08-21): browse applies it
   // as editable, outcome-language scope. Explicit URL params win over it.
   profile = null,
-  // Aug 14 decision: login before catalog access. 'gated' (default) shows an
-  // unauthenticated visitor the match count and a discount hint, then the
-  // account prompt — the notes' exact sequence ("prompts login before showing
-  // catalog. Show program count and hint at discounts without revealing
-  // school names or amounts"). 'open' preserves the anonymous browse the four
-  // story walkthroughs were authored against.
-  catalogMode = 'gated',
 }) {
   const [query, setQuery] = useState(() => initialParams?.get('q') || '')
   const [activeFilter, setActiveFilter] = useState(
@@ -92,7 +84,6 @@ export default function App({
   const [flowReturnView, setFlowReturnView] = useState('detail') // where the flow's back goes
   const [flowStep, setFlowStep] = useState('choose')
   const [requested, setRequested] = useState(() => new Set()) // program ids the user has acted on
-  const teasing = catalogMode === 'gated' && !joined
   const [saved, setSaved] = useState(() => new Set()) // saved program ids (post-join)
   const { showToast } = useToast()
 
@@ -159,7 +150,7 @@ export default function App({
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const id = params.get('program') || initialParams?.get('program')
-    if (id && !teasing) {
+    if (id) {
       const p = PROGRAMS.find((x) => x.id === id)
       if (p) {
         setSelected(p)
@@ -420,29 +411,13 @@ export default function App({
                 return ctx ? <span className="font-semibold text-ink-500"> in {ctx}</span> : null
               })()}
             </p>
-            {!teasing && (
-              <p className="mt-0.5 text-[13.5px] font-bold text-brand-700">
-                Every discount here is already negotiated. Connect through AllCampus to activate it.
-              </p>
-            )}
-            {teasing && (
-              <p className="mt-1 text-[14px] font-semibold text-ink-600">
-                {new Set(results.map((r) => r.schoolId)).size} in-network schools
-                {bestDiscountPercent(results) != null && (
-                  <span className="font-bold text-good-700"> · up to {bestDiscountPercent(results)}% off</span>
-                )}
-              </p>
-            )}
+            <p className="mt-0.5 text-[13.5px] font-bold text-brand-700">
+              Every discount here is already negotiated. Connect through AllCampus to activate it.
+            </p>
           </div>
-
-          {teasing && (
-            <a href="#/" className="text-[13.5px] font-bold text-brand-600 underline-offset-2 hover:underline">
-              ← Keep exploring subjects
-            </a>
-          )}
           {/* Value lenses instead of a generic sort: same framing as the
               profile results band. Deferred tuition narrows; the rest order. */}
-          <div className={`flex flex-wrap gap-2 ${teasing ? 'hidden' : ''}`}>
+          <div className="flex flex-wrap gap-2">
             {[
               ...BROWSE_LENSES,
               // Dynamic per the 8/21 meeting: only when the benefit can
@@ -470,48 +445,8 @@ export default function App({
           </div>
         </div>
 
-        {teasing ? (
-          /*
-           * The logged-out grid (2026-08-19 session, replacing the single
-           * teaser panel): obfuscated program cards
-           * (discount badge, level, subject; NO name, school, or price), a
-           * create-account cell in the row, and any click opens the account
-           * flow. Value is teased card by card, per the transcript.
-           */
-          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {results.slice(0, 3).map((p) => (
-              <ObfuscatedCard key={p.id} program={p} onGate={onGate} />
-            ))}
+        {results.length === 0 ? (
 
-            {/* The account ask, in the flow of the grid. */}
-            <div className="flex flex-col justify-center rounded-[var(--radius-card)] bg-brand-700 p-6 text-white">
-              <h2 className="text-[18px] font-black leading-tight">
-                Create a free account to see all details
-              </h2>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-white/85">
-                School names, your discounted price
-                {partner?.benefitKnown ? ' with your employer benefit applied' : ''}, and full
-                program pages.
-              </p>
-              <button
-                onClick={() => onGate?.('catalog')}
-                className="mt-3 rounded-lg bg-white px-4 py-2 text-[13.5px] font-bold text-brand-700 transition hover:bg-brand-50"
-              >
-                Create a free account
-              </button>
-            </div>
-
-            {results.slice(3, 8).map((p) => (
-              <ObfuscatedCard key={p.id} program={p} onGate={onGate} />
-            ))}
-
-            {results.length > 8 && (
-              <div className="flex items-center justify-center rounded-[var(--radius-card)] border border-dashed border-surface-200 p-6 text-center text-[14px] font-bold text-ink-500">
-                and {results.length - 8} more with your free account
-              </div>
-            )}
-          </div>
-        ) : results.length === 0 ? (
           // Move 4: the honest empty state + the Ally handoff, never a dead end.
           <EmptyStateAlly
             query={query}

@@ -54,33 +54,20 @@ export default function PrototypeFrame() {
   const [employerId, setEmployerId] = useState(initialEmployer)
   const [route, setRoute] = useState(parseHash)
   const [story, setStory] = useState(initialStory)
-  // Session state for the gate + intent branching (move 2 + move 3).
   // Identity comes from the partner landing page, not auth (8/21). `joined`
   // only marks a completed signup, so the save-profile conversion moments
-  // (steps CTA, Save, profile completion) can actually fire. Nothing is
-  // gated on it in phase 1.
+  // (header Sign up, the journey's account step, profile completion) can fire.
   const [joined, setJoined] = useState(false)
   const [intent, setIntent] = useState(null)
   const [gate, setGate] = useState(null) // { trigger } | null
-  // Gated always (Brigid, Aug 19: drop the gated-vs-open toggle). A running
-  // story flips this internally so the walkthroughs keep working; no UI.
-  // 2026-08-20 client direction: catalog UN-gated again; login returns to its
-  // pre-Aug-19 moments (Save/Compare + signup CTAs). All gating machinery kept
-  // dormant — this direction has reversed once already.
-  const [catalogMode, setCatalogMode] = useState('open')
+  // 2026-08-25 direction: ONE prototype, no gates. The Phase 1 / Phase 2 A/B
+  // (open vs obfuscated-until-account) is gone, and with it catalogMode. The
+  // catalog is always open; the account is something you can create, never
+  // something you have to create to see a price. `joined` still exists because
+  // signing up is still real, it just no longer withholds anything.
   // 2026-08-21 reset: the pathfinder's education profile. Cleared on a
   // scenario switch — each scenario is its own partner landing page.
   const [profile, setProfile] = useState(null)
-  // 8/21 meeting: phase-one (open) and phase-two (obfuscated until account)
-  // as SIBLING variants for A/B testing. Phase 2 re-arms the dormant gating.
-  const [phase, setPhase] = useState(1)
-  const applyPhase = (ph) => {
-    setPhase(ph)
-    setCatalogMode(ph === 2 ? 'gated' : 'open')
-    setJoined(false)
-    setGate(null)
-    setIntent(null)
-  }
   // Phone view (E3): auto-enabled for mobile-first stories like Tina's.
   const [phone, setPhone] = useState(false)
   const [intentOpen, setIntentOpen] = useState(false)
@@ -105,8 +92,6 @@ export default function PrototypeFrame() {
     setEmployerId(u.employerId)
     setJoined(false)
     setIntent(null)
-    // The stories were authored against anonymous browse; keep them working.
-    setCatalogMode('open')
     setPhone(!!u.mobile)
     navigate(u.entry)
   }
@@ -114,7 +99,6 @@ export default function PrototypeFrame() {
   const exitStory = () => {
     setStory(null)
     setPhone(false)
-    setCatalogMode(phase === 2 ? 'gated' : 'open')
     navigate('/stories')
   }
 
@@ -185,7 +169,6 @@ export default function PrototypeFrame() {
         schoolId={schoolId}
         partner={partner}
         joined={joined}
-        gated={catalogMode === 'gated' && !joined}
         onGate={requestGate}
         onNavigate={navigate}
       />
@@ -200,7 +183,6 @@ export default function PrototypeFrame() {
         categoryId={route.path.split('/')[2]}
         partner={partner}
         joined={joined}
-        gated={catalogMode === 'gated' && !joined}
         onGate={requestGate}
         onNavigate={navigate}
       />
@@ -217,12 +199,11 @@ export default function PrototypeFrame() {
         onGate={requestGate}
         onNavigate={navigate}
         profile={profile}
-        catalogMode={catalogMode}
       />
     )
   } else {
     page = (
-      <LandingPage partner={partner} profile={profile} onProfile={setProfile} joined={joined} gated={catalogMode === 'gated' && !joined} onGate={requestGate} onNavigate={navigate} />
+      <LandingPage partner={partner} profile={profile} onProfile={setProfile} joined={joined} onGate={requestGate} onNavigate={navigate} />
     )
   }
 
@@ -269,22 +250,6 @@ export default function PrototypeFrame() {
           </select>
         </label>
 
-        {/* A/B siblings (8/21): Phase 1 = open catalog; Phase 2 = program
-            details obfuscated until an account exists. */}
-        <div className="hidden items-center gap-1 rounded-full bg-white/10 p-0.5 lg:flex">
-          {[1, 2].map((ph) => (
-            <button
-              key={ph}
-              onClick={() => applyPhase(ph)}
-              className={`rounded-full px-2.5 py-1 text-[12px] font-bold transition ${
-                phase === ph ? 'bg-white text-ink-900' : 'text-white/70 hover:text-white'
-              }`}
-            >
-              Phase {ph}
-            </button>
-          ))}
-        </div>
-
         <span className="hidden flex-1 truncate text-[12px] text-white/55 xl:block">
           {story ? `Story: ${story.name} — ${story.title}` : ''}
         </span>
@@ -327,7 +292,6 @@ export default function PrototypeFrame() {
       {/* The account gate + intent question (product surfaces) */}
       <GateModal
         open={!!gate && !joined}
-        trigger={gate?.trigger}
         partner={partner}
         onJoin={join}
         onDismiss={() => setGate(null)}

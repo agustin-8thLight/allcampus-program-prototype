@@ -23,10 +23,7 @@ import AllyOverlay from '../components/AllyOverlay.jsx'
  * sits BEFORE any outbound school link.
  */
 
-// `gated`: with the catalog behind login (Aug 14 decision), school pages must
-// not leak the prices browse withholds. The school's own identity stays: the
-// employer link that brought the visitor here already revealed it.
-export default function SchoolPage({ schoolId, partner, joined = false, gated = false, onGate, onNavigate }) {
+export default function SchoolPage({ schoolId, partner, joined = false, onGate, onNavigate }) {
   const school = getSchool(schoolId)
   if (!school) {
     return (
@@ -235,7 +232,7 @@ export default function SchoolPage({ schoolId, partner, joined = false, gated = 
           <StepsStrip steps={howSteps} />
           <div className="mt-8">
             <h3 className="font-display text-[15px] font-extrabold text-mk-slate">
-              Who does what along the way
+              Who does what
             </h3>
             <div className="mt-3">
               <EcosystemStrip variant="school" schoolName={school.name} partner={partner} />
@@ -244,8 +241,6 @@ export default function SchoolPage({ schoolId, partner, joined = false, gated = 
         </div>
         </div>
       </section>
-
-      <AllyEntry partner={partner} />
 
       {/* Programs region opens the grey ground, like the landing. */}
       <div className="border-t border-mk-line bg-mk-surface pb-10">
@@ -292,32 +287,9 @@ export default function SchoolPage({ schoolId, partner, joined = false, gated = 
         </section>
       )}
 
-      {/* 2026-08-19 session: logged out, NO program grid. The grid is where
-          leakage happens; the subjects menu above is the browse surface, and
-          this compact tease routes to the gated browse teaser instead. */}
-      {gated ? (
-        <section className="mx-auto max-w-6xl px-5 pt-16">
-          <div className="rounded-[var(--radius-card)] border border-mk-line bg-white p-6 font-display shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
-            <p className="text-[18px] font-extrabold text-mk-slate">
-              {programs.length} program{programs.length === 1 ? '' : 's'} at {firstWord}
-              {bestPct != null && (
-                <span className="text-mk-green-700"> · {discountLabel(programs)}</span>
-              )}
-            </p>
-            <p className="mt-1.5 text-[14.5px] text-mk-body">
-              Save your profile with a free account to see every program and your price.
-            </p>
-            <MkButton
-              tone="teal"
-              className="mt-4"
-              onClick={() => goBrowse({ school: school.id })}
-            >
-              See all {programs.length} programs
-            </MkButton>
-          </div>
-        </section>
-      ) : (
-      /* School-scoped catalog preview (logged in only) */
+      {/* Every program, with its price. Nothing is held back for an
+          account (2026-08-25: one prototype, no gates). */}
+
       <section className="mx-auto max-w-6xl px-5 pt-16">
         {/* Search-within-school (recommendation: the school page is browsable;
             a miss routes to the honest empty state + Ally handoff). */}
@@ -367,13 +339,7 @@ export default function SchoolPage({ schoolId, partner, joined = false, gated = 
                   <span className="mt-1 block font-display text-[16px] font-extrabold leading-snug text-mk-slate">
                     {p.name}
                   </span>
-                  {gated ? (
-                    <span className="mt-1.5 block font-display text-[13px] font-semibold text-mk-body/70">
-                      Log in to see your price
-                    </span>
-                  ) : (
-                    <>
-                      <span className="mt-1.5 block font-display text-[13.5px] font-bold text-mk-slate">
+                  <span className="mt-1.5 block font-display text-[13.5px] font-bold text-mk-slate">
                         {resolveCost(p).primaryValue}{' '}
                         <span className="font-semibold text-mk-body">
                           {resolveCost(p).primaryLabel === 'Per credit' ? 'per credit' : 'total'}
@@ -386,8 +352,6 @@ export default function SchoolPage({ schoolId, partner, joined = false, gated = 
                             : `Est. ${money(oop)} out of pocket/yr`}
                         </span>
                       )}
-                    </>
-                  )}
                   <span className="mt-1.5 block font-display text-[12.5px] text-mk-body">
                     Starts {startDateDisplay(p) || 'soon'}
                   </span>
@@ -400,8 +364,9 @@ export default function SchoolPage({ schoolId, partner, joined = false, gated = 
           )}
         </div>
       </section>
-      )}
       </div>
+
+      <AllyEntry partner={partner} />
 
       {/* Dark CTA bookend, mirroring the landing close. */}
       <section className="bg-gradient-to-br from-mk-teal-600 to-mk-slate py-14 text-center">

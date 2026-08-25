@@ -71,8 +71,10 @@ export function HowItWorks({ partner, onGate }) {
   return (
     <section className="bg-white py-20">
       <div className="mx-auto max-w-6xl px-5">
-        <Eyebrow>How it works</Eyebrow>
-        <Heading className="mt-2">One clear path, start to finish</Heading>
+        {/* No eyebrow: "HOW IT WORKS" over "One path, start to finish" was a
+            label restating the heading under it. "Clear" also went — a page
+            that claims to be clear is not the same as one that is. */}
+        <Heading>One path, start to finish</Heading>
 
         {/* 2026-08-25: "Who does what along the way" moved out of this
             section and into Why AllCampus. This section answers what YOU do;
@@ -181,7 +183,7 @@ export function WhyAllCampus({ partner }) {
 
         {/* Who does what: moved here from How it works (2026-08-25). */}
         <h3 className="mt-14 font-display text-[16px] font-extrabold text-mk-slate">
-          Who does what along the way
+          Who does what
         </h3>
         <div className="mt-4">
           <EcosystemStrip variant="landing" partner={partner} />

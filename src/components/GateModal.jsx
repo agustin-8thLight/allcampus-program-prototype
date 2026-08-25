@@ -6,7 +6,7 @@ import { emitStoryEvent } from '../data/useCases.js'
  * promising "browsing never requires an account" is gone — that promise is no
  * longer true and a broken promise is worse than none.
  */
-export default function GateModal({ open, partner, trigger = 'save', onJoin, onDismiss }) {
+export default function GateModal({ open, partner, onJoin, onDismiss }) {
   if (!open) return null
   const benefit = partner?.benefitKnown && partner.employerReimbursement > 0
   return (
@@ -22,18 +22,15 @@ export default function GateModal({ open, partner, trigger = 'save', onJoin, onD
             </span>
           </div>
         )}
-        <h2 className="text-xl font-black text-ink-900">
-          {trigger === 'catalog'
-            ? 'Save your profile'
-            : trigger === 'compare'
-              ? 'Compare from your profile'
-              : 'Save it to your profile'}
-        </h2>
+        {/* 2026-08-25: one action, one name. The header says Sign up, the
+            journey card says "Create your free account", and this modal said
+            "Save my profile" — three labels for the same thing. It also isn't
+            a gate any more: nothing is withheld from someone who says Not now. */}
+        <h2 className="text-xl font-black text-ink-900">Create your free account</h2>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
-          A free account keeps your profile: your matches, your shortlist
           {benefit
-            ? `, and your exact costs with the ${/^your /i.test(partner.name) ? 'employer' : partner.name} benefit applied.`
-            : ', and your pricing across visits.'}
+            ? `Keeps your matches and your ${/^your /i.test(partner.name) ? 'employer' : partner.name} pricing with you.`
+            : 'Keeps your matches and your pricing with you.'}
         </p>
         <div className="mt-5 flex items-center gap-2">
           <button
@@ -43,7 +40,7 @@ export default function GateModal({ open, partner, trigger = 'save', onJoin, onD
             }}
             className="rounded-lg bg-brand-600 px-4 py-2.5 text-[15px] font-bold text-white transition hover:bg-brand-700"
           >
-            Save my profile
+            Create your free account
           </button>
           <button
             onClick={onDismiss}

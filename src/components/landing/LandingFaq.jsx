@@ -1,4 +1,4 @@
-import { Eyebrow, Heading } from './Section.jsx'
+import { Heading } from './Section.jsx'
 
 /*
  * Page-level FAQ (stays at the bottom, per 2026-08-11 meeting). Questions
@@ -29,10 +29,10 @@ export default function LandingFaq() {
   return (
     <section className="bg-mk-surface pb-20 pt-4">
       <div className="mx-auto max-w-3xl px-5">
-      {/* Centered, per 2026-08-25 direction. */}
+      {/* Centered, per 2026-08-25 direction. The FAQS eyebrow went: it was
+          the heading again, one line higher. */}
       <div className="text-center">
-        <Eyebrow>FAQs</Eyebrow>
-        <Heading className="mt-1">Your questions, answered</Heading>
+        <Heading>Your questions, answered</Heading>
       </div>
       <div className="mt-7 space-y-2.5">
         {FAQS.map((f) => (

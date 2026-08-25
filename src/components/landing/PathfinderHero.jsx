@@ -64,7 +64,7 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
                   <span aria-hidden>→</span>
                 </button>
                 <p className="mt-3 text-[13px] font-semibold text-white/75">
-                  About a minute, and we&rsquo;ll show you what fits.
+                  About a minute. No account needed.
                 </p>
               </div>
 

@@ -138,10 +138,10 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
           <p className="text-[15px] font-bold text-mk-slate">
             Your discount lives here, not on {schoolName || 'the school'}&rsquo;s site.
           </p>
+          {/* 2026-08-25 copy pass: the follow-on sentence restated journey
+              step 4 almost word for word. The claim is the whole point. */}
           <p className="mt-1 text-[14px] leading-relaxed text-mk-body">
-            Enrolling through AllCampus is how your employer&rsquo;s partnership pricing gets
-            applied. Going directly to {schoolName || 'the school'} means paying their standard
-            tuition without your benefit&rsquo;s discount.
+            Going directly to {schoolName || 'the school'} means paying their standard tuition.
           </p>
         </div>
       )}

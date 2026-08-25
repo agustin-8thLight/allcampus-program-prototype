@@ -33,7 +33,7 @@ import { Heading } from '../components/landing/Section.jsx'
  * hero, the skills-navigator variant, the outcome-cards + browse-by-subject
  * band ("supported decision-making beats the browse-by-subject block").
  */
-export default function LandingPage({ partner, profile, onProfile, gated = false, onGate, onNavigate }) {
+export default function LandingPage({ partner, profile, onProfile, joined = false, gated = false, onGate, onNavigate }) {
   const [pathfinder, setPathfinder] = useState(null) // null | { step }
   const [allyOpen, setAllyOpen] = useState(null) // null | { school?: string }
 
@@ -53,6 +53,8 @@ export default function LandingPage({ partner, profile, onProfile, gated = false
       <PathfinderHero
         partner={partner}
         profile={profile}
+        joined={joined}
+        onSignup={() => onGate?.('catalog')}
         onStart={() => openPathfinder('start')}
         onEdit={(step) => openPathfinder(step)}
         onBrowse={() => goBrowse({})}
@@ -77,20 +79,36 @@ export default function LandingPage({ partner, profile, onProfile, gated = false
 
       <LandingFaq />
 
-      {/* Closing CTA: the dark bookend, now pointing at the pathfinder. */}
+      {/* Closing CTA: the dark bookend. 2026-08-25 direction — the action
+          this page pushes is the account, so the bookend asks for it and the
+          pathfinder sits underneath as the way in for anyone not ready. */}
       <section className="bg-gradient-to-br from-mk-teal-600 to-mk-slate py-14 text-center">
-        <Heading size="sm" className="text-white">Start your profile</Heading>
+        <Heading size="sm" className="text-white">
+          {joined ? 'Pick up where you left off' : 'Create your free account'}
+        </Heading>
         <p className="mx-auto mt-2 max-w-md px-5 font-display text-[14px] text-white/80">
-          Three questions. We map the rest, and nothing is locked in.
+          {joined
+            ? 'Your matches and your pricing are saved.'
+            : 'Keeps your matches and your employer pricing with you.'}
         </p>
-        <div className="mt-5">
+        <div className="mt-5 flex flex-col items-center gap-3">
           <button
             type="button"
-            onClick={() => openPathfinder('start')}
-            className="inline-flex items-center justify-center rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
+            onClick={() => (joined ? goBrowse({}) : onGate?.('catalog'))}
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
           >
-            Start your profile
+            {joined ? 'Browse all programs' : 'Create your free account'}
+            <span aria-hidden>&rarr;</span>
           </button>
+          {!joined && (
+            <button
+              type="button"
+              onClick={() => openPathfinder('start')}
+              className="font-display text-[13px] font-bold text-white/80 underline-offset-2 hover:text-white hover:underline"
+            >
+              Not sure yet? Answer 3 questions &rarr;
+            </button>
+          )}
         </div>
       </section>
 

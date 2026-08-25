@@ -8,14 +8,20 @@ import { startLabel, matchPrograms } from '../../data/pathfinder.js'
 
 /*
  * PathfinderHero (2026-08-21 reset): replaces the search-card hero. One value
- * statement, ONE primary action (the pathfinder), and a quiet self-serve
- * outlet for the minority who know exactly what they want.
+ * statement, one primary action, and a quiet self-serve outlet for the
+ * minority who know exactly what they want.
+ *
+ * 2026-08-25 direction: the action this page pushes is SIGNING UP, so the
+ * account is the primary button and the pathfinder steps down to a real
+ * second option — visible and labelled, not a whisper. This deliberately
+ * revises the Aug 20/21 "lead with ONE action (the pathfinder)" decision;
+ * the pathfinder is now the way in for anyone not ready to commit.
  *
  * With a profile set, the floating card slot (where the search card used to
  * hang) holds the education profile instead: answers echoed, each editable,
  * the Amazon "here's everything we know about you, is this true?" moment.
  */
-export default function PathfinderHero({ partner, profile, onStart, onEdit, onBrowse }) {
+export default function PathfinderHero({ partner, profile, joined = false, onSignup, onStart, onEdit, onBrowse }) {
   const known = !!partner?.benefitKnown
   const reimburses = known && (partner?.employerReimbursement ?? 0) > 0
   const maxPct = bestDiscountPercent(PROGRAMS)
@@ -40,9 +46,11 @@ export default function PathfinderHero({ partner, profile, onStart, onEdit, onBr
           <h1 className="mt-3 max-w-2xl text-[36px] font-extrabold leading-tight sm:text-[44px]">
             Going back to school is confusing. Using your benefit shouldn&rsquo;t be.
           </h1>
+          {/* 2026-08-25 copy pass: "We'll walk you through it" restated the
+              headline's own promise. The dek carries what's on offer. */}
           <p className="mt-4 max-w-xl text-[16.5px] leading-relaxed text-white/85">
             Discounted tuition{reimburses ? ', your reimbursement benefit,' : ''} and real help
-            using {reimburses ? 'both' : 'it'}. We&rsquo;ll walk you through it.
+            using {reimburses ? 'both' : 'it'}.
           </p>
 
           {!profile && (
@@ -50,23 +58,37 @@ export default function PathfinderHero({ partner, profile, onStart, onEdit, onBr
               <div className="mt-10">
                 <button
                   type="button"
-                  onClick={() => onStart?.()}
+                  onClick={() => (joined ? onBrowse?.() : onSignup?.())}
                   className="inline-flex items-center gap-2 rounded-lg bg-white px-10 py-4 text-[17px] font-bold text-mk-teal-700 shadow-[0_14px_36px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:bg-mk-band"
                 >
-                  Start your profile
+                  {joined ? 'Browse all programs' : 'Create your free account'}
                   <span aria-hidden>→</span>
                 </button>
                 <p className="mt-3 text-[13px] font-semibold text-white/75">
-                  3 questions, about a minute. No account needed.
+                  {joined
+                    ? 'Your matches and your pricing are saved.'
+                    : 'Free, and it keeps your employer pricing with you.'}
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => onBrowse?.()}
-                className="mt-6 block text-[13.5px] font-bold text-white/80 underline-offset-2 hover:text-white hover:underline"
-              >
-                Browse all programs &rarr;
-              </button>
+              {/* The two lower-commitment routes, in commitment order. */}
+              <div className="mt-7 flex flex-col items-start gap-2.5">
+                {!joined && (
+                  <button
+                    type="button"
+                    onClick={() => onStart?.()}
+                    className="text-[14px] font-bold text-white underline-offset-2 hover:underline"
+                  >
+                    Not sure yet? Answer 3 questions &rarr;
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onBrowse?.()}
+                  className="text-[13.5px] font-bold text-white/75 underline-offset-2 hover:text-white hover:underline"
+                >
+                  Browse all programs &rarr;
+                </button>
+              </div>
 
               {/* Proof row (2026-08-25 polish): the network numbers used to
                   live only in the Why section's body copy, three screens
@@ -141,9 +163,22 @@ export default function PathfinderHero({ partner, profile, onStart, onEdit, onBr
                 onEdit={() => onEdit?.('benefit')}
               />
             </div>
-            <p className="mt-3 text-[13px] font-semibold text-mk-body">
-              {matchPrograms(profile, PROGRAMS).length} programs fit this profile. They&rsquo;re right below.
-            </p>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-mk-line pt-3.5">
+              <p className="text-[13px] font-semibold text-mk-body">
+                {matchPrograms(profile, PROGRAMS).length} programs fit this profile.{' '}
+                {joined ? 'Saved to your account.' : 'They\u2019re right below.'}
+              </p>
+              {!joined && (
+                <button
+                  type="button"
+                  onClick={() => onSignup?.()}
+                  className="inline-flex items-center gap-2 rounded-lg bg-mk-teal-600 px-4 py-2.5 text-[13.5px] font-bold text-white transition hover:bg-mk-teal-700"
+                >
+                  Save this with a free account
+                  <span aria-hidden>&rarr;</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

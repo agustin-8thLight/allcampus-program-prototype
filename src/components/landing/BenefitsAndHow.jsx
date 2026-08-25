@@ -43,14 +43,14 @@ export function HowItWorks({ partner, onGate }) {
     {
       icon: 'find',
       title: 'Select a school and a program',
-      body: 'Use the pathfinder, or browse the catalog. Nothing needs approving yet.',
+      body: 'Answer 3 questions, or browse the catalog. Nothing needs approving yet.',
     },
     {
       icon: 'account',
       title: 'Save your profile',
       highlight: true,
       body: 'Keeps your matches and your pricing with you. Nothing goes to your employer.',
-      cta: { label: 'Save my profile', onClick: () => onGate?.('catalog') },
+      cta: { label: 'Create your free account', onClick: () => onGate?.('catalog') },
     },
     {
       icon: 'confirm',
@@ -76,18 +76,13 @@ export function HowItWorks({ partner, onGate }) {
       <div className="mx-auto max-w-6xl px-5">
         <Eyebrow>How it works</Eyebrow>
         <Heading className="mt-2">One clear path, start to finish</Heading>
-        <Body className="mt-3 max-w-2xl">
-          The whole journey up front, and who handles each part.
-        </Body>
 
-        <div className="mt-9">
+        {/* 2026-08-25: "Who does what along the way" moved out of this
+            section and into Why AllCampus. This section answers what YOU do;
+            the cast of parties is an argument for the platform, not a step
+            in the journey, and having both here made one long explainer. */}
+        <div className="mt-8">
           <StepsStrip steps={steps} />
-        </div>
-        <h3 className="mt-14 font-display text-[16px] font-extrabold text-mk-slate">
-          Who does what along the way
-        </h3>
-        <div className="mt-4">
-          <EcosystemStrip variant="landing" partner={partner} />
         </div>
       </div>
     </section>
@@ -101,11 +96,11 @@ export function WhyAllCampus({ partner }) {
   const cappedSchools = Object.values(SCHOOLS).filter((s) => s.tuitionCap)
 
   // 2026-08-25 polish: the numbers that carried this section were buried in
-  // body copy. They lead now, as a stat row, so the section opens with
-  // something scannable instead of two paragraphs.
+  // body copy, so they lead now as a stat row. Copy pass, same day: the
+  // school and program counts came straight back out — Brigid's headline
+  // already says "24 schools. 135 programs." two lines above. What's left
+  // is the two figures the headline doesn't carry.
   const stats = [
-    { value: schoolCount, label: 'partner universities' },
-    { value: PROGRAMS.length, label: 'programs in the network' },
     { value: maxPct != null ? `${maxPct}%` : 'Yes', label: 'off tuition, already negotiated' },
     ...(cappedSchools.length > 0
       ? [{ value: money(5250), label: `a year, capped at ${cappedSchools.length} schools` }]
@@ -125,7 +120,7 @@ export function WhyAllCampus({ partner }) {
         </Heading>
 
         {/* Stat row: the scannable version of the section. */}
-        <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius-card)] border border-mk-line bg-mk-line lg:grid-cols-4">
+        <dl className="mt-7 grid grid-cols-1 gap-px overflow-hidden rounded-[var(--radius-card)] border border-mk-line bg-mk-line sm:max-w-2xl sm:grid-cols-2">
           {stats.map((st) => (
             <div key={st.label} className="bg-white px-5 py-6">
               <dt className="font-display text-[32px] font-black leading-none text-mk-teal-700">
@@ -217,10 +212,20 @@ export function WhyAllCampus({ partner }) {
           </div>
         </div>
 
+        {/* Who does what: moved here from How it works (2026-08-25). The four
+            parties are the reason the platform exists, so they belong in the
+            argument for it, landing directly on the activation line below. */}
+        <h3 className="mt-12 font-display text-[16px] font-extrabold text-mk-slate">
+          Who does what along the way
+        </h3>
+        <div className="mt-4">
+          <EcosystemStrip variant="landing" partner={partner} />
+        </div>
+
         {/* WHY through AllCampus: the leakage line, stated plainly. The second
             sentence used to repeat step 4 of the journey almost word for word
             (2026-08-25 polish: deduped, the sentence of record stays). */}
-        <div className="mt-6 rounded-[var(--radius-card)] border-l-4 border-mk-teal-600 bg-white px-6 py-4 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
+        <div className="mt-8 rounded-[var(--radius-card)] border-l-4 border-mk-teal-600 bg-white px-6 py-4 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
           <p className="font-display text-[15px] font-extrabold text-mk-slate">
             Your discount already exists. Connect through AllCampus to activate it.
           </p>

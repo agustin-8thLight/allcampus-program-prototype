@@ -11,7 +11,6 @@ export default function LogoStrip({ onSelectSchool, onSeeAll }) {
   // rendering all 24 floods the band; the rest sit behind a "see all" button.
   const allSchools = Object.values(SCHOOLS)
   const schools = allSchools.slice(0, 10)
-  const remaining = allSchools.length - schools.length
   return (
     <section className="bg-mk-surface py-12">
       <div className="mx-auto max-w-6xl px-5">
@@ -38,20 +37,11 @@ export default function LogoStrip({ onSelectSchool, onSeeAll }) {
             </span>
           </button>
           ))}
-          {remaining > 0 && (
-            <button
-              type="button"
-              onClick={() => onSeeAll?.()}
-              className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition hover:bg-mk-band"
-            >
-              <span className="font-display text-[13.5px] font-bold text-mk-teal-700 group-hover:underline">
-                +{remaining} more universities →
-              </span>
-            </button>
-          )}
         </div>
         {/* The "+N more" tile alone didn't read as a door to the directory —
-            reviewers assumed the full-schools view didn't exist. Explicit CTA. */}
+            reviewers assumed the full-schools view didn't exist, so this
+            explicit CTA was added. 2026-08-25 copy pass: with the button
+            here, the +N tile was a third way of saying the same thing. */}
         <div className="mt-7 text-center">
           <button
             type="button"

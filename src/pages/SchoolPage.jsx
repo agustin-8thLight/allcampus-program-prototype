@@ -4,7 +4,7 @@ import EcosystemStrip from '../components/landing/EcosystemStrip.jsx'
 import StepsStrip from '../components/landing/StepsStrip.jsx'
 import AllyEntry from '../components/landing/AllyEntry.jsx'
 import SubjectIcon from '../components/landing/SubjectIcon.jsx'
-import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.jsx'
+import { Heading, Body, MkButton } from '../components/landing/Section.jsx'
 import { PROGRAMS, money, resolveCost, startDateDisplay } from '../data/model.js'
 import { estimatedOutOfPocket, bestDiscountPercent, discountLabel } from '../data/benefit.js'
 import { getArea, getSkill } from '../data/taxonomy.js'
@@ -86,7 +86,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
       title: 'Save your profile',
       highlight: true,
       body: 'Keeps your matches and your pricing with you. Nothing goes to your employer.',
-      cta: { label: 'Save my profile', onClick: () => onGate?.('catalog') },
+      cta: { label: 'Create your free account', onClick: () => onGate?.('catalog') },
     },
     {
       icon: 'confirm',
@@ -160,20 +160,6 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
                   Explore all programs
                 </MkButton>
               </div>
-              <ul className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/20 pt-6">
-                {[
-                  `${programs.length} program${programs.length === 1 ? '' : 's'} in the network`,
-                  ...(bestPct != null ? [`${discountLabel(programs)} tuition`] : []),
-                  'Built for working adults',
-                ].map((t) => (
-                  <li
-                    key={t}
-                    className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[12.5px] font-bold text-white/90 backdrop-blur-sm"
-                  >
-                    {t}
-                  </li>
-                ))}
-              </ul>
             </div>
 
             {/* RIGHT: the school's own identity, as a card rather than four
@@ -242,13 +228,9 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
           landing's order: hero -> How -> Ally -> programs on grey). */}
       <section className="bg-white py-16">
         <div className="mx-auto max-w-6xl px-5">
-        <Eyebrow>Your path from here</Eyebrow>
-        <Heading className="mt-2">
-          How it works for you
-        </Heading>
-        <Body className="mt-3 max-w-2xl">
-          The whole journey at {firstWord}, and who handles each part.
-        </Body>
+        {/* 2026-08-25 copy pass: the eyebrow and the dek both restated the
+            heading. One heading is enough to open a section. */}
+        <Heading>How it works for you</Heading>
         <div className="mt-8">
           {/* 2026-08-21 reset: the journey map AND the who-does-what boxes,
               both always visible. The big picture is the confidence builder. */}
@@ -275,10 +257,7 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
           filtered browse. */}
       {areaMenu.length > 0 && (
         <section className="mx-auto max-w-6xl px-5 pt-14">
-          <Eyebrow>What you can study here</Eyebrow>
-          <Heading size="sm" className="mt-2">
-            Programs by subject
-          </Heading>
+          <Heading size="sm">Programs by subject</Heading>
           {/* 2026-08-25 polish: at one or two skills per area these cards
               stretched to a shared row height and read as mostly empty. Three
               compact self-sizing columns instead, icon inline with the label. */}
@@ -342,7 +321,6 @@ export default function SchoolPage({ schoolId, partner, gated = false, onGate, o
       ) : (
       /* School-scoped catalog preview (logged in only) */
       <section className="mx-auto max-w-6xl px-5 pt-16">
-        <Eyebrow>Programs at {school.name.split(' ')[0]}</Eyebrow>
         {/* Search-within-school (recommendation: the school page is browsable;
             a miss routes to the honest empty state + Ally handoff). */}
         <form

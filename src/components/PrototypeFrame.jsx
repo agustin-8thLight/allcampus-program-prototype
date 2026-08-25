@@ -220,7 +220,7 @@ export default function PrototypeFrame() {
     )
   } else {
     page = (
-      <LandingPage partner={partner} profile={profile} onProfile={setProfile} gated={catalogMode === 'gated' && !joined} onGate={requestGate} onNavigate={navigate} />
+      <LandingPage partner={partner} profile={profile} onProfile={setProfile} joined={joined} gated={catalogMode === 'gated' && !joined} onGate={requestGate} onNavigate={navigate} />
     )
   }
 

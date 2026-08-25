@@ -56,10 +56,10 @@ export default function AllyEntry({ partner }) {
             <Heading size="sm" className="mt-2">
               Not sure where to start? Talk it through with Ally.
             </Heading>
-            <Body className="mt-2 max-w-xl">
-              Ally helps you narrow things down: what to study, which credential fits, and how a
-              program works around a full-time job.
-            </Body>
+            {/* 2026-08-25 copy pass: the dek used to list what to study /
+                which credential / around a job — the exact three things the
+                chips below already ask. The chips are the better version. */}
+            <Body className="mt-2 max-w-md">Ask it anything. Start with one of these.</Body>
 
             {/* Question chips ARE the entry — no fake chat transcript above
                 them. The previous version mocked up a conversation, which
@@ -86,9 +86,10 @@ export default function AllyEntry({ partner }) {
               <span aria-hidden>&#10022;</span>
             </button>
 
+            {/* The honest part stays. The sentence naming who DOES approve
+                funding went: the journey strip above says it twice. */}
             <p className="mt-4 font-display text-[11.5px] leading-relaxed text-mk-body/70">
-              Ally is an AI assistant and can make mistakes. It doesn&rsquo;t confirm eligibility or
-              approve funding. Your employer or benefits administrator does that.
+              Ally can make mistakes, and it can&rsquo;t confirm eligibility or approve funding.
             </p>
           </div>
 

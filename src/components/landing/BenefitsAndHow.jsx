@@ -189,11 +189,11 @@ export function WhyAllCampus({ partner }) {
           <EcosystemStrip variant="landing" partner={partner} />
         </div>
 
-        <div className="mt-8 rounded-[var(--radius-card)] border-l-4 border-mk-teal-600 bg-white px-6 py-4 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
-          <p className="font-display text-[15px] font-extrabold text-mk-slate">
-            Your discount already exists. Connect through AllCampus to activate it.
-          </p>
-        </div>
+        {/* 2026-08-25: the standalone activation banner is gone. The same
+            message is already in the value card above, in Brigid's own
+            wording ("AllCampus already secured your discount — it's just
+            waiting to be activated"), so this was the third time the page
+            said it. */}
       </div>
     </section>
   )

@@ -88,7 +88,7 @@ export function HowItWorks({ partner, onGate }) {
   )
 }
 
-export function WhyAllCampus({ partner }) {
+export function WhyAllCampus({ partner, onNavigate }) {
   const { reimburses, noTr, trPossible } = partnerState(partner)
   const maxPct = bestDiscountPercent(PROGRAMS)
   const schoolCount = Object.keys(SCHOOLS).length
@@ -166,15 +166,27 @@ export function WhyAllCampus({ partner }) {
                       ? 'That cap holds before any discount math even starts.'
                       : 'If your employer reimburses tuition, that cap can mean $0 out of pocket.'}
                 </p>
-                <span className="mt-3 flex flex-wrap gap-2">
+                {/* 2026-08-26: these were dead text. They name the two
+                    schools where the number above is literally $0, which makes
+                    them the most earned link on the page. */}
+                <span className="mt-3 flex flex-wrap items-center gap-2">
                   {cappedSchools.map((s) => (
-                    <span
+                    <button
                       key={s.id}
-                      className="rounded-full border border-mk-line bg-white px-3 py-1 font-display text-[12.5px] font-bold text-mk-slate"
+                      type="button"
+                      onClick={() => onNavigate?.(`/school/${s.id}`)}
+                      className="rounded-full border border-mk-line bg-white px-3 py-1 font-display text-[12.5px] font-bold text-mk-slate transition hover:border-mk-teal-600 hover:text-mk-teal-700"
                     >
-                      {s.name}
-                    </span>
+                      {s.name} &rarr;
+                    </button>
                   ))}
+                  <button
+                    type="button"
+                    onClick={() => onNavigate?.('/browse')}
+                    className="font-display text-[12.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
+                  >
+                    See all programs &rarr;
+                  </button>
                 </span>
               </div>
             )}

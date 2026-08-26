@@ -64,7 +64,7 @@ export default function AllyEntry({ partner }) {
             alt=""
             hue={268}
             rounded="rounded-lg"
-            className="h-28 w-full shrink-0 sm:h-24 sm:w-32"
+            className="h-44 w-full shrink-0 sm:h-40 sm:w-64"
           />
 
           <div className="min-w-0 flex-1">

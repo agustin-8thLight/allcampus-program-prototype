@@ -195,17 +195,20 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
         ))}
       </ol>
 
+      {/* Centered under the rail it opens (2026-08-26). */}
+      <div className="mt-3 text-center">
       <button
         type="button"
         onClick={() => setDetail((v) => !v)}
         aria-expanded={detail}
-        className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
+        className="inline-flex items-center gap-1.5 text-[13px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
       >
         {detail ? 'Hide the detail' : 'Read what each one does'}
         <span aria-hidden className={`text-[15px] leading-none transition ${detail ? 'rotate-180' : ''}`}>
           &#8964;
         </span>
       </button>
+      </div>
     </div>
   )
 }

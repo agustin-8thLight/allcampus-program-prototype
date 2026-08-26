@@ -68,7 +68,7 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
           is for. Small on purpose, not buried. */}
       <AllyEntry partner={partner} />
 
-      <WhyAllCampus partner={partner} />
+      <WhyAllCampus partner={partner} onNavigate={onNavigate} />
 
       <StoryCards partner={partner} />
 

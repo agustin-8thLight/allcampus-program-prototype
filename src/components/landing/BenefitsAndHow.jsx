@@ -88,7 +88,7 @@ export function HowItWorks({ partner, onGate }) {
   )
 }
 
-export function WhyAllCampus({ partner, onNavigate }) {
+export function WhyAllCampus({ partner, onNavigate, onStartProfile }) {
   const { reimburses, noTr, trPossible } = partnerState(partner)
   const maxPct = bestDiscountPercent(PROGRAMS)
   const schoolCount = Object.keys(SCHOOLS).length
@@ -180,12 +180,16 @@ export function WhyAllCampus({ partner, onNavigate }) {
                       {s.name} &rarr;
                     </button>
                   ))}
+                  {/* 2026-08-26: was "See all programs". The profile is the
+                      thing we drive to, because it is what carries a price
+                      like this one from visit to visit — and it only persists
+                      once there's an account behind it. */}
                   <button
                     type="button"
-                    onClick={() => onNavigate?.('/browse')}
+                    onClick={() => onStartProfile?.()}
                     className="font-display text-[12.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
                   >
-                    See all programs &rarr;
+                    See your price at these schools &rarr;
                   </button>
                 </span>
               </div>

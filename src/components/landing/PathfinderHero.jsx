@@ -142,7 +142,11 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-mk-line pt-3.5">
               <p className="text-[13px] font-semibold text-mk-body">
                 {matchPrograms(profile, PROGRAMS).length} programs fit this profile.{' '}
-                {joined ? 'Saved to your account.' : 'They\u2019re right below.'}
+                {joined ? (
+                  <span className="text-mk-green-700">Saved to your account.</span>
+                ) : (
+                  <span className="text-mk-body/80">Not saved yet.</span>
+                )}
               </p>
               {!joined && (
                 <button

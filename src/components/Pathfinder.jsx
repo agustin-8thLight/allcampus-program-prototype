@@ -354,9 +354,13 @@ export default function Pathfinder({ open, partner, initialStep = 'start', onCom
           <PrimaryBtn onClick={() => finish({}, { save: true })}>Save my profile &amp; see matches</PrimaryBtn>
           <GhostBtn onClick={() => finish()}>Skip for now, show my matches</GhostBtn>
         </div>
+        {/* 2026-08-26: the consequence is stated, not implied. An account is
+            what makes the profile persist; without one it lasts this visit
+            only. Skipping still shows the matches, so this is information
+            rather than a wall. */}
         <NextLine>
-          Saving attaches this profile to a free account, so your matches and pricing follow you.
-          Skipping is fine, you can save any time.
+          Saving takes a free account, and that is what keeps this profile. Skip it and your
+          answers last for this visit only.
         </NextLine>
       </>
     ),

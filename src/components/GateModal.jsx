@@ -22,15 +22,17 @@ export default function GateModal({ open, partner, onJoin, onDismiss }) {
             </span>
           </div>
         )}
-        {/* 2026-08-25: one action, one name. The header says Sign up, the
-            journey card says "Create your free account", and this modal said
-            "Save my profile" — three labels for the same thing. It also isn't
-            a gate any more: nothing is withheld from someone who says Not now. */}
+        {/* 2026-08-25: one action, one name, so this reads the same as the
+            header's Sign up and the journey card. It also isn't a gate any
+            more: nothing is withheld from someone who says Not now.
+            2026-08-26: the body names the PROFILE, because that is what the
+            account is for. Setting a profile is the thing we drive to; the
+            account is what makes it survive past this visit. */}
         <h2 className="text-xl font-black text-ink-900">Create your free account</h2>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
           {benefit
-            ? `Keeps your matches and your ${/^your /i.test(partner.name) ? 'employer' : partner.name} pricing with you.`
-            : 'Keeps your matches and your pricing with you.'}
+            ? `It saves your profile: your matches, and your ${/^your /i.test(partner.name) ? 'employer' : partner.name} pricing, on every visit.`
+            : 'It saves your profile: your matches and your pricing, on every visit.'}
         </p>
         <div className="mt-5 flex items-center gap-2">
           <button

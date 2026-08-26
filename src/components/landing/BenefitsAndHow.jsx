@@ -69,7 +69,7 @@ export function HowItWorks({ partner, onGate }) {
   ]
 
   return (
-    <section className="bg-white py-20">
+    <section className="bg-white pb-10 pt-20">
       <div className="mx-auto max-w-6xl px-5">
         {/* No eyebrow: "HOW IT WORKS" over "One path, start to finish" was a
             label restating the heading under it. "Clear" also went — a page

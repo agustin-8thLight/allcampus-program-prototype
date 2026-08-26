@@ -22,10 +22,9 @@ import { Heading } from '../components/landing/Section.jsx'
  *     self-serve outlet. With a profile: the profile card floats here.
  *  2. Profile results (only with a profile): matched programs, outcome lenses
  *  3. How it works (white)
- *  4. Why AllCampus (grey opens here): the value card, who-does-what, and
- *     the through-AllCampus activation line
- *  5. Learner stories (grey)
- *  6. Ally (grey, secondary weight)
+ *  4. Ally (secondary weight, directly under the path)
+ *  5. Why AllCampus (grey opens here): the value card + who-does-what
+ *  6. Learner stories (grey)
  *  7. Partner school logos + See all schools (grey)
  *  8. FAQ (grey), then the dark CTA bookend -> the three questions, footer
  *
@@ -63,14 +62,15 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
 
       <HowItWorks partner={partner} onGate={onGate} />
 
+      {/* Ally sits directly under the path (2026-08-26): secondary WEIGHT,
+          but back up here where the question lands. Someone who has just read
+          the four steps and isn't sure which one they're on is exactly who it
+          is for. Small on purpose, not buried. */}
+      <AllyEntry partner={partner} />
+
       <WhyAllCampus partner={partner} />
 
       <StoryCards partner={partner} />
-
-      {/* Ally sits AFTER the stories (2026-08-25): secondary weight, secondary
-          position. Someone who has read the path, the value, and other
-          people's outcomes and still isn't sure is exactly who it's for. */}
-      <AllyEntry partner={partner} />
 
       <LogoStrip
         onSelectSchool={(s) => onNavigate(`/school/${s.id}`)}

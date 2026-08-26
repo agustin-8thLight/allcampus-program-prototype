@@ -46,7 +46,7 @@ export default function AllyEntry({ partner }) {
   const open = (seed = null) => setOverlay({ seed })
 
   return (
-    <section className="bg-white pb-20">
+    <section className="bg-mk-surface py-14">
       <div className="mx-auto max-w-4xl px-5">
         {/* 2026-08-25: Ally sits at SECONDARY weight. It has been demoted three
             times now (front door, then search's companion, then a full-width
@@ -55,9 +55,11 @@ export default function AllyEntry({ partner }) {
             one row, a thumbnail rather than a photo panel, and no section
             heading of its own. It is an outlet, not a destination.
 
-            2026-08-26: it sits on the SAME white ground as the path above it,
-            so it reads as a footnote to those four steps rather than a band of
-            its own. Grey still opens at Why AllCampus. */}
+            2026-08-26: it OPENS the grey ground instead of sharing the path's
+            white. Sitting on white read as the tail of the four steps above
+            it; a tinted band of its own would have been a third ground, which
+            is the choppiness we already cut twice. Moving where grey starts
+            separates it for free. */}
         <div className="flex flex-col gap-5 overflow-hidden rounded-xl border border-mk-line bg-white p-5 sm:flex-row sm:items-center">
           <Img
             src={ALLY_IMAGE}

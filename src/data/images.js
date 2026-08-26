@@ -108,9 +108,18 @@ export const CATEGORY_IMAGES = {
   'people-public': U('1509062522246-3755977927d7', 1800, 600),
 }
 
-/* Editorial photo for the Why-AllCampus band (2026-08-25 polish). Reuses an
-   id already verified above. */
-export const WHY_IMAGE = U('1552581234-26160f608093', 900, 1100)
+/*
+ * Editorial photo for the Why-AllCampus band.
+ *
+ * 2026-08-26: reassigned. This slot previously reused
+ * 1552581234-26160f608093, which is ALSO GOAL_IMAGES['move-into-management'] —
+ * and that goal is the first outcome card under every employer that emphasizes
+ * business, so the same photograph appeared twice on one page, once as a
+ * full-height editorial shot. The goal photo keeps the id because it does
+ * identification work for a specific outcome; this slot is decorative, so it
+ * moved. New id eyeballed on a contact sheet, not just curl-checked.
+ */
+export const WHY_IMAGE = U('1522202176988-66273c2fd55f', 900, 1100)
 
 /*
  * Subject photography for program thumbnails (2026-08-25 polish).

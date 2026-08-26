@@ -3,11 +3,9 @@ import MkHeader from '../components/landing/MkHeader.jsx'
 import EcosystemStrip from '../components/landing/EcosystemStrip.jsx'
 import StepsStrip from '../components/landing/StepsStrip.jsx'
 import AllyEntry from '../components/landing/AllyEntry.jsx'
-import SubjectIcon from '../components/landing/SubjectIcon.jsx'
 import { Heading, Body, MkButton } from '../components/landing/Section.jsx'
 import { PROGRAMS, money, resolveCost, startDateDisplay } from '../data/model.js'
 import { estimatedOutOfPocket, bestDiscountPercent, discountLabel } from '../data/benefit.js'
-import { getArea, getSkill } from '../data/taxonomy.js'
 import { policyOwner } from '../data/corporatePartners.js'
 import { getSchool } from '../data/schools.js'
 import { schoolImage } from '../data/images.js'
@@ -45,27 +43,6 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
   // school's catalog is the headline, not a footnote.
   const bestPct = bestDiscountPercent(programs)
 
-  // 2026-08-19 session: subjects replace the program grid as the logged-out
-  // browse surface. Derive the areas this school actually covers, and within
-  // each, the skills it covers with a program count per skill.
-  const areaMenu = (() => {
-    const byArea = new Map()
-    for (const p of programs) {
-      if (!p.areaId) continue
-      if (!byArea.has(p.areaId)) byArea.set(p.areaId, new Map())
-      const skills = byArea.get(p.areaId)
-      for (const sid of p.skillIds || []) skills.set(sid, (skills.get(sid) || 0) + 1)
-    }
-    return [...byArea.entries()]
-      .map(([areaId, skills]) => ({
-        area: getArea(areaId),
-        skills: [...skills.entries()]
-          .map(([skillId, count]) => ({ skill: getSkill(skillId), count }))
-          .filter((s) => s.skill),
-      }))
-      .filter((e) => e.area)
-  })()
-
   // 2026-08-19 session: partner-aware "how it works for you" steps.
   // Draft copy; Brigid's content doc pending.
   const owner = policyOwner(partner) || 'Your employer'
@@ -76,7 +53,7 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
     {
       icon: 'find',
       title: 'Select a school and a program',
-      body: `Browse ${firstWord}\u2019s subjects below. Nothing needs approving yet.`,
+      body: `Browse ${firstWord}\u2019s programs below. Nothing needs approving yet.`,
     },
     {
       icon: 'account',
@@ -244,49 +221,6 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
 
       {/* Programs region opens the grey ground, like the landing. */}
       <div className="border-t border-mk-line bg-mk-surface pb-10">
-      {/* SUBJECTS MENU (2026-08-19 session): the visual browse surface that
-          replaces the program grid for logged-out visitors. Areas the school
-          covers, with skill chips that carry program counts and route into
-          filtered browse. */}
-      {areaMenu.length > 0 && (
-        <section className="mx-auto max-w-6xl px-5 pt-14">
-          <Heading size="sm">Programs by subject</Heading>
-          {/* 2026-08-25 polish: at one or two skills per area these cards
-              stretched to a shared row height and read as mostly empty. Three
-              compact self-sizing columns instead, icon inline with the label. */}
-          <div className="mt-5 grid grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {areaMenu.map(({ area, skills }) => (
-              <div
-                key={area.id}
-                className="rounded-[var(--radius-card)] border border-mk-line bg-white p-4 transition hover:border-mk-teal-600/50 hover:shadow-[0_4px_16px_rgba(69,120,140,0.10)]"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mk-band text-mk-teal-700">
-                    <SubjectIcon id={area.id} className="h-5 w-5" />
-                  </span>
-                  <span className="font-display text-[15px] font-extrabold text-mk-slate">
-                    {area.label}
-                  </span>
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {skills.map(({ skill, count }) => (
-                    <button
-                      key={skill.id}
-                      type="button"
-                      onClick={() => onNavigate(`/browse?school=${school.id}&skill=${skill.id}`)}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-mk-line bg-mk-surface px-3 py-1.5 font-display text-[13px] font-semibold text-mk-slate transition hover:border-mk-teal-600 hover:bg-white hover:text-mk-teal-700"
-                    >
-                      {skill.label}
-                      <span className="font-bold text-mk-teal-700">{count}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
       {/* Every program, with its price. Nothing is held back for an
           account (2026-08-25: one prototype, no gates). */}
 

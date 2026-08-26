@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import MkHeader from '../components/landing/MkHeader.jsx'
 import PathfinderHero from '../components/landing/PathfinderHero.jsx'
+import DiscoveryBand from '../components/landing/DiscoveryBand.jsx'
 import ProfileResults from '../components/landing/ProfileResults.jsx'
 import Pathfinder from '../components/Pathfinder.jsx'
 import AllyEntry from '../components/landing/AllyEntry.jsx'
@@ -21,16 +22,20 @@ import { Heading } from '../components/landing/Section.jsx'
  *  1. Hero: value statement + "Let's get started" (pathfinder) + a quiet
  *     self-serve outlet. With a profile: the profile card floats here.
  *  2. Profile results (only with a profile): matched programs, outcome lenses
- *  3. How it works (white)
- *  4. Ally (secondary weight, directly under the path)
- *  5. Why AllCampus (grey opens here): the value card + who-does-what
- *  6. Learner stories (grey)
- *  7. Partner school logos + See all schools (grey)
- *  8. FAQ (grey), then the dark CTA bookend -> the three questions, footer
+ *  3. Discovery band (white, no profile only): outcome photo cards + the
+ *     four subject tiles. Breadth, both exits pre-narrowed.
+ *  4. How it works (white)
+ *  5. Ally (grey opens here, secondary weight)
+ *  6. Why AllCampus (grey): the value card + who-does-what
+ *  7. Learner stories (grey)
+ *  8. Partner school logos + See all schools (grey)
+ *  9. FAQ (grey), then the dark CTA bookend -> the three questions, footer
  *
- * Retired from this page (v2 candidates, components parked): the search-card
- * hero, the skills-navigator variant, the outcome-cards + browse-by-subject
- * band ("supported decision-making beats the browse-by-subject block").
+ * The outcome-cards + browse-by-subject band was retired here on 2026-08-21
+ * ("supported decision-making beats the browse-by-subject block") and is BACK
+ * as of 2026-08-26, rebuilt as DiscoveryBand. Both things are true: it shows
+ * breadth, and both of its exits are narrowed. See that file's header.
+ * Still retired (parked): the search-card hero, the skills-navigator variant.
  */
 export default function LandingPage({ partner, profile, onProfile, joined = false, onGate, onNavigate }) {
   const [pathfinder, setPathfinder] = useState(null) // null | { step }
@@ -59,6 +64,12 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
       />
 
       {profile && <ProfileResults profile={profile} partner={partner} onGate={onGate} onNavigate={onNavigate} />}
+
+      {/* Breadth, before the process explanation (2026-08-26). Answers the
+          skeptic's first question, "is there anything here for me," which is
+          worth nothing if it lands after the how-it-works. With a profile set,
+          ProfileResults above already answers it, so this steps aside. */}
+      {!profile && <DiscoveryBand partner={partner} onNavigate={onNavigate} />}
 
       <HowItWorks partner={partner} onGate={onGate} />
 

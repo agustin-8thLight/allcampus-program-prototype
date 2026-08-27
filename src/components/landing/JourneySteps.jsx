@@ -1,5 +1,4 @@
 import { Eyebrow, Heading } from './Section.jsx'
-import { policyOwner } from '../../data/corporatePartners.js'
 
 /*
  * JourneySteps (2026-08-27) — James Guajardo's design notes, "Journey &
@@ -12,10 +11,9 @@ import { policyOwner } from '../../data/corporatePartners.js'
  * point of view on the question a first-time visitor actually has — who is
  * AllCampus, and can I trust them with my tuition benefit?
  *
- * So the two sections are one 5-step journey, and each step names its DRIVER
- * inline instead of making the reader cross-reference a second diagram. That
- * inline driver is the whole reason the merge works; without it the
- * who-does-what information would simply be lost.
+ * So the two sections are one 5-step journey. The who-does-what information
+ * is not lost, it is inside the sentences: "through AllCampus", "with your
+ * employer". That is how the merge keeps the cast without a second diagram.
  *
  * Step 3 states plainly that requesting information through AllCampus is what
  * unlocks the discount, rather than implying it is one option among several.
@@ -25,8 +23,13 @@ import { policyOwner } from '../../data/corporatePartners.js'
  *
  * NUMERALS. Big ghosted numbers were removed from the old 4-card strip on
  * 2026-08-25 for being decorative noise. These are different: small, inline,
- * part of the step label, and load-bearing in a five-step sequence. Easy to
- * drop if they read as a reversal.
+ * part of the step label, and load-bearing in a five-step sequence.
+ *
+ * COPY IS JAMES'S, VERBATIM (2026-08-27), em dashes and ampersands included.
+ * His mockup carries no driver pills and no per-step buttons: the driver is
+ * inside the sentence ("with your employer", "through AllCampus"), which is a
+ * lighter way to do it than the chips I had. Client language of record, not
+ * ours to restyle.
  */
 
 const ART = {
@@ -66,54 +69,44 @@ const ART = {
   ),
 }
 
-export default function JourneySteps({ partner, onGate, onSpecialist }) {
-  const owner = policyOwner(partner) || 'your employer'
-  const firstName = partner?.name && !/^your /i.test(partner.name) ? partner.name : 'your employer'
-
+/*
+ * `bare` drops the section wrapper and the header, for the school page, which
+ * supplies its own school-scoped heading and the discount-lives-here banner
+ * above the strip. Without it the header rendered twice.
+ */
+export default function JourneySteps({ bare = false }) {
   const steps = [
     {
       icon: 'account',
-      driver: 'You',
       title: 'Create an AllCampus account',
       body: 'Create your free profile to search programs, save favorites, and get guided support.',
-      cta: { label: 'Create an account', onClick: () => onGate?.('catalog') },
     },
     {
       icon: 'shop',
-      driver: 'You',
-      title: 'Shop for schools and programs',
+      title: 'Shop for schools & programs',
       body: 'Compare accredited schools and programs matched to your goals, funding, and schedule.',
     },
     {
       icon: 'connect',
-      driver: 'AllCampus',
       title: 'Connect to schools through AllCampus',
-      body: 'Requesting information through AllCampus is what unlocks your discount and your support.',
+      body: 'Request information through AllCampus \u2014 that\u2019s what unlocks your discount and support.',
       highlight: true,
     },
     {
       icon: 'confirm',
-      driver: firstName,
       title: 'Confirm your employer tuition benefit',
-      body: `Confirm eligibility and complete approvals with ${owner}. A specialist can help.`,
-      cta: { label: 'Talk to a specialist', onClick: () => onSpecialist?.(), quiet: true },
+      body: 'Confirm eligibility and complete approvals with your employer \u2014 a specialist can help.',
     },
     {
       icon: 'start',
-      driver: 'Your school',
-      title: 'Start your program and earn new skills',
+      title: 'Start your program & earn new skills',
       body: 'Enroll, finalize funding and your schedule, and start building new skills.',
     },
   ]
 
-  return (
-    <section className="bg-white py-20">
-      <div className="mx-auto max-w-6xl px-5">
-        <Eyebrow>How AllCampus works</Eyebrow>
-        <Heading className="mt-2 max-w-2xl">Your path, guided support, start to finish</Heading>
-
-        <ol className="mt-9 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3">
-          {steps.map((s, i) => {
+  const strip = (
+    <ol className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3">
+      {steps.map((s, i) => {
             const Art = ART[s.icon]
             const on = !!s.highlight
             return (
@@ -144,18 +137,8 @@ export default function JourneySteps({ partner, onGate, onSpecialist }) {
                     </span>
                   </div>
 
-                  {/* The driver, inline. This is what lets the who-does-what
-                      diagram go away instead of just being deleted. */}
-                  <span
-                    className={`mt-4 inline-flex w-fit rounded-full px-2.5 py-0.5 font-display text-[11px] font-bold uppercase tracking-[0.1em] ${
-                      on ? 'bg-white/15 text-white/90' : 'bg-mk-band text-mk-teal-700'
-                    }`}
-                  >
-                    {s.driver}
-                  </span>
-
                   <p
-                    className={`mt-2.5 font-display text-[15.5px] font-extrabold leading-snug ${
+                    className={`mt-4 font-display text-[15.5px] font-extrabold leading-snug ${
                       on ? '' : 'text-mk-slate'
                     }`}
                   >
@@ -169,31 +152,21 @@ export default function JourneySteps({ partner, onGate, onSpecialist }) {
                     {s.body}
                   </p>
 
-                  {s.cta && (
-                    <div className="mt-auto pt-4">
-                      <button
-                        type="button"
-                        onClick={s.cta.onClick}
-                        className={
-                          s.cta.quiet
-                            ? `font-display text-[13px] font-bold underline-offset-2 hover:underline ${on ? 'text-white' : 'text-mk-teal-700'}`
-                            : `w-full rounded-lg px-3 py-2.5 font-display text-[13.5px] font-bold shadow-sm transition ${
-                                on
-                                  ? 'bg-white text-mk-teal-700 hover:bg-mk-band'
-                                  : 'bg-mk-teal-600 text-white hover:bg-mk-teal-700'
-                              }`
-                        }
-                      >
-                        {s.cta.label}
-                        {s.cta.quiet && <span aria-hidden> &rarr;</span>}
-                      </button>
-                    </div>
-                  )}
                 </div>
               </li>
             )
           })}
-        </ol>
+    </ol>
+  )
+
+  if (bare) return strip
+
+  return (
+    <section className="bg-white py-20">
+      <div className="mx-auto max-w-6xl px-5">
+        <Eyebrow>How AllCampus works</Eyebrow>
+        <Heading className="mt-2 max-w-2xl">Your path, guided support, start to finish</Heading>
+        <div className="mt-9">{strip}</div>
       </div>
     </section>
   )

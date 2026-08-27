@@ -115,8 +115,8 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
           <strong className="font-extrabold text-mk-slate">
             AllCampus is {partner?.benefitKnown && !/^your /i.test(partner.name) ? `${partner.name}\u2019s` : 'your employer\u2019s'}{' '}
             tuition benefit partner
-          </strong>
-          , built to help you use your discount and your reimbursement without the runaround.
+          </strong>{' '}
+          &mdash; built to help you use your discount and your reimbursement without the runaround.
         </p>
 
         {/* 2026-08-25: the stat tiles came out (the headline already carries
@@ -203,7 +203,7 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
                     onClick={() => onNavigate?.('/browse')}
                     className="font-display text-[12.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
                   >
-                    See all programs &rarr;
+                    See your price at these schools &rarr;
                   </button>
                 </span>
               </div>

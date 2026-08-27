@@ -69,23 +69,23 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
                 </button>
               </div>
 
-              {/* Stat row. Counts come from the catalog, so they agree with
-                  Why AllCampus and the logo strip further down. James's
-                  mockup used 50+ / 1,100+ production figures up here and
-                  flagged the mismatch himself; deriving them keeps one set of
-                  numbers on the page until someone verifies the real ones. */}
+              {/* Stat row, James's figures and labels verbatim. He flags the
+                  mismatch himself: these are production network numbers while
+                  Why AllCampus and the logo strip below report the 24/135 mock
+                  catalog. Two different scopes on one page, unreconciled and
+                  needing a real number before this goes anywhere external. */}
               <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
                 {[
-                  { v: String(Object.keys(SCHOOLS).length), l: 'Partner schools' },
-                  { v: String(PROGRAMS.length), l: 'Programs' },
-                  { v: maxPct != null ? `${maxPct}%` : 'Yes', l: 'Off tuition' },
-                  { v: 'Free', l: 'Benefits support' },
+                  { v: '50+', l: 'Partner schools' },
+                  { v: '1,100+', l: 'Programs' },
+                  { v: 'Tuition', l: 'Discounts' },
+                  { v: 'Education', l: 'Support' },
                 ].map((st) => (
                   <div
                     key={st.l}
                     className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm"
                   >
-                    <dt className="text-[22px] font-black leading-none text-white">{st.v}</dt>
+                    <dt className="text-[20px] font-black leading-none text-white">{st.v}</dt>
                     <dd className="mt-1 text-[12px] font-semibold leading-snug text-white/75">
                       {st.l}
                     </dd>

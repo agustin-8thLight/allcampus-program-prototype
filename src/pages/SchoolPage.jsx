@@ -1,12 +1,10 @@
 import { useState } from 'react'
 import MkHeader from '../components/landing/MkHeader.jsx'
-import EcosystemStrip from '../components/landing/EcosystemStrip.jsx'
-import StepsStrip from '../components/landing/StepsStrip.jsx'
+import JourneySteps from '../components/landing/JourneySteps.jsx'
 import AllyEntry from '../components/landing/AllyEntry.jsx'
-import { Heading, Body, MkButton } from '../components/landing/Section.jsx'
+import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.jsx'
 import { PROGRAMS, money, resolveCost, startDateDisplay } from '../data/model.js'
 import { estimatedOutOfPocket, bestDiscountPercent, discountLabel } from '../data/benefit.js'
-import { policyOwner } from '../data/corporatePartners.js'
 import { getSchool } from '../data/schools.js'
 import { schoolImage } from '../data/images.js'
 import Img from '../components/Img.jsx'
@@ -17,8 +15,9 @@ import AllyOverlay from '../components/AllyOverlay.jsx'
  * scoped to a single school. The key gap it fixes: the AllCampus value
  * proposition was unclear at this level: users bounced to the school's own
  * site (e.g. SNHU) without understanding the discount AllCampus provides.
- * So the "why stay on this platform" block (EcosystemStrip, school variant)
- * sits BEFORE any outbound school link.
+ * So the "why stay on this platform" banner sits BEFORE any outbound school
+ * link. (2026-08-27: EcosystemStrip retired here with James's merge; the
+ * banner's copy moved inline.)
  */
 
 export default function SchoolPage({ schoolId, partner, joined = false, onGate, onNavigate }) {
@@ -42,37 +41,6 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
   // 2026-08-19 session: lead with the discount. The best percent across this
   // school's catalog is the headline, not a footnote.
   const bestPct = bestDiscountPercent(programs)
-
-  // 2026-08-19 session: partner-aware "how it works for you" steps.
-  // Draft copy; Brigid's content doc pending.
-  const owner = policyOwner(partner) || 'Your employer'
-  // Logged out: the journey to signup (illustrated strip). Logged in: the
-  // account step is stale, so the same slot explains the machine instead
-  // (the four-party strip, school variant) — 2026-08-20 direction.
-  const howSteps = [
-    {
-      icon: 'find',
-      title: 'Select a school and a program',
-      body: `Browse ${firstWord}\u2019s programs below. Nothing needs approving yet.`,
-    },
-    {
-      icon: 'account',
-      title: 'Save your profile',
-      body: 'Keeps your matches and your pricing with you. Nothing goes to your employer.',
-      cta: { label: 'Create your free account', onClick: () => onGate?.('catalog') },
-    },
-    {
-      icon: 'confirm',
-      title: 'Confirm your benefit',
-      body: `${owner} approves the funding, not AllCampus. A free specialist call helps.`,
-    },
-    {
-      icon: 'apply',
-      title: 'Connect through AllCampus',
-      highlight: true,
-      body: `${firstWord} then handles admissions, enrollment, billing, and your discounted tuition.`,
-    },
-  ]
 
   const goBrowse = (params = {}) => {
     const qs = new URLSearchParams(params).toString()
@@ -196,26 +164,30 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
         </div>
       </section>
 
-      {/* HOW IT WORKS FOR YOU — moved up (8/25: school pages mirror the
-          landing's order: hero -> How -> Ally -> programs on grey). */}
+      {/* 2026-08-27, James's merge applied here too: this page ran the same
+          two redundant explainers (a step strip AND the who-does-what rail).
+          Now one journey, with the driver inside each sentence. The
+          discount-lives-here banner stays, and stays BEFORE any outbound
+          school link — that placement is the anti-bounce fix. */}
       <section className="bg-white py-16">
         <div className="mx-auto max-w-6xl px-5">
-        {/* 2026-08-25 copy pass: the eyebrow and the dek both restated the
-            heading. One heading is enough to open a section. */}
-        <Heading>How it works for you</Heading>
-        <div className="mt-8">
-          {/* 2026-08-21 reset: the journey map AND the who-does-what boxes,
-              both always visible. The big picture is the confidence builder. */}
-          <StepsStrip steps={howSteps} />
-          <div className="mt-8">
-            <h3 className="text-center font-display text-[15px] font-extrabold text-mk-slate">
-              Who does what
-            </h3>
-            <div className="mt-3">
-              <EcosystemStrip variant="school" schoolName={school.name} partner={partner} />
-            </div>
+          <Eyebrow>How AllCampus works</Eyebrow>
+          <Heading className="mt-2 max-w-2xl">
+            Your path at {firstWord}, guided support, start to finish
+          </Heading>
+
+          <div className="mt-6 rounded-xl border border-mk-teal-600/30 bg-mk-band px-5 py-4 font-display">
+            <p className="text-[15px] font-bold text-mk-slate">
+              Your discount lives here, not on {school.name}&rsquo;s site.
+            </p>
+            <p className="mt-1 text-[14px] leading-relaxed text-mk-body">
+              Going directly to {school.name} means paying their standard tuition.
+            </p>
           </div>
-        </div>
+
+          <div className="mt-8">
+            <JourneySteps bare />
+          </div>
         </div>
       </section>
 

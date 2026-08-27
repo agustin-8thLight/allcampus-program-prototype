@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Eyebrow, Heading, Body } from './Section.jsx'
 import AllyOverlay from '../AllyOverlay.jsx'
 
 /*
@@ -21,28 +20,21 @@ import AllyOverlay from '../AllyOverlay.jsx'
  * OPEN (James, 2026-08-27): whether the specialist's book-a-call stays in this
  * form, and whether both cards should carry a face rather than an icon, to
  * match the learner-story treatment lower down. Icons for now.
+ *
+ * COPY IS JAMES'S, VERBATIM. His mockup also gives this pair NO section
+ * heading and NO question chips on the Ally card: the two cards sit directly
+ * under step 05 as part of the same moment. I had added an eyebrow, a heading,
+ * and three chips; all three are gone.
  */
-
-const ALLY_QUESTIONS = [
-  { id: 'narrow', q: 'I’m not sure what to study' },
-  { id: 'fit', q: 'Will this fit around a full-time job?' },
-  { id: 'outcomes', q: 'Where could a program like this lead?' },
-]
 
 export default function HelpPair({ partner, onSpecialistRef }) {
   const [overlay, setOverlay] = useState(null)
   const open = (seed = null) => setOverlay({ seed })
 
   return (
-    <section id="get-help" className="bg-white pb-20">
+    <section id="get-help" className="bg-white pb-20 pt-2">
       <div className="mx-auto max-w-6xl px-5">
-        <Eyebrow>Two ways to get help</Eyebrow>
-        <Heading className="mt-2 max-w-2xl">Ask anything, or talk to a person</Heading>
-        <Body className="mt-3 max-w-xl">
-          Ally handles the search. A specialist handles your benefit.
-        </Body>
-
-        <div className="mt-8 grid grid-cols-1 items-stretch gap-5 lg:grid-cols-2">
+        <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-2">
           {/* ALLY: self-serve scope */}
           <div className="flex flex-col rounded-[var(--radius-card)] border border-mk-line bg-white p-6 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
             <div className="flex items-center gap-3">
@@ -59,21 +51,10 @@ export default function HelpPair({ partner, onSpecialistRef }) {
               </span>
             </div>
             <p className="mt-3.5 font-display text-[14px] leading-relaxed text-mk-body">
-              Ally helps you find programs, compare options, explore career paths, and find what you
-              can afford. Available any time, right in your account.
+              Ally is an AI support tool that helps you find programs, compare options, explore
+              career paths, and locate affordable programs &mdash; available any time, right in your
+              account.
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {ALLY_QUESTIONS.map((x) => (
-                <button
-                  key={x.id}
-                  type="button"
-                  onClick={() => open(x.id)}
-                  className="rounded-full border border-mk-line bg-white px-3 py-1.5 font-display text-[12.5px] font-bold text-mk-slate transition hover:border-mk-purple hover:text-mk-purple"
-                >
-                  {x.q}
-                </button>
-              ))}
-            </div>
             <div className="mt-auto pt-5">
               <button
                 type="button"
@@ -84,8 +65,8 @@ export default function HelpPair({ partner, onSpecialistRef }) {
                 <span aria-hidden>&#10022;</span>
               </button>
               <p className="mt-3 font-display text-[11.5px] leading-relaxed text-mk-body/70">
-                Ally is AI and can make mistakes. Confirm benefit eligibility and tuition costs with
-                a specialist or your employer.
+                Ally is AI and can make mistakes &mdash; please confirm benefit eligibility and
+                tuition costs with a specialist or your employer.
               </p>
             </div>
           </div>
@@ -114,8 +95,8 @@ export default function HelpPair({ partner, onSpecialistRef }) {
               </span>
             </div>
             <p className="mt-3.5 font-display text-[14px] leading-relaxed text-mk-body">
-              For anything involving eligibility, funding, or paperwork. A specialist walks through
-              your own numbers with you, and the call is free.
+              Get support from an AllCampus Education Benefits Specialist. If you have questions, or
+              need guidance on education or tuition benefits, please book a call.
             </p>
             <div className="mt-auto pt-5">
               <button

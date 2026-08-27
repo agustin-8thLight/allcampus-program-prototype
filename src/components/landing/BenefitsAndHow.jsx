@@ -48,7 +48,6 @@ export function HowItWorks({ partner, onGate }) {
     {
       icon: 'account',
       title: 'Save your profile',
-      highlight: true,
       body: 'Keeps your matches and your pricing with you. Nothing goes to your employer.',
       cta: { label: 'Create your free account', onClick: () => onGate?.('catalog') },
     },
@@ -64,12 +63,16 @@ export function HowItWorks({ partner, onGate }) {
     {
       icon: 'apply',
       title: 'Connect with a school through AllCampus',
+      // 2026-08-27: the emphasis sits here, on the goal. Connecting through
+      // AllCampus is what activates the discount, so it is the thing the whole
+      // path exists to reach — not the account step, which is a means.
+      highlight: true,
       body: 'The school then handles admissions, enrollment, billing, and your discounted tuition.',
     },
   ]
 
   return (
-    <section className="bg-white py-20">
+    <section className="bg-white pb-12 pt-20">
       <div className="mx-auto max-w-6xl px-5">
         {/* No eyebrow: "HOW IT WORKS" over "One path, start to finish" was a
             label restating the heading under it. "Clear" also went — a page

@@ -12,6 +12,11 @@
  * Presentational: pages pass steps [{icon, title, body, highlight?,
  * cta?: {label, onClick}}]. Gradients stay inside the sampled mk palette.
  *
+ * 2026-08-27: `highlight` and `cta` are now INDEPENDENT. The dark card used to
+ * be the only branch that could hold a button, which forced the emphasis onto
+ * whichever step owned the CTA. The emphasis belongs on the last step, the
+ * goal, while the account button stays on step two where it happens.
+ *
  * 2026-08-25: step numerals removed (reading order already carries them) and
  * the second description per card went with them — one card, one sentence.
  */
@@ -72,44 +77,54 @@ export default function StepsStrip({ steps }) {
     >
       {steps.map((s, i) => {
         const Art = ART[s.icon] || ART.find
+        const on = !!s.highlight
         return (
           <li key={s.title} className="relative h-full">
             {i < steps.length - 1 && <ArrowChip />}
-            {s.highlight ? (
-              /* The account card: dark gradient, white type, the button. */
-              <div className="flex h-full flex-col rounded-[var(--radius-card)] bg-gradient-to-br from-mk-teal-600 to-mk-slate p-5 text-white shadow-[0_18px_40px_rgba(51,71,91,0.35)]">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-white shadow-inner backdrop-blur-sm">
-                  <Art className="h-9 w-9" />
-                </div>
-                <p className="mt-3.5 font-display text-[17.5px] font-extrabold leading-snug">
-                  {s.title}
-                </p>
-                <p className="mt-2 font-display text-[13.5px] leading-relaxed text-white/85">
-                  {s.body}
-                </p>
-                {s.cta && (
-                  <button
-                    type="button"
-                    onClick={s.cta.onClick}
-                    className="mt-auto w-full rounded-lg bg-white px-4 py-2.5 pt-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-sm transition hover:bg-mk-band"
-                  >
-                    {s.cta.label}
-                  </button>
-                )}
+            <div
+              className={`flex h-full flex-col rounded-[var(--radius-card)] p-5 transition ${
+                on
+                  ? 'bg-gradient-to-br from-mk-teal-600 to-mk-slate text-white shadow-[0_18px_40px_rgba(51,71,91,0.35)]'
+                  : 'border border-mk-line bg-gradient-to-b from-white to-mk-band/50 shadow-[0_14px_32px_rgba(51,71,91,0.12)] hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(51,71,91,0.16)]'
+              }`}
+            >
+              <div
+                className={`flex h-16 w-16 items-center justify-center rounded-2xl ${
+                  on
+                    ? 'bg-white/15 text-white shadow-inner backdrop-blur-sm'
+                    : 'bg-gradient-to-br from-mk-blue-50 to-mk-band text-mk-teal-700 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_2px_6px_rgba(51,71,91,0.10)]'
+                }`}
+              >
+                <Art className="h-9 w-9" />
               </div>
-            ) : (
-              <div className="flex h-full flex-col rounded-[var(--radius-card)] border border-mk-line bg-gradient-to-b from-white to-mk-band/50 p-5 shadow-[0_14px_32px_rgba(51,71,91,0.12)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(51,71,91,0.16)]">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-mk-blue-50 to-mk-band text-mk-teal-700 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_2px_6px_rgba(51,71,91,0.10)]">
-                  <Art className="h-9 w-9" />
-                </div>
-                <p className="mt-3.5 font-display text-[17.5px] font-extrabold leading-snug text-mk-slate">
-                  {s.title}
-                </p>
-                <p className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
-                  {s.body}
-                </p>
-              </div>
-            )}
+              <p
+                className={`mt-3.5 font-display text-[17.5px] font-extrabold leading-snug ${
+                  on ? '' : 'text-mk-slate'
+                }`}
+              >
+                {s.title}
+              </p>
+              <p
+                className={`mt-2 font-display text-[13.5px] leading-relaxed ${
+                  on ? 'text-white/85' : 'text-mk-body'
+                }`}
+              >
+                {s.body}
+              </p>
+              {s.cta && (
+                <button
+                  type="button"
+                  onClick={s.cta.onClick}
+                  className={`mt-auto w-full rounded-lg px-4 py-2.5 font-display text-[14px] font-bold shadow-sm transition ${
+                    on
+                      ? 'bg-white text-mk-teal-700 hover:bg-mk-band'
+                      : 'bg-mk-teal-600 text-white hover:bg-mk-teal-700'
+                  }`}
+                >
+                  {s.cta.label}
+                </button>
+              )}
+            </div>
           </li>
         )
       })}

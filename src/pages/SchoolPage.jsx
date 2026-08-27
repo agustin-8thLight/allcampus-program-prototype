@@ -58,7 +58,6 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
     {
       icon: 'account',
       title: 'Save your profile',
-      highlight: true,
       body: 'Keeps your matches and your pricing with you. Nothing goes to your employer.',
       cta: { label: 'Create your free account', onClick: () => onGate?.('catalog') },
     },
@@ -70,6 +69,7 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
     {
       icon: 'apply',
       title: 'Connect through AllCampus',
+      highlight: true,
       body: `${firstWord} then handles admissions, enrollment, billing, and your discounted tuition.`,
     },
   ]

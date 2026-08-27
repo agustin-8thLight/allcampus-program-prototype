@@ -4,9 +4,10 @@ import PathfinderHero from '../components/landing/PathfinderHero.jsx'
 import DiscoveryBand from '../components/landing/DiscoveryBand.jsx'
 import ProfileResults from '../components/landing/ProfileResults.jsx'
 import Pathfinder from '../components/Pathfinder.jsx'
-import AllyEntry from '../components/landing/AllyEntry.jsx'
 import AllyOverlay from '../components/AllyOverlay.jsx'
-import { HowItWorks, WhyAllCampus } from '../components/landing/BenefitsAndHow.jsx'
+import { WhyAllCampus } from '../components/landing/BenefitsAndHow.jsx'
+import JourneySteps from '../components/landing/JourneySteps.jsx'
+import HelpPair from '../components/landing/HelpPair.jsx'
 import StoryCards from '../components/landing/StoryCards.jsx'
 import LogoStrip from '../components/landing/LogoStrip.jsx'
 import LandingFaq from '../components/landing/LandingFaq.jsx'
@@ -50,6 +51,12 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
 
   const openPathfinder = (step = 'start') => setPathfinder({ step })
 
+  // 2026-08-27: the three questions are TABLED, so nothing on this page opens
+  // the pathfinder any more. It stays mounted and reachable by prop so the
+  // profile path can come back without a rebuild.
+  const scrollToHelp = () =>
+    document.getElementById('get-help')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
   return (
     <div className="min-h-screen bg-white">
       <MkHeader partner={partner} onNavigate={onNavigate} joined={joined} onGate={onGate} />
@@ -59,35 +66,26 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
         profile={profile}
         joined={joined}
         onSignup={() => onGate?.('catalog')}
-        onStart={() => openPathfinder('start')}
+        onBrowse={() => goBrowse({})}
         onEdit={(step) => openPathfinder(step)}
       />
 
       {profile && <ProfileResults profile={profile} partner={partner} onGate={onGate} onNavigate={onNavigate} />}
 
-      <HowItWorks partner={partner} onGate={onGate} />
+      {/* 2026-08-27, James's note 2: the money explanation runs BEFORE the
+          process. The headline promises that using your benefit shouldn't be
+          confusing, so the financial confusion it names gets answered before
+          anyone is asked to follow five steps. */}
+      <WhyAllCampus partner={partner} onNavigate={onNavigate} onSpecialist={scrollToHelp} />
 
-      {/* Ally sits directly under the path (2026-08-26): secondary WEIGHT,
-          but back up here where the question lands. Someone who has just read
-          the four steps and isn't sure which one they're on is exactly who it
-          is for. Small on purpose, not buried. */}
-      <AllyEntry partner={partner} />
+      <JourneySteps partner={partner} onGate={onGate} onSpecialist={scrollToHelp} />
 
-      <WhyAllCampus
-        partner={partner}
-        onNavigate={onNavigate}
-        onStartProfile={() => openPathfinder('start')}
-      />
+      <HelpPair partner={partner} />
 
       <StoryCards partner={partner} />
 
-      {/* 2026-08-27: moved down from the second slot. This band is not one of
-          the page's arguments — the hero, the path, and Why AllCampus carry
-          the benefits and push the profile. This is here to put something
-          visual on the page showing the breadth of the network, so it sits
-          with the other proof (stories above, partner universities below)
-          rather than competing with the pitch. With a profile set,
-          ProfileResults already shows real programs, so this steps aside. */}
+      {/* Breadth, sitting with the other proof rather than competing with the
+          pitch (2026-08-27). */}
       {!profile && <DiscoveryBand partner={partner} onNavigate={onNavigate} />}
 
       <LogoStrip
@@ -102,15 +100,15 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
           pathfinder sits underneath as the way in for anyone not ready. */}
       <section className="bg-gradient-to-br from-mk-teal-600 to-mk-slate py-14 text-center">
         <Heading size="sm" className="text-white">
-          {joined ? 'Your matches are saved' : 'Three questions, and you\u2019ll see what fits'}
+          {joined ? 'Your matches are saved' : 'Ready when you are'}
         </Heading>
         <div className="mt-5">
           <button
             type="button"
-            onClick={() => (joined ? goBrowse({}) : openPathfinder('start'))}
+            onClick={() => (joined ? goBrowse({}) : onGate?.('catalog'))}
             className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
           >
-            {joined ? 'Browse all programs' : 'Answer 3 questions'}
+            {joined ? 'Browse all programs' : 'Get started'}
             <span aria-hidden>&rarr;</span>
           </button>
         </div>
@@ -139,6 +137,19 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
         }}
         onClose={() => setPathfinder(null)}
       />
+
+      {/* Persistent launcher (James's note 4), so help isn't limited to the
+          one section. He flags the treatment as a rough placeholder: wants a
+          read on styling, mobile placement, and whether it rides every page
+          or only this one. */}
+      <button
+        type="button"
+        onClick={() => setAllyOpen({})}
+        className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-mk-purple px-5 py-3 font-display text-[14px] font-bold text-white shadow-[0_10px_30px_rgba(123,97,196,0.45)] transition hover:opacity-95"
+      >
+        <span aria-hidden>&#10022;</span>
+        Ask Ally
+      </button>
 
       <AllyOverlay open={!!allyOpen} partner={partner} seedContext={allyOpen} onClose={() => setAllyOpen(null)} />
     </div>

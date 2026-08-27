@@ -30,9 +30,11 @@ export default function GateModal({ open, partner, onJoin, onDismiss }) {
             account is what makes it survive past this visit. */}
         <h2 className="text-xl font-black text-ink-900">Create your free account</h2>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
+          {/* 2026-08-27: "your matches" was survey language, and the survey is
+              tabled. Matches step 1 of the journey instead. */}
           {benefit
-            ? `It saves your profile: your matches, and your ${/^your /i.test(partner.name) ? 'employer' : partner.name} pricing, on every visit.`
-            : 'It saves your profile: your matches and your pricing, on every visit.'}
+            ? `Search programs, save favorites, and keep your ${/^your /i.test(partner.name) ? 'employer' : partner.name} pricing on every visit.`
+            : 'Search programs, save favorites, and keep your pricing on every visit.'}
         </p>
         <div className="mt-5 flex items-center gap-2">
           <button

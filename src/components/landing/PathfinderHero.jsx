@@ -11,16 +11,20 @@ import { startLabel, matchPrograms } from '../../data/pathfinder.js'
  * statement, one primary action, and a quiet self-serve outlet for the
  * minority who know exactly what they want.
  *
- * 2026-08-25, second pass: the hero drives ONE action, the three questions.
- * Sign up and log in moved to the header, which is what freed the hero to
- * stop competing with itself — an earlier version had an account button, a
- * survey link, and a browse link stacked under the headline.
+ * 2026-08-27: the three-question flow is TABLED. The client likes the idea
+ * but it introduces complexity this first version doesn't need, so every
+ * entry point to it is gone and the hero's one action is the account. The
+ * Pathfinder component and the whole profile path stay in the codebase,
+ * parked, for when it comes back.
+ *
+ * Per James's notes the hero is eyebrow, headline, dek, one CTA, and a stat
+ * row — nothing else, so it does not compete with itself.
  *
  * With a profile set, the floating card slot (where the search card used to
  * hang) holds the education profile instead: answers echoed, each editable,
  * the Amazon "here's everything we know about you, is this true?" moment.
  */
-export default function PathfinderHero({ partner, profile, joined = false, onSignup, onStart, onEdit }) {
+export default function PathfinderHero({ partner, profile, joined = false, onSignup, onBrowse, onEdit }) {
   const known = !!partner?.benefitKnown
   const reimburses = known && (partner?.employerReimbursement ?? 0) > 0
   const maxPct = bestDiscountPercent(PROGRAMS)
@@ -54,35 +58,40 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
 
           {!profile && (
             <>
-              <div className="mt-10">
+              <div className="mt-9">
                 <button
                   type="button"
-                  onClick={() => onStart?.()}
-                  className="inline-flex items-center gap-2 rounded-lg bg-white px-10 py-4 text-[17px] font-bold text-mk-teal-700 shadow-[0_14px_36px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:bg-mk-band"
+                  onClick={() => (joined ? onBrowse?.() : onSignup?.())}
+                  className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-3.5 text-[16px] font-bold text-mk-teal-700 shadow-[0_14px_36px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:bg-mk-band"
                 >
-                  Answer 3 questions
+                  {joined ? 'Browse all programs' : 'Create an account'}
                   <span aria-hidden>→</span>
                 </button>
-                <p className="mt-3 text-[13px] font-semibold text-white/75">
-                  About a minute.
-                </p>
               </div>
 
-              {/* Proof row: the network numbers, beside the first decision. */}
-              <ul className="mt-9 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/20 pt-6">
+              {/* Stat row. Counts come from the catalog, so they agree with
+                  Why AllCampus and the logo strip further down. James's
+                  mockup used 50+ / 1,100+ production figures up here and
+                  flagged the mismatch himself; deriving them keeps one set of
+                  numbers on the page until someone verifies the real ones. */}
+              <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
                 {[
-                  `${Object.keys(SCHOOLS).length} partner universities`,
-                  `${PROGRAMS.length} programs`,
-                  maxPct != null ? `Up to ${maxPct}% off tuition` : 'Negotiated tuition discounts',
-                ].map((t) => (
-                  <li
-                    key={t}
-                    className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[12.5px] font-bold text-white/90 backdrop-blur-sm"
+                  { v: String(Object.keys(SCHOOLS).length), l: 'Partner schools' },
+                  { v: String(PROGRAMS.length), l: 'Programs' },
+                  { v: maxPct != null ? `${maxPct}%` : 'Yes', l: 'Off tuition' },
+                  { v: 'Free', l: 'Benefits support' },
+                ].map((st) => (
+                  <div
+                    key={st.l}
+                    className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm"
                   >
-                    {t}
-                  </li>
+                    <dt className="text-[22px] font-black leading-none text-white">{st.v}</dt>
+                    <dd className="mt-1 text-[12px] font-semibold leading-snug text-white/75">
+                      {st.l}
+                    </dd>
+                  </div>
                 ))}
-              </ul>
+              </dl>
             </>
           )}
         </div>
@@ -96,13 +105,7 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
               <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
                 Your education profile
               </p>
-              <button
-                type="button"
-                onClick={() => onStart?.()}
-                className="text-[12.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
-              >
-                Start over
-              </button>
+              <span />
             </div>
             <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
               <ProfileCell

@@ -91,14 +91,14 @@ export function HowItWorks({ partner, onGate }) {
   )
 }
 
-export function WhyAllCampus({ partner, onNavigate, onStartProfile }) {
+export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
   const { reimburses, noTr, trPossible } = partnerState(partner)
   const maxPct = bestDiscountPercent(PROGRAMS)
   const schoolCount = Object.keys(SCHOOLS).length
   const cappedSchools = Object.values(SCHOOLS).filter((s) => s.tuitionCap)
 
   return (
-    <section className="bg-mk-surface py-20">
+    <section className="bg-white py-20">
       <div className="mx-auto max-w-6xl px-5">
         {/* Brigid's WHY ALLCAMPUS headline (content doc, 2026-08-20), Version
             A for TR audiences / Version B general. */}
@@ -107,6 +107,17 @@ export function WhyAllCampus({ partner, onNavigate, onStartProfile }) {
           {schoolCount} schools. {PROGRAMS.length} programs.{' '}
           {reimburses ? 'Discounts already negotiated.' : `Up to ${maxPct}% off tuition.`}
         </Heading>
+
+        {/* 2026-08-27, James's note 3: nothing on the page said outright what
+            kind of company AllCampus is, or that the employer chose it. That
+            matters to anyone wary of a third party touching their benefit. */}
+        <p className="mt-3 max-w-2xl font-display text-[15px] leading-relaxed text-mk-body">
+          <strong className="font-extrabold text-mk-slate">
+            AllCampus is {partner?.benefitKnown && !/^your /i.test(partner.name) ? `${partner.name}\u2019s` : 'your employer\u2019s'}{' '}
+            tuition benefit partner
+          </strong>
+          , built to help you use your discount and your reimbursement without the runaround.
+        </p>
 
         {/* 2026-08-25: the stat tiles came out (the headline already carries
             those figures), and the three stacked cards became ONE card. Three
@@ -189,10 +200,10 @@ export function WhyAllCampus({ partner, onNavigate, onStartProfile }) {
                       once there's an account behind it. */}
                   <button
                     type="button"
-                    onClick={() => onStartProfile?.()}
+                    onClick={() => onNavigate?.('/browse')}
                     className="font-display text-[12.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
                   >
-                    See your price at these schools &rarr;
+                    See all programs &rarr;
                   </button>
                 </span>
               </div>
@@ -200,12 +211,21 @@ export function WhyAllCampus({ partner, onNavigate, onStartProfile }) {
           </div>
         </div>
 
-        {/* Who does what: moved here from How it works (2026-08-25). */}
-        <h3 className="mt-14 text-center font-display text-[16px] font-extrabold text-mk-slate">
-          Who does what
-        </h3>
-        <div className="mt-4">
-          <EcosystemStrip variant="landing" partner={partner} />
+        {/* 2026-08-27: "Who does what" is GONE from this page. Its content
+            did not disappear — each of the five journey steps now names its
+            own driver inline, which is what James's merge was for. The
+            EcosystemStrip component stays in the tree for the school page. */}
+        <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <p className="font-display text-[14.5px] font-semibold text-mk-body">
+            Not sure what your own numbers look like?
+          </p>
+          <button
+            type="button"
+            onClick={() => onSpecialist?.()}
+            className="font-display text-[14.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
+          >
+            Talk to an Education Benefits specialist &rarr;
+          </button>
         </div>
 
         {/* 2026-08-25: the standalone activation banner is gone. The same

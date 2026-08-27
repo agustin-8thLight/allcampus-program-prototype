@@ -57,7 +57,7 @@ export default function DiscoveryBand({ partner, onNavigate }) {
   if (allGoals.length < 3) return null
 
   return (
-    <section className="bg-white py-20">
+    <section className="bg-mk-surface pb-16">
       <div className="mx-auto max-w-6xl px-5">
         <Eyebrow>What&rsquo;s inside</Eyebrow>
         <Heading className="mt-2 max-w-2xl">Where do you want to end up?</Heading>

@@ -22,12 +22,12 @@ import { Heading } from '../components/landing/Section.jsx'
  *  1. Hero: value statement + "Let's get started" (pathfinder) + a quiet
  *     self-serve outlet. With a profile: the profile card floats here.
  *  2. Profile results (only with a profile): matched programs, outcome lenses
- *  3. Discovery band (white, no profile only): outcome photo cards + the
- *     four subject tiles. Breadth, both exits pre-narrowed.
- *  4. How it works (white)
- *  5. Ally (grey opens here, secondary weight)
- *  6. Why AllCampus (grey): the value card + who-does-what
- *  7. Learner stories (grey)
+ *  3. How it works (white)
+ *  4. Ally (grey opens here, secondary weight)
+ *  5. Why AllCampus (grey): the value card + who-does-what
+ *  6. Learner stories (grey)
+ *  7. Discovery band (grey, no profile only): breadth of the network, not an
+ *     argument. Proof, sitting with the other proof.
  *  8. Partner school logos + See all schools (grey)
  *  9. FAQ (grey), then the dark CTA bookend -> the three questions, footer
  *
@@ -65,12 +65,6 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
 
       {profile && <ProfileResults profile={profile} partner={partner} onGate={onGate} onNavigate={onNavigate} />}
 
-      {/* Breadth, before the process explanation (2026-08-26). Answers the
-          skeptic's first question, "is there anything here for me," which is
-          worth nothing if it lands after the how-it-works. With a profile set,
-          ProfileResults above already answers it, so this steps aside. */}
-      {!profile && <DiscoveryBand partner={partner} onNavigate={onNavigate} />}
-
       <HowItWorks partner={partner} onGate={onGate} />
 
       {/* Ally sits directly under the path (2026-08-26): secondary WEIGHT,
@@ -86,6 +80,15 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
       />
 
       <StoryCards partner={partner} />
+
+      {/* 2026-08-27: moved down from the second slot. This band is not one of
+          the page's arguments — the hero, the path, and Why AllCampus carry
+          the benefits and push the profile. This is here to put something
+          visual on the page showing the breadth of the network, so it sits
+          with the other proof (stories above, partner universities below)
+          rather than competing with the pitch. With a profile set,
+          ProfileResults already shows real programs, so this steps aside. */}
+      {!profile && <DiscoveryBand partner={partner} onNavigate={onNavigate} />}
 
       <LogoStrip
         onSelectSchool={(s) => onNavigate(`/school/${s.id}`)}

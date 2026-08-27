@@ -208,7 +208,7 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
               both always visible. The big picture is the confidence builder. */}
           <StepsStrip steps={howSteps} />
           <div className="mt-8">
-            <h3 className="font-display text-[15px] font-extrabold text-mk-slate">
+            <h3 className="text-center font-display text-[15px] font-extrabold text-mk-slate">
               Who does what
             </h3>
             <div className="mt-3">

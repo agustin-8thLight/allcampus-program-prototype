@@ -201,7 +201,7 @@ export function WhyAllCampus({ partner, onNavigate, onStartProfile }) {
         </div>
 
         {/* Who does what: moved here from How it works (2026-08-25). */}
-        <h3 className="mt-14 font-display text-[16px] font-extrabold text-mk-slate">
+        <h3 className="mt-14 text-center font-display text-[16px] font-extrabold text-mk-slate">
           Who does what
         </h3>
         <div className="mt-4">

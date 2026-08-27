@@ -26,7 +26,7 @@ export default function StoryCards({ partner }) {
         {stories.map((s) => (
           <figure
             key={s.id}
-            className="overflow-hidden rounded-xl border border-mk-line bg-white"
+            className="flex h-full flex-col overflow-hidden rounded-xl border border-mk-line bg-white"
           >
             {/* Learner portrait */}
             <div className="relative h-52">
@@ -44,18 +44,24 @@ export default function StoryCards({ partner }) {
                 <span className="block text-[12.5px] text-white/85">{s.role}</span>
               </figcaption>
             </div>
-            <blockquote className="p-5">
+            <blockquote className="flex flex-1 flex-col p-5">
               <p className="font-display text-[14px] leading-relaxed text-mk-slate">
                 &ldquo;{s.quote}&rdquo;
               </p>
-              <p className="mt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
-                {s.program}
-              </p>
-              {s.outcome && (
-                <p className="mt-1 flex items-center gap-1.5 font-display text-[12.5px] font-bold text-mk-green-700">
-                  <span aria-hidden>→</span> {s.outcome}
-                </p>
-              )}
+              {/* 2026-08-27: the program and the outcome were two arrowed text
+                  lines that landed at a different height on every card. They
+                  are tags now, pinned to the card's bottom by mt-auto, so the
+                  row reads as one band instead of three floating footers. */}
+              <span className="mt-auto flex flex-wrap gap-2 pt-4">
+                <span className="rounded-full border border-mk-line bg-mk-surface px-3 py-1 font-display text-[12px] font-bold text-mk-teal-700">
+                  {s.program}
+                </span>
+                {s.outcome && (
+                  <span className="rounded-full border border-mk-green-600/30 bg-mk-green-600/10 px-3 py-1 font-display text-[12px] font-bold text-mk-green-700">
+                    {s.outcome}
+                  </span>
+                )}
+              </span>
             </blockquote>
           </figure>
         ))}

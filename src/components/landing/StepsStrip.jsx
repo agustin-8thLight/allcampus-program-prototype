@@ -111,11 +111,14 @@ export default function StepsStrip({ steps }) {
               >
                 {s.body}
               </p>
+              {/* mt-auto pins it to the card's bottom edge; the pt gives it
+                  air, since mt-auto alone left it flush against the body. */}
               {s.cta && (
+                <div className="mt-auto pt-5">
                 <button
                   type="button"
                   onClick={s.cta.onClick}
-                  className={`mt-auto w-full rounded-lg px-4 py-2.5 font-display text-[14px] font-bold shadow-sm transition ${
+                  className={`w-full rounded-lg px-4 py-2.5 font-display text-[14px] font-bold shadow-sm transition ${
                     on
                       ? 'bg-white text-mk-teal-700 hover:bg-mk-band'
                       : 'bg-mk-teal-600 text-white hover:bg-mk-teal-700'
@@ -123,6 +126,7 @@ export default function StepsStrip({ steps }) {
                 >
                   {s.cta.label}
                 </button>
+                </div>
               )}
             </div>
           </li>

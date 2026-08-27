@@ -66,7 +66,7 @@ export default function DiscoveryBand({ partner, onNavigate }) {
         </Body>
 
         {/* TIER 1: outcomes, the emotive cards. */}
-        <div className="mt-8 grid grid-cols-1 items-start gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {goals.map((g) => {
             const matches = PROGRAMS.filter((p) => programMatchesGoal(p, g))
             // Chips answer "what's actually inside this outcome", by frequency
@@ -98,9 +98,9 @@ export default function DiscoveryBand({ partner, onNavigate }) {
                 key={g.id}
                 type="button"
                 onClick={() => onNavigate?.(`/browse?goal=${g.id}`)}
-                className="group overflow-hidden rounded-xl border border-mk-line bg-white text-left shadow-[0_2px_10px_rgba(51,71,91,0.05)] transition hover:-translate-y-0.5 hover:border-mk-teal-600 hover:shadow-[0_10px_28px_rgba(69,120,140,0.14)]"
+                className="group flex h-full flex-col overflow-hidden rounded-xl border border-mk-line bg-white text-left shadow-[0_2px_10px_rgba(51,71,91,0.05)] transition hover:-translate-y-0.5 hover:border-mk-teal-600 hover:shadow-[0_10px_28px_rgba(69,120,140,0.14)]"
               >
-                <span className="relative block h-40">
+                <span className="relative block h-40 shrink-0">
                   <Img
                     src={goalImage(g.id)}
                     alt=""
@@ -116,7 +116,7 @@ export default function DiscoveryBand({ partner, onNavigate }) {
                     </span>
                   </span>
                 </span>
-                <span className="block p-4">
+                <span className="flex flex-1 flex-col p-4">
                   <span className="block font-display text-[13.5px] leading-relaxed text-mk-body">
                     {g.sub}
                   </span>
@@ -132,7 +132,9 @@ export default function DiscoveryBand({ partner, onNavigate }) {
                       ))}
                     </span>
                   )}
-                  <span className="mt-3 flex items-center gap-1.5 font-display text-[12.5px] font-bold text-mk-teal-700">
+                  {/* Pinned to the bottom so the count sits on one line
+                      across the row, whatever the chips did above it. */}
+                  <span className="mt-auto flex items-center gap-1.5 pt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
                     {matches.length} program{matches.length === 1 ? '' : 's'}
                     <span aria-hidden className="transition group-hover:translate-x-0.5">
                       &rarr;

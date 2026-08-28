@@ -72,6 +72,21 @@ export const CORPORATE_PARTNERS = {
     id: 'texas-roadhouse',
     // Corrected per Brigid (2026-08-19 session): Texas Roadhouse is the MIXED
     // eligibility example — some employees have TR, some don't — not no-TR.
+    //
+    // 2026-08-28: that correction changed partnerType and stopped, leaving the
+    // policy string below still written for the no-TR reading. It said Texas
+    // Roadhouse "does not currently offer tuition reimbursement," which is the
+    // opposite of mixed, and Ally was reading it out while the page said
+    // eligibility depends on your role. Policy string rewritten to match the
+    // type, in Brigid's own words for this archetype (see her direct-mixed
+    // employer box in EcosystemStrip.jsx).
+    //
+    // The four reimbursement amounts stay at 0 ON PURPOSE. Inventing a dollar
+    // figure for a real named client is not ours to do, and 0 is functionally
+    // right: it drives partnerState to trPossible, so the page asks someone to
+    // check whether they qualify rather than promising an amount they may not
+    // get. Add the real value here and the page flips to the confident
+    // "Confirm your benefit" framing on its own.
     partnerType: 'direct-mixed',
     benefitAdmin: null,
     policyLocation: 'your Texas Roadhouse benefits team',
@@ -84,7 +99,7 @@ export const CORPORATE_PARTNERS = {
     minBenefit: 0,
     reimbursementProvider: null,
     policy:
-      'Texas Roadhouse does not currently offer tuition reimbursement. AllCampus partner discounts still apply to every program.',
+      'Texas Roadhouse offers a Tuition Reimbursement Benefit, but eligibility depends on your role, so check with your benefits team to confirm yours. Access to the AllCampus discount network is guaranteed for everyone, regardless of reimbursement eligibility.',
     emphasizedAreaIds: ['healthcare', 'business'],
     hiddenAreaIds: [],
   },

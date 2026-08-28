@@ -1,5 +1,6 @@
 import { Eyebrow, Heading } from './Section.jsx'
 import { partnerState } from './BenefitsAndHow.jsx'
+import { hasBenefitAdmin } from '../../data/corporatePartners.js'
 
 /*
  * JourneySteps (2026-08-27) — James Guajardo's design notes, "Journey &
@@ -27,12 +28,17 @@ import { partnerState } from './BenefitsAndHow.jsx'
  * part of the step label, and load-bearing in a five-step sequence.
  *
  * COPY IS JAMES'S, VERBATIM (2026-08-27), em dashes and ampersands included.
- * 2026-08-28: step 04 is the one exception. His copy is written for a direct
- * partner WITH reimbursement, which is the scenario his mockup shows. "Confirm
- * your employer tuition benefit" said to a no-TR employer asks someone to
- * confirm a benefit that does not exist, and to an unknown employer it asserts
- * one we have not established. His sentence stands wherever there IS a
- * benefit; the other two cases get honest variants.
+ * 2026-08-28: step 04 is the one exception, because his copy is written for a
+ * direct partner WITH reimbursement — the scenario his mockup shows. "Confirm
+ * your employer tuition benefit" asks a no-TR employee to confirm a benefit
+ * that doesn't exist, and names the wrong party when an administrator runs it.
+ *
+ * The variants are NOT new writing. Each reuses the language already approved
+ * for that partner type in EcosystemStrip's employerBox (Brigid's strings) and
+ * the partner records' own policy copy: "eligibility depends on your role, so
+ * check with HR" for mixed, and "discounts still apply to every program" for
+ * no-TR. His sentence stands verbatim wherever there is a benefit the employer
+ * itself approves.
  * His mockup carries no driver pills and no per-step buttons: the driver is
  * inside the sentence ("with your employer", "through AllCampus"), which is a
  * lighter way to do it than the chips I had. Client language of record, not
@@ -83,6 +89,7 @@ const ART = {
  */
 export default function JourneySteps({ partner, bare = false }) {
   const { reimburses, noTr } = partnerState(partner)
+  const admin = hasBenefitAdmin(partner) ? partner.benefitAdmin?.name : null
   const steps = [
     {
       icon: 'account',
@@ -104,18 +111,20 @@ export default function JourneySteps({ partner, bare = false }) {
       ? {
           icon: 'confirm',
           title: 'Confirm your price',
-          body: 'A specialist confirms your discounted price and next steps \u2014 no employer approval needed.',
+          body: 'Partner discounts apply to every program \u2014 a specialist can confirm your price.',
         }
       : reimburses
         ? {
             icon: 'confirm',
             title: 'Confirm your employer tuition benefit',
-            body: 'Confirm eligibility and complete approvals with your employer \u2014 a specialist can help.',
+            body: admin
+              ? `Confirm eligibility and complete approvals with ${admin} \u2014 a specialist can help.`
+              : 'Confirm eligibility and complete approvals with your employer \u2014 a specialist can help.',
           }
         : {
             icon: 'confirm',
             title: 'Check your employer tuition benefit',
-            body: 'Many employers put money toward tuition \u2014 a specialist can help you find out.',
+            body: 'Eligibility depends on your role, so check with HR \u2014 a specialist can help.',
           },
     {
       icon: 'start',

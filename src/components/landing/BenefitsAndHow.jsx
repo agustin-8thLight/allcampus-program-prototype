@@ -76,14 +76,14 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
         <p className="mt-3 max-w-2xl font-display text-[15px] leading-relaxed text-mk-body">
           <strong className="font-extrabold text-mk-slate">
             AllCampus is {possessive}{' '}
-            {noTr ? 'education benefits partner' : 'tuition benefit partner'}
+            {noTr ? 'discount network partner' : 'tuition benefit partner'}
           </strong>{' '}
-          &mdash; built to help you use your{' '}
+          &mdash;{' '}
           {noTr
-            ? 'tuition discount without the runaround.'
+            ? 'built to reduce the cost of tuition for you.'
             : reimburses
-              ? 'discount and your reimbursement without the runaround.'
-              : 'discount, and any reimbursement you qualify for, without the runaround.'}
+              ? 'built to help you use your discount and your reimbursement without the runaround.'
+              : 'built to help you use your discount, guaranteed for everyone, and your reimbursement if your role qualifies.'}
         </p>
 
         {/* 2026-08-25: the stat tiles came out (the headline already carries

@@ -1,9 +1,18 @@
 import { SCHOOLS } from '../../data/schools.js'
+import { WHY_COUNTS } from '../../data/landingCopy.js'
+import { MkButton } from './Section.jsx'
 
 /*
  * Partner school logo strip (stays, per 2026-08-11 meeting). Monogram
  * placeholders stand in for real school logos; clicking one opens that
  * school's page.
+ *
+ * 2026-08-28: the label leads with Brigid's network figure, not the mock
+ * catalog's count. It used to say "24 partner universities" three screens
+ * under a hero claiming 50+, which is the page arguing with itself. The
+ * "See all" button dropped its number for the same reason: the directory
+ * below genuinely holds 24 records, and a real count sitting beside a
+ * network claim it contradicts is worse than no count.
  */
 
 export default function LogoStrip({ onSelectSchool, onSeeAll }) {
@@ -12,10 +21,10 @@ export default function LogoStrip({ onSelectSchool, onSeeAll }) {
   const allSchools = Object.values(SCHOOLS)
   const schools = allSchools.slice(0, 10)
   return (
-    <section className="bg-mk-surface py-12">
+    <section className="bg-mk-surface pb-20">
       <div className="mx-auto max-w-6xl px-5">
         <p className="mb-6 text-center font-display text-[12px] font-bold uppercase tracking-[0.16em] text-mk-body">
-          {allSchools.length} partner universities, one application path
+          {WHY_COUNTS.schools} partner universities, one application path
         </p>
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-5">
         {schools.map((s) => (
@@ -27,12 +36,12 @@ export default function LogoStrip({ onSelectSchool, onSeeAll }) {
             className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition hover:bg-mk-band"
           >
             <span
-              className="flex h-10 w-10 items-center justify-center rounded-lg text-[14px] font-black text-white shadow-sm"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-[15px] font-black text-white shadow-sm"
               style={{ background: s.logoColor }}
             >
               {s.logoMonogram}
             </span>
-            <span className="font-display text-[13.5px] font-bold text-mk-slate group-hover:text-mk-teal-700">
+            <span className="font-display text-[13px] font-bold text-mk-slate group-hover:text-mk-teal-700">
               {s.name}
             </span>
           </button>
@@ -43,13 +52,9 @@ export default function LogoStrip({ onSelectSchool, onSeeAll }) {
             explicit CTA was added. 2026-08-25 copy pass: with the button
             here, the +N tile was a third way of saying the same thing. */}
         <div className="mt-7 text-center">
-          <button
-            type="button"
-            onClick={() => onSeeAll?.()}
-            className="inline-flex items-center justify-center rounded-md border border-mk-teal-600 bg-white px-5 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 transition hover:bg-mk-band"
-          >
-            See all {allSchools.length} schools →
-          </button>
+          <MkButton tone="outline" onClick={() => onSeeAll?.()}>
+            See all schools →
+          </MkButton>
         </div>
       </div>
     </section>

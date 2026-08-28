@@ -1,4 +1,5 @@
 import MkHeader from '../components/landing/MkHeader.jsx'
+import { WHY_COUNTS } from '../data/landingCopy.js'
 import { Eyebrow, Heading, Body } from '../components/landing/Section.jsx'
 import { SCHOOLS } from '../data/schools.js'
 import { PROGRAMS } from '../data/model.js'
@@ -37,7 +38,7 @@ export default function SchoolsPage({ partner, joined = false, onGate, onNavigat
           <div className="mt-4">
             <Eyebrow>The network</Eyebrow>
             <Heading size="lg" className="mt-1">
-              {schools.length} partner universities, one application path
+              {WHY_COUNTS.schools} partner universities, one application path
             </Heading>
             <Body className="mt-3 max-w-2xl">
               Every school here has agreed to AllCampus partner pricing. Enrolling through

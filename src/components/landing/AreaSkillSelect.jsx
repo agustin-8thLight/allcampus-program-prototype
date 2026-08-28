@@ -75,7 +75,7 @@ export default function AreaSkillSelect({ value, onChange }) {
   }
 
   const pill = (active) =>
-    `rounded-full border px-4 py-2.5 text-left font-display text-[13.5px] font-semibold transition ${
+    `rounded-full border px-4 py-2.5 text-left font-display text-[13px] font-semibold transition ${
       active
         ? 'border-mk-teal-600 bg-mk-band text-mk-teal-700'
         : 'border-mk-line bg-white text-mk-slate hover:border-mk-teal-600 hover:text-mk-teal-700'
@@ -97,7 +97,7 @@ export default function AreaSkillSelect({ value, onChange }) {
           aria-haspopup="true"
           aria-expanded={open}
           aria-describedby="area-skill-label"
-          className={`flex w-full items-center justify-between gap-2 rounded-md border bg-white px-3 py-2.5 text-left font-display text-[14px] transition ${
+          className={`flex w-full items-center justify-between gap-2 rounded-md border bg-white px-3 py-2.5 text-left font-display text-[15px] transition ${
             open ? 'border-mk-teal-600' : 'border-mk-line hover:border-mk-teal-600'
           } ${value ? 'text-mk-slate' : 'text-mk-body/60'}`}
         >
@@ -125,7 +125,7 @@ export default function AreaSkillSelect({ value, onChange }) {
                   key={t.id}
                   type="button"
                   onClick={() => setTab(t.id)}
-                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-t-lg border-b-2 px-3.5 py-3 font-display text-[13.5px] font-bold transition ${
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-t-lg border-b-2 px-3.5 py-3 font-display text-[13px] font-bold transition ${
                     active
                       ? 'border-mk-teal-600 text-mk-teal-700'
                       : 'border-transparent text-mk-body hover:text-mk-slate'
@@ -150,7 +150,7 @@ export default function AreaSkillSelect({ value, onChange }) {
                     className={pill(value === `goal:${g.id}`)}
                   >
                     {g.label}
-                    <span className="ml-1.5 text-[11.5px] font-semibold text-mk-body/70">
+                    <span className="ml-1.5 text-[12px] font-semibold text-mk-body/70">
                       {counts.goal[g.id] || 0}
                     </span>
                   </button>
@@ -164,7 +164,7 @@ export default function AreaSkillSelect({ value, onChange }) {
                   className={pill(value === `area:${activeArea.id}`)}
                 >
                   All of {activeArea.label}
-                  <span className="ml-1.5 text-[11.5px] font-semibold text-mk-body/70">
+                  <span className="ml-1.5 text-[12px] font-semibold text-mk-body/70">
                     {counts.area[activeArea.id] || 0}
                   </span>
                 </button>
@@ -176,7 +176,7 @@ export default function AreaSkillSelect({ value, onChange }) {
                     className={pill(value === `skill:${s.id}`)}
                   >
                     {s.label}
-                    <span className="ml-1.5 text-[11.5px] font-semibold text-mk-body/70">
+                    <span className="ml-1.5 text-[12px] font-semibold text-mk-body/70">
                       {counts.skill[s.id] || 0}
                     </span>
                   </button>

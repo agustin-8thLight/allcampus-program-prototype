@@ -51,7 +51,6 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
       ? `${partner.name}\u2019s`
       : 'your employer\u2019s'
   const maxPct = bestDiscountPercent(PROGRAMS)
-  const schoolCount = Object.keys(SCHOOLS).length
   const cappedSchools = Object.values(SCHOOLS).filter((s) => s.tuitionCap)
 
   return (
@@ -64,7 +63,7 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
             catalog's computed 24/135 while James's hero carried 50+/1,100+,
             so the page had two number sets and neither was hers (she says
             1,200+). Her doc does sanction computed mock counts, so reverting
-            is a one-line swap back to schoolCount/PROGRAMS.length. */}
+            is a one-line swap back to the catalog's computed counts. */}
         <Eyebrow>Why AllCampus</Eyebrow>
         <Heading className="mt-2 max-w-3xl">
           {WHY_COUNTS.schools} schools. {WHY_COUNTS.programs} programs.{' '}
@@ -118,30 +117,30 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
             className="h-64 w-full lg:h-full lg:min-h-[400px]"
           />
 
-          <div className="rounded-[var(--radius-card)] border border-mk-line bg-white p-7 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
-            <p className="font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
+          <div className="rounded-[var(--radius-card)] border border-mk-line bg-white p-8">
+            <p className="font-display text-[12px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
               For everyone
             </p>
-            <p className="mt-1.5 font-display text-[27px] font-black leading-tight text-mk-slate">
+            <p className="mt-1.5 font-display text-[28px] font-black leading-tight text-mk-slate">
               {maxPct != null ? `Up to ${maxPct}% off tuition` : 'Exclusive tuition discounts'}
             </p>
-            <p className="mt-2 font-display text-[14.5px] leading-relaxed text-mk-body">
+            <p className="mt-2 font-display text-[15px] leading-relaxed text-mk-body">
               AllCampus already secured your discount &mdash; it&rsquo;s just waiting to be
               activated. Connect with a school through AllCampus to make that happen.
             </p>
 
             <div className="mt-6 border-t border-mk-line pt-5">
-              <p className="font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
+              <p className="font-display text-[12px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
                 {reimburses ? 'From your employer' : trPossible ? 'Worth checking' : 'The certain part'}
               </p>
-              <p className="mt-1.5 font-display text-[20px] font-extrabold leading-snug text-mk-slate">
+              <p className="mt-1.5 font-display text-[22px] font-extrabold leading-snug text-mk-slate">
                 {reimburses
                   ? `${money(partner.employerReimbursement)}/yr toward tuition`
                   : trPossible
                     ? 'Tuition reimbursement may be available'
                     : 'The discount network is yours regardless'}
               </p>
-              <p className="mt-2 font-display text-[14px] leading-relaxed text-mk-body">
+              <p className="mt-2 font-display text-[15px] leading-relaxed text-mk-body">
                 {reimburses
                   ? `Tuition reimbursement${hasBenefitAdmin(partner) ? ', administered through your benefit portal,' : ''} stacks on top of the discount. Eligibility, approval, and filing are owned by your employer, not AllCampus.`
                   : trPossible
@@ -155,7 +154,7 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
                 {/* 2026-08-28: the bold headline here duplicated Brigid's
                     dek, which now runs under the section heading where her
                     doc puts it. Support line and school links stay. */}
-                <p className="font-display text-[13.5px] leading-relaxed text-mk-body">
+                <p className="font-display text-[13px] leading-relaxed text-mk-body">
                   {reimburses
                     ? 'The cap matches your reimbursement, so your benefit covers it entirely.'
                     : noTr
@@ -171,7 +170,7 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
                       key={s.id}
                       type="button"
                       onClick={() => onNavigate?.(`/school/${s.id}`)}
-                      className="rounded-full border border-mk-line bg-white px-3 py-1 font-display text-[12.5px] font-bold text-mk-slate transition hover:border-mk-teal-600 hover:text-mk-teal-700"
+                      className="rounded-full border border-mk-line bg-white px-3 py-1 font-display text-[13px] font-bold text-mk-slate transition hover:border-mk-teal-600 hover:text-mk-teal-700"
                     >
                       {s.name} &rarr;
                     </button>
@@ -183,7 +182,7 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
                   <button
                     type="button"
                     onClick={() => onNavigate?.('/browse')}
-                    className="font-display text-[12.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
+                    className="font-display text-[13px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
                   >
                     See your price at these schools &rarr;
                   </button>
@@ -198,13 +197,13 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
             own driver inline, which is what James's merge was for. The
             EcosystemStrip component stays in the tree for the school page. */}
         <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2">
-          <p className="font-display text-[14.5px] font-semibold text-mk-body">
+          <p className="font-display text-[15px] font-semibold text-mk-body">
             Not sure what your own numbers look like?
           </p>
           <button
             type="button"
             onClick={() => onSpecialist?.()}
-            className="font-display text-[14.5px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
+            className="font-display text-[15px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
           >
             Talk to an Education Benefits specialist &rarr;
           </button>

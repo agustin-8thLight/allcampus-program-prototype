@@ -59,7 +59,7 @@ export default function AllyEntry({ partner }) {
             direction. Grey opens at Why AllCampus again. Separation comes from
             the section's own padding rather than a ground change, since a
             tinted band of its own would be a third ground. */}
-        <div className="flex flex-col gap-5 overflow-hidden rounded-xl border border-mk-line bg-white p-5 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-5 overflow-hidden rounded-[var(--radius-card)] border border-mk-line bg-white p-5 sm:flex-row sm:items-center">
           <Img
             src={ALLY_IMAGE}
             alt=""
@@ -69,10 +69,10 @@ export default function AllyEntry({ partner }) {
           />
 
           <div className="min-w-0 flex-1">
-            <p className="font-display text-[16px] font-extrabold leading-snug text-mk-slate">
+            <p className="font-display text-[16.5px] font-extrabold leading-snug text-mk-slate">
               Still deciding? Talk it through with Ally.
             </p>
-            <p className="mt-1 font-display text-[13.5px] leading-relaxed text-mk-body">
+            <p className="mt-1 font-display text-[13px] leading-relaxed text-mk-body">
               What to study, which credential fits, how it works around a full-time job.
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -81,7 +81,7 @@ export default function AllyEntry({ partner }) {
                   key={x.id}
                   type="button"
                   onClick={() => open(x.id)}
-                  className="rounded-full border border-mk-line bg-white px-3 py-1.5 font-display text-[12.5px] font-bold text-mk-slate transition hover:border-mk-purple hover:text-mk-purple"
+                  className="rounded-full border border-mk-line bg-white px-3 py-1.5 font-display text-[13px] font-bold text-mk-slate transition hover:border-mk-purple hover:text-mk-purple"
                 >
                   {x.q}
                 </button>
@@ -89,12 +89,12 @@ export default function AllyEntry({ partner }) {
               <button
                 type="button"
                 onClick={() => open()}
-                className="font-display text-[12.5px] font-bold text-mk-purple underline-offset-2 hover:underline"
+                className="font-display text-[13px] font-bold text-mk-purple underline-offset-2 hover:underline"
               >
                 Open Ally &#10022;
               </button>
             </div>
-            <p className="mt-3 font-display text-[11px] leading-relaxed text-mk-body/70">
+            <p className="mt-3 font-display text-[12px] leading-relaxed text-mk-body/70">
               Ally can make mistakes, and it can&rsquo;t confirm eligibility or approve funding.
             </p>
           </div>

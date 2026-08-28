@@ -45,8 +45,6 @@
   --color-brand-900: #163c40;
 
   /* Accent blue, used by secondary affordances (search, links). */
-  --color-accent-500: #2563eb;
-  --color-accent-600: #1d4ed8;
 
   /* Neutral ink/surface ramp. */
   --color-ink-900: #1a1d21;
@@ -69,7 +67,28 @@
   --color-info-50: #eaf2fe;
   --color-info-700: #1d4ed8;
 
-  --radius-card: 14px;
+  /*
+   * 2026-08-28 polish pass, hubspot.com as the fidelity analog.
+   *
+   * Their cards: 16px radius, a 1px hairline, 32px padding, and NO resting
+   * shadow. Ours had 11 distinct shadow strings across 4 color bases and a
+   * radius token governing only 4 of 13 card surfaces. The calm in their page
+   * comes from restraint and padding, not elevation, so these are the one
+   * card recipe everything on the marketing surface uses.
+   */
+  --radius-card: 16px;
+  --shadow-card-hover: 0 10px 28px rgba(69, 120, 140, 0.14);
+
+  /*
+   * Type scale. The landing page had 23 distinct text-[Npx] values, eight of
+   * them half-pixel, ten steps inside a 4px range. These six replace them.
+   */
+  --text-mk-caption: 12px;
+  --text-mk-meta: 13px;
+  --text-mk-body: 15px;
+  --text-mk-lead: 16.5px;
+  --text-mk-cardtitle: 17px;
+  --text-mk-subhead: 22px;
 }
 
 html {

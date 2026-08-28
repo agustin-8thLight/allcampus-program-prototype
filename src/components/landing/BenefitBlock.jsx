@@ -46,7 +46,7 @@ function Tile({ onClick, children, tone = 'plain' }) {
 }
 
 const TileLabel = ({ children }) => (
-  <span className="font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-body">
+  <span className="font-display text-[12px] font-bold uppercase tracking-[0.14em] text-mk-body">
     {children}
   </span>
 )
@@ -85,9 +85,9 @@ export default function BenefitBlock({
               <TileLabel>The {partner.name} benefit</TileLabel>
               <span className="mt-3 font-display text-[34px] font-black leading-none text-mk-slate">
                 {money(amount)}
-                <span className="text-[16px] font-bold text-mk-body">/year</span>
+                <span className="text-[16.5px] font-bold text-mk-body">/year</span>
               </span>
-              <span className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
+              <span className="mt-2 font-display text-[13px] leading-relaxed text-mk-body">
                 Tuition support
                 {hasBenefitAdmin(partner) ? `, administered by ${partner.benefitAdmin.name}` : ''} — it
                 stacks on top of AllCampus partner discounts.
@@ -107,13 +107,13 @@ export default function BenefitBlock({
                 Estimate my out-of-pocket
                 <span className="ml-1 text-mk-purple">→</span>
               </span>
-              <span className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
+              <span className="mt-2 font-display text-[13px] leading-relaxed text-mk-body">
                 First-year estimates start at{' '}
                 <strong className="text-mk-slate">{money(cheapestOop ?? 0)}</strong> with your
                 benefit applied. Ask Ally to walk your numbers — same math as every price card.
               </span>
-              <span className="mt-auto flex items-center gap-1.5 pt-3 font-display text-[12.5px] font-bold text-mk-purple">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-mk-purple text-[11px] text-white">✦</span>
+              <span className="mt-auto flex items-center gap-1.5 pt-3 font-display text-[13px] font-bold text-mk-purple">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-mk-purple text-[12px] text-white">✦</span>
                 Opens Ally
               </span>
             </Tile>
@@ -125,15 +125,15 @@ export default function BenefitBlock({
                 <TileLabel>Zero out-of-pocket</TileLabel>
                 <span className="mt-3 font-display text-[34px] font-black leading-none text-mk-green-700">
                   {covered.length}
-                  <span className="ml-2 text-[16px] font-bold text-mk-slate">
+                  <span className="ml-2 text-[16.5px] font-bold text-mk-slate">
                     fully covered program{covered.length === 1 ? '' : 's'}
                   </span>
                 </span>
-                <span className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
+                <span className="mt-2 font-display text-[13px] leading-relaxed text-mk-body">
                   Programs whose yearly cost fits inside your benefit — verified per program on its
                   price card.
                 </span>
-                <span className="mt-auto pt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
+                <span className="mt-auto pt-3 font-display text-[13px] font-bold text-mk-teal-700">
                   See them in search →
                 </span>
               </Tile>
@@ -143,7 +143,7 @@ export default function BenefitBlock({
                 <span className="mt-3 font-display text-[34px] font-black leading-none text-mk-green-700">
                   {topSavings ? `Save ${money(topSavings)}` : 'Partner pricing'}
                 </span>
-                <span className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
+                <span className="mt-2 font-display text-[13px] leading-relaxed text-mk-body">
                   {topPercent
                     ? `Partner discounts reach ${topPercent}% off — up to ${money(topSavings || 0)} off a full program before your benefit is applied.`
                     : 'Every program here is priced below its standard tuition.'}
@@ -155,7 +155,7 @@ export default function BenefitBlock({
                     </>
                   )}
                 </span>
-                <span className="mt-auto pt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
+                <span className="mt-auto pt-3 font-display text-[13px] font-bold text-mk-teal-700">
                   See the best-value programs →
                 </span>
               </Tile>
@@ -188,11 +188,11 @@ export default function BenefitBlock({
               <span className="mt-3 font-display text-[22px] font-black leading-snug text-mk-slate">
                 Every program here is discounted <span className="text-mk-teal-700">→</span>
               </span>
-              <span className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
+              <span className="mt-2 font-display text-[13px] leading-relaxed text-mk-body">
                 The {partner.name} partnership prices every program below its standard tuition —
                 certificates start around {money(cheapestOop ?? 3600)} total.
               </span>
-              <span className="mt-auto pt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
+              <span className="mt-auto pt-3 font-display text-[13px] font-bold text-mk-teal-700">
                 Browse most affordable first →
               </span>
             </Tile>
@@ -201,12 +201,12 @@ export default function BenefitBlock({
               <span className="mt-3 font-display text-[22px] font-black leading-snug text-mk-slate">
                 Ask Ally what things cost <span className="ml-1 text-mk-purple">→</span>
               </span>
-              <span className="mt-2 font-display text-[13.5px] leading-relaxed text-mk-body">
+              <span className="mt-2 font-display text-[13px] leading-relaxed text-mk-body">
                 Cheapest real paths, payment options, and how deferred tuition works — no benefit
                 required.
               </span>
-              <span className="mt-auto flex items-center gap-1.5 pt-3 font-display text-[12.5px] font-bold text-mk-purple">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-mk-purple text-[11px] text-white">✦</span>
+              <span className="mt-auto flex items-center gap-1.5 pt-3 font-display text-[13px] font-bold text-mk-purple">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-mk-purple text-[12px] text-white">✦</span>
                 Opens Ally
               </span>
             </Tile>
@@ -215,7 +215,7 @@ export default function BenefitBlock({
       )}
 
       {state === 'unknown' && (
-        <div className="mt-3 grid grid-cols-1 items-center gap-8 rounded-xl border border-mk-line bg-white p-8 lg:grid-cols-[1.2fr_1fr]">
+        <div className="mt-3 grid grid-cols-1 items-center gap-8 rounded-[var(--radius-card)] border border-mk-line bg-white p-8 lg:grid-cols-[1.2fr_1fr]">
           <div>
             <Heading size="sm">Does your employer help pay for school?</Heading>
             <Body className="mt-2 max-w-lg">

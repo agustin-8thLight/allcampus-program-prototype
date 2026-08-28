@@ -84,7 +84,7 @@ export default function ProfileResults({ profile, partner, onGate, onNavigate })
           <button
             type="button"
             onClick={() => onNavigate('/browse')}
-            className="font-display text-[14px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
+            className="font-display text-[15px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
           >
             See all {matches.length} matching programs →
           </button>

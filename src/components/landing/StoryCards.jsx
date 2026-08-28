@@ -15,7 +15,7 @@ export default function StoryCards({ partner }) {
   const partnerSpecific = partner?.benefitKnown && storiesForPartner(partner.id) !== storiesForPartner(null)
 
   return (
-    <section className="bg-mk-surface pb-16">
+    <section className="bg-mk-surface py-20">
       <div className="mx-auto max-w-6xl px-5">
       <Eyebrow>Learner stories</Eyebrow>
       <Heading className="mt-2">People like you, already using their benefit</Heading>
@@ -26,7 +26,7 @@ export default function StoryCards({ partner }) {
         {stories.map((s) => (
           <figure
             key={s.id}
-            className="flex h-full flex-col overflow-hidden rounded-xl border border-mk-line bg-white"
+            className="flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-mk-line bg-white"
           >
             {/* Learner portrait */}
             <div className="relative h-52">
@@ -41,11 +41,11 @@ export default function StoryCards({ partner }) {
               />
               <figcaption className="absolute inset-x-0 bottom-0 p-4 font-display text-white">
                 <span className="block text-[15px] font-extrabold">{s.name}</span>
-                <span className="block text-[12.5px] text-white/85">{s.role}</span>
+                <span className="block text-[13px] text-white/85">{s.role}</span>
               </figcaption>
             </div>
-            <blockquote className="flex flex-1 flex-col p-5">
-              <p className="font-display text-[14px] leading-relaxed text-mk-slate">
+            <blockquote className="flex flex-1 flex-col p-6">
+              <p className="font-display text-[15px] leading-relaxed text-mk-slate">
                 &ldquo;{s.quote}&rdquo;
               </p>
               {/* 2026-08-27: the program and the outcome were two arrowed text

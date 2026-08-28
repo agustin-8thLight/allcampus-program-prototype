@@ -11,7 +11,7 @@ import HelpPair from '../components/landing/HelpPair.jsx'
 import StoryCards from '../components/landing/StoryCards.jsx'
 import LogoStrip from '../components/landing/LogoStrip.jsx'
 import LandingFaq from '../components/landing/LandingFaq.jsx'
-import { Heading } from '../components/landing/Section.jsx'
+import { Heading, MkButton } from '../components/landing/Section.jsx'
 
 /*
  * Landing page (2026-08-21 reset, Brigid's Aug 20 session + follow-up):
@@ -102,15 +102,20 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
         <Heading size="sm" className="text-white">
           {joined ? 'Your matches are saved' : 'Ready when you are'}
         </Heading>
-        <div className="mt-5">
-          <button
-            type="button"
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <MkButton
+            tone="light"
+            size="lg"
             onClick={() => (joined ? goBrowse({}) : onGate?.('catalog'))}
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-6 py-2.5 font-display text-[14px] font-bold text-mk-teal-700 shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition hover:bg-mk-band"
           >
             {joined ? 'Browse all programs' : 'Get started'}
             <span aria-hidden>&rarr;</span>
-          </button>
+          </MkButton>
+          {!joined && (
+            <MkButton tone="ghostLight" size="lg" onClick={() => goBrowse({})}>
+              Browse programs
+            </MkButton>
+          )}
         </div>
       </section>
 
@@ -145,7 +150,7 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
       <button
         type="button"
         onClick={() => setAllyOpen({})}
-        className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-mk-purple px-5 py-3 font-display text-[14px] font-bold text-white shadow-[0_10px_30px_rgba(123,97,196,0.45)] transition hover:opacity-95"
+        className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-mk-purple px-5 py-3 font-display text-[15px] font-bold text-white shadow-[0_10px_30px_rgba(123,97,196,0.45)] transition hover:opacity-95"
       >
         <span aria-hidden>&#10022;</span>
         Ask Ally

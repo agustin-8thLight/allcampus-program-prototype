@@ -98,14 +98,14 @@ export default function StepsStrip({ steps }) {
                 <Art className="h-9 w-9" />
               </div>
               <p
-                className={`mt-3.5 font-display text-[17.5px] font-extrabold leading-snug ${
+                className={`mt-3.5 font-display text-[17px] font-extrabold leading-snug ${
                   on ? '' : 'text-mk-slate'
                 }`}
               >
                 {s.title}
               </p>
               <p
-                className={`mt-2 font-display text-[13.5px] leading-relaxed ${
+                className={`mt-2 font-display text-[13px] leading-relaxed ${
                   on ? 'text-white/85' : 'text-mk-body'
                 }`}
               >
@@ -118,7 +118,7 @@ export default function StepsStrip({ steps }) {
                 <button
                   type="button"
                   onClick={s.cta.onClick}
-                  className={`w-full rounded-lg px-4 py-2.5 font-display text-[14px] font-bold shadow-sm transition ${
+                  className={`w-full rounded-lg px-4 py-2.5 font-display text-[15px] font-bold shadow-sm transition ${
                     on
                       ? 'bg-white text-mk-teal-700 hover:bg-mk-band'
                       : 'bg-mk-teal-600 text-white hover:bg-mk-teal-700'

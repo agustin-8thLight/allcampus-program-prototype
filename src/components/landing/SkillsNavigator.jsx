@@ -48,10 +48,10 @@ export default function SkillsNavigator({ onNavigate }) {
                   <SubjectIcon id={a.id} className="h-[18px] w-[18px]" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-display text-[14px] font-extrabold text-mk-slate group-hover:text-mk-teal-700">
+                  <span className="block truncate font-display text-[15px] font-extrabold text-mk-slate group-hover:text-mk-teal-700">
                     {a.label}
                   </span>
-                  <span className="block font-display text-[11.5px] font-semibold text-mk-body">
+                  <span className="block font-display text-[12px] font-semibold text-mk-body">
                     {counts.area[a.id] || 0} programs
                   </span>
                 </span>
@@ -68,7 +68,7 @@ export default function SkillsNavigator({ onNavigate }) {
                     className="rounded-full border border-mk-line bg-white px-2.5 py-1 font-display text-[12px] font-semibold text-mk-slate transition hover:border-mk-teal-600 hover:text-mk-teal-700"
                   >
                     {s.label}
-                    <span className="ml-1 text-[10.5px] font-semibold text-mk-body/70">
+                    <span className="ml-1 text-[12px] font-semibold text-mk-body/70">
                       {counts.skill[s.id] || 0}
                     </span>
                   </button>

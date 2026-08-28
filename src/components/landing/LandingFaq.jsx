@@ -27,7 +27,7 @@ const FAQS = [
 
 export default function LandingFaq() {
   return (
-    <section className="bg-mk-surface pb-20 pt-4">
+    <section className="bg-mk-surface pb-20">
       <div className="mx-auto max-w-3xl px-5">
       {/* Centered, per 2026-08-25 direction. The FAQS eyebrow went: it was
           the heading again, one line higher. */}
@@ -44,7 +44,7 @@ export default function LandingFaq() {
               {f.q}
               <span className="text-mk-teal-600 transition group-open:rotate-180">⌄</span>
             </summary>
-            <p className="mt-2 font-display text-[14px] leading-relaxed text-mk-body">{f.a}</p>
+            <p className="mt-2 font-display text-[15px] leading-relaxed text-mk-body">{f.a}</p>
           </details>
         ))}
       </div>

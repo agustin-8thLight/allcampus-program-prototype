@@ -161,10 +161,10 @@ export default function JourneySteps({ partner, bare = false }) {
             return (
               <li key={s.title} className="h-full">
                 <div
-                  className={`flex h-full flex-col rounded-[var(--radius-card)] p-5 transition ${
+                  className={`flex h-full flex-col rounded-[var(--radius-card)] p-6 transition ${
                     on
                       ? 'bg-gradient-to-br from-mk-teal-600 to-mk-slate text-white shadow-[0_18px_40px_rgba(51,71,91,0.35)]'
-                      : 'border border-mk-line bg-gradient-to-b from-white to-mk-band/50 shadow-[0_8px_24px_rgba(51,71,91,0.08)]'
+                      : 'border border-mk-line bg-gradient-to-b from-white to-mk-band/50'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -187,7 +187,7 @@ export default function JourneySteps({ partner, bare = false }) {
                   </div>
 
                   <p
-                    className={`mt-4 font-display text-[15.5px] font-extrabold leading-snug ${
+                    className={`mt-4 font-display text-[16.5px] font-extrabold leading-snug ${
                       on ? '' : 'text-mk-slate'
                     }`}
                   >

@@ -61,16 +61,16 @@ export default function CategoriesExplorer({ partner, onSelectCategory }) {
                 <div className="flex items-start gap-4">
                   <SubjectIconTile id={c.id} hue={c.hue} size="md" />
                   <span className="min-w-0 flex-1">
-                    <span className="block font-display text-[20px] font-extrabold leading-snug text-mk-slate">
+                    <span className="block font-display text-[22px] font-extrabold leading-snug text-mk-slate">
                       {c.label}
                     </span>
-                    <span className="mt-1.5 block font-display text-[14px] leading-relaxed text-mk-body">
+                    <span className="mt-1.5 block font-display text-[15px] leading-relaxed text-mk-body">
                       {c.blurb}
                     </span>
                   </span>
                   <span
                     aria-hidden
-                    className="mt-1 shrink-0 font-display text-[17px] text-mk-teal-600 transition group-hover:translate-x-1"
+                    className="mt-1 shrink-0 font-display text-[22px] text-mk-teal-600 transition group-hover:translate-x-1"
                   >
                     →
                   </span>
@@ -80,13 +80,13 @@ export default function CategoriesExplorer({ partner, onSelectCategory }) {
                   {preview.map((s) => (
                     <span
                       key={s.id}
-                      className="rounded-full border border-mk-line bg-white px-2.5 py-1 font-display text-[12.5px] font-bold text-mk-body"
+                      className="rounded-full border border-mk-line bg-white px-2.5 py-1 font-display text-[13px] font-bold text-mk-body"
                     >
                       {s.label}
                     </span>
                   ))}
                   {skills.length > preview.length && (
-                    <span className="rounded-full px-2 py-1 font-display text-[12.5px] font-bold text-mk-body/70">
+                    <span className="rounded-full px-2 py-1 font-display text-[13px] font-bold text-mk-body/70">
                       +{skills.length - preview.length} more
                     </span>
                   )}
@@ -95,7 +95,7 @@ export default function CategoriesExplorer({ partner, onSelectCategory }) {
                 {/* Meta foot, mirroring the "Application due …" line Coursera
                     puts at the bottom of every degree card: one factual line,
                     same place on every tile, so the grid has a baseline. */}
-                <span className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-mk-line pt-3.5 font-display text-[12.5px] font-bold text-mk-body">
+                <span className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-mk-line pt-3.5 font-display text-[13px] font-bold text-mk-body">
                   {programs.length} {programs.length === 1 ? 'program' : 'programs'}
                   {coveredN > 0 && (
                     <>
@@ -111,7 +111,7 @@ export default function CategoriesExplorer({ partner, onSelectCategory }) {
           })}
         </div>
 
-        <p className="mt-6 font-display text-[12.5px] text-mk-body/70">
+        <p className="mt-6 font-display text-[13px] text-mk-body/70">
           Subject-area labels are a draft. Brigid owns the student-facing vocabulary and should
           replace these four with hers.
         </p>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import AllyOverlay from '../AllyOverlay.jsx'
+import { MkButton } from './Section.jsx'
 
 /*
  * HelpPair (2026-08-27) — "two ways to get help", from James's design notes.
@@ -32,39 +33,35 @@ export default function HelpPair({ partner, onSpecialistRef }) {
   const open = (seed = null) => setOverlay({ seed })
 
   return (
-    <section id="get-help" className="bg-white pb-20 pt-2">
+    <section id="get-help" className="bg-white pb-20">
       <div className="mx-auto max-w-6xl px-5">
         <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-2">
           {/* ALLY: self-serve scope */}
-          <div className="flex flex-col rounded-[var(--radius-card)] border border-mk-line bg-white p-6 shadow-[0_2px_10px_rgba(51,71,91,0.05)]">
+          <div className="flex flex-col rounded-[var(--radius-card)] border border-mk-line bg-white p-8">
             <div className="flex items-center gap-3">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-mk-purple text-[17px] text-white">
                 &#10022;
               </span>
               <span>
-                <span className="block font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-purple">
+                <span className="block font-display text-[12px] font-bold uppercase tracking-[0.14em] text-mk-purple">
                   AI support
                 </span>
-                <span className="block font-display text-[18px] font-extrabold leading-snug text-mk-slate">
+                <span className="block font-display text-[17px] font-extrabold leading-snug text-mk-slate">
                   Ask Ally
                 </span>
               </span>
             </div>
-            <p className="mt-3.5 font-display text-[14px] leading-relaxed text-mk-body">
+            <p className="mt-3.5 font-display text-[15px] leading-relaxed text-mk-body">
               Ally is an AI support tool that helps you find programs, compare options, explore
               career paths, and locate affordable programs &mdash; available any time, right in your
               account.
             </p>
             <div className="mt-auto pt-5">
-              <button
-                type="button"
-                onClick={() => open()}
-                className="inline-flex items-center gap-2 rounded-lg bg-mk-purple px-5 py-2.5 font-display text-[14px] font-bold text-white shadow-[0_8px_20px_rgba(123,97,196,0.28)] transition hover:opacity-90"
-              >
+              <MkButton tone="purple" onClick={() => open()}>
                 Open Ally
                 <span aria-hidden>&#10022;</span>
-              </button>
-              <p className="mt-3 font-display text-[11.5px] leading-relaxed text-mk-body/70">
+              </MkButton>
+              <p className="mt-3 font-display text-[12px] leading-relaxed text-mk-body/70">
                 Ally is AI and can make mistakes &mdash; please confirm benefit eligibility and
                 tuition costs with a specialist or your employer.
               </p>
@@ -74,7 +71,7 @@ export default function HelpPair({ partner, onSpecialistRef }) {
           {/* SPECIALIST: the human, scoped to eligibility and funding */}
           <div
             ref={onSpecialistRef}
-            className="flex flex-col rounded-[var(--radius-card)] border border-mk-teal-600/30 bg-gradient-to-b from-white to-mk-band/50 p-6 shadow-[0_2px_10px_rgba(51,71,91,0.05)]"
+            className="flex flex-col rounded-[var(--radius-card)] border border-mk-teal-600/30 bg-gradient-to-b from-white to-mk-band/50 p-8"
           >
             <div className="flex items-center gap-3">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-mk-teal-600 text-white">
@@ -86,26 +83,23 @@ export default function HelpPair({ partner, onSpecialistRef }) {
                 </svg>
               </span>
               <span>
-                <span className="block font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
+                <span className="block font-display text-[12px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
                   A person
                 </span>
-                <span className="block font-display text-[18px] font-extrabold leading-snug text-mk-slate">
+                <span className="block font-display text-[17px] font-extrabold leading-snug text-mk-slate">
                   Education Benefits Specialist
                 </span>
               </span>
             </div>
-            <p className="mt-3.5 font-display text-[14px] leading-relaxed text-mk-body">
+            <p className="mt-3.5 font-display text-[15px] leading-relaxed text-mk-body">
               Get support from an AllCampus Education Benefits Specialist. If you have questions, or
               need guidance on education or tuition benefits, please book a call.
             </p>
             <div className="mt-auto pt-5">
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 rounded-lg bg-mk-teal-600 px-5 py-2.5 font-display text-[14px] font-bold text-white transition hover:bg-mk-teal-700"
-              >
+              <MkButton tone="teal">
                 Book a call
                 <span aria-hidden>&rarr;</span>
-              </button>
+              </MkButton>
             </div>
           </div>
         </div>

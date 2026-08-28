@@ -119,7 +119,7 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
           </p>
           {/* 2026-08-25 copy pass: the follow-on sentence restated journey
               step 4 almost word for word. The claim is the whole point. */}
-          <p className="mt-1 text-[14px] leading-relaxed text-mk-body">
+          <p className="mt-1 text-[15px] leading-relaxed text-mk-body">
             Going directly to {schoolName || 'the school'} means paying their standard tuition.
           </p>
         </div>
@@ -146,7 +146,7 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
               >
                 {Art[n.art] ? Art[n.art]({ className: 'h-8 w-8' }) : null}
               </div>
-              <p className="mt-3.5 text-[16px] font-extrabold leading-snug text-mk-slate">
+              <p className="mt-3.5 text-[16.5px] font-extrabold leading-snug text-mk-slate">
                 {n.label}
               </p>
               <p
@@ -165,7 +165,7 @@ export default function EcosystemStrip({ variant = 'landing', schoolName = null,
             {i < nodes.length - 1 && (
               <span
                 aria-hidden
-                className="absolute -right-[7px] top-[52px] z-10 hidden text-[17px] text-mk-teal-600/45 lg:block"
+                className="absolute -right-[7px] top-[52px] z-10 hidden text-[22px] text-mk-teal-600/45 lg:block"
               >
                 &rarr;
               </span>

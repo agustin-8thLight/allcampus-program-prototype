@@ -59,7 +59,7 @@ export default function GoalsExplorer({ partner, onSelectGoal, onSelectCategory 
                   overlay="bg-gradient-to-t from-mk-slate/45 to-transparent"
                 />
                 <div className="px-5 py-4">
-                  <span className="block font-display text-[17px] font-extrabold leading-snug text-mk-slate">
+                  <span className="block font-display text-[22px] font-extrabold leading-snug text-mk-slate">
                     {g.label}
                   </span>
                   <span className="mt-1 block font-display text-[13px] text-mk-body">{g.sub}</span>
@@ -84,13 +84,13 @@ export default function GoalsExplorer({ partner, onSelectGoal, onSelectCategory 
                           {preview.map((s) => (
                             <span
                               key={s.id}
-                              className="rounded-full border border-mk-line bg-white px-2.5 py-1 font-display text-[12.5px] font-bold text-mk-body"
+                              className="rounded-full border border-mk-line bg-white px-2.5 py-1 font-display text-[13px] font-bold text-mk-body"
                             >
                               {s.label}
                             </span>
                           ))}
                           {skills.length > preview.length && (
-                            <span className="rounded-full px-2 py-1 font-display text-[12.5px] font-bold text-mk-body/70">
+                            <span className="rounded-full px-2 py-1 font-display text-[13px] font-bold text-mk-body/70">
                               +{skills.length - preview.length} more
                             </span>
                           )}
@@ -100,7 +100,7 @@ export default function GoalsExplorer({ partner, onSelectGoal, onSelectCategory 
                   </span>
 
                   <span className="mt-3 flex items-center justify-between">
-                    <span className="font-display text-[12.5px] font-bold text-mk-body">
+                    <span className="font-display text-[13px] font-bold text-mk-body">
                       {n > 0 ? `${n} program${n > 1 ? 's' : ''}` : 'Programs coming to catalog'}
                       {c > 0 && (
                         <span className="text-mk-green-700"> · {c} fully covered for you</span>
@@ -131,11 +131,11 @@ export default function GoalsExplorer({ partner, onSelectGoal, onSelectCategory 
                   key={c.id}
                   type="button"
                   onClick={() => onSelectCategory(c)}
-                  className="group flex items-center gap-3 rounded-xl border border-mk-line bg-white px-3.5 py-3 text-left transition hover:-translate-y-0.5 hover:border-mk-teal-600 hover:shadow-[0_6px_18px_rgba(69,120,140,0.14)]"
+                  className="group flex items-center gap-3 rounded-[var(--radius-card)] border border-mk-line bg-white px-3.5 py-3 text-left transition hover:-translate-y-0.5 hover:border-mk-teal-600 hover:shadow-[0_6px_18px_rgba(69,120,140,0.14)]"
                 >
                   <SubjectIconTile id={c.id} size="sm" />
                   <span className="min-w-0">
-                    <span className="block font-display text-[13.5px] font-extrabold leading-snug text-mk-slate">
+                    <span className="block font-display text-[13px] font-extrabold leading-snug text-mk-slate">
                       {c.label}
                     </span>
                     <span className="block font-display text-[12px] font-semibold text-mk-body">

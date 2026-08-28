@@ -57,7 +57,7 @@ export default function DiscoveryBand({ partner, onNavigate }) {
   if (allGoals.length < 3) return null
 
   return (
-    <section className="bg-mk-surface pb-16">
+    <section className="bg-mk-surface pb-20">
       <div className="mx-auto max-w-6xl px-5">
         <Eyebrow>What&rsquo;s inside</Eyebrow>
         <Heading className="mt-2 max-w-2xl">Where do you want to end up?</Heading>
@@ -98,7 +98,7 @@ export default function DiscoveryBand({ partner, onNavigate }) {
                 key={g.id}
                 type="button"
                 onClick={() => onNavigate?.(`/browse?goal=${g.id}`)}
-                className="group flex h-full flex-col overflow-hidden rounded-xl border border-mk-line bg-white text-left shadow-[0_2px_10px_rgba(51,71,91,0.05)] transition hover:-translate-y-0.5 hover:border-mk-teal-600 hover:shadow-[0_10px_28px_rgba(69,120,140,0.14)]"
+                className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-mk-line bg-white text-left transition hover:-translate-y-0.5 hover:border-mk-teal-600 hover:shadow-[var(--shadow-card-hover)]"
               >
                 <span className="relative block h-40 shrink-0">
                   <Img
@@ -116,8 +116,8 @@ export default function DiscoveryBand({ partner, onNavigate }) {
                     </span>
                   </span>
                 </span>
-                <span className="flex flex-1 flex-col p-4">
-                  <span className="block font-display text-[13.5px] leading-relaxed text-mk-body">
+                <span className="flex flex-1 flex-col p-5">
+                  <span className="block font-display text-[13px] leading-relaxed text-mk-body">
                     {g.sub}
                   </span>
                   {chips.length > 0 && (
@@ -134,7 +134,7 @@ export default function DiscoveryBand({ partner, onNavigate }) {
                   )}
                   {/* Pinned to the bottom so the count sits on one line
                       across the row, whatever the chips did above it. */}
-                  <span className="mt-auto flex items-center gap-1.5 pt-3 font-display text-[12.5px] font-bold text-mk-teal-700">
+                  <span className="mt-auto flex items-center gap-1.5 pt-3 font-display text-[13px] font-bold text-mk-teal-700">
                     {matches.length} program{matches.length === 1 ? '' : 's'}
                     <span aria-hidden className="transition group-hover:translate-x-0.5">
                       &rarr;
@@ -151,7 +151,7 @@ export default function DiscoveryBand({ partner, onNavigate }) {
             <button
               type="button"
               onClick={() => setExpanded(true)}
-              className="font-display text-[14px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
+              className="font-display text-[15px] font-bold text-mk-teal-700 underline-offset-2 hover:underline"
             >
               Show {allGoals.length - GOALS_SHOWN} more &rarr;
             </button>
@@ -173,16 +173,16 @@ export default function DiscoveryBand({ partner, onNavigate }) {
                   key={c.id}
                   type="button"
                   onClick={() => onNavigate?.(`/category/${c.id}`)}
-                  className="group flex items-center gap-3 rounded-xl border border-mk-line bg-white px-4 py-3.5 text-left transition hover:border-mk-teal-600 hover:shadow-[0_4px_16px_rgba(69,120,140,0.10)]"
+                  className="group flex items-center gap-3 rounded-[var(--radius-card)] border border-mk-line bg-white px-4 py-3.5 text-left transition hover:border-mk-teal-600 hover:shadow-[var(--shadow-card-hover)]"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-mk-band text-mk-teal-700">
                     <SubjectIcon id={c.id} className="h-5 w-5" />
                   </span>
                   <span className="min-w-0">
-                    <span className="block font-display text-[14px] font-extrabold leading-snug text-mk-slate">
+                    <span className="block font-display text-[15px] font-extrabold leading-snug text-mk-slate">
                       {c.label}
                     </span>
-                    <span className="mt-0.5 block font-display text-[12.5px] font-semibold text-mk-body">
+                    <span className="mt-0.5 block font-display text-[13px] font-semibold text-mk-body">
                       {count} programs
                     </span>
                   </span>

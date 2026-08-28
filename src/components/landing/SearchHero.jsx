@@ -39,7 +39,7 @@ export default function SearchHero({ partner, onSearch, navigator = false, onNav
   }
 
   const selectCls =
-    'w-full appearance-none rounded-md border border-mk-line bg-white px-3 py-2.5 font-display text-[14px] text-mk-slate outline-none focus:border-mk-teal-600'
+    'w-full appearance-none rounded-md border border-mk-line bg-white px-3 py-2.5 font-display text-[15px] text-mk-slate outline-none focus:border-mk-teal-600'
 
   return (
     <section className="relative font-display">
@@ -59,7 +59,7 @@ export default function SearchHero({ partner, onSearch, navigator = false, onNav
           <h1 className="max-w-2xl text-[36px] font-extrabold leading-tight sm:text-[44px]">
             Advance your career through education
           </h1>
-          <p className="mt-3 max-w-xl text-[15.5px] leading-relaxed text-white/85">
+          <p className="mt-3 max-w-xl text-[16.5px] leading-relaxed text-white/85">
             Find the degree or certificate that moves you forward, with exclusive discounts
             {partner?.benefitKnown ? (
               <> through {partner.name}&rsquo;s partnership with AllCampus.</>
@@ -91,7 +91,7 @@ export default function SearchHero({ partner, onSearch, navigator = false, onNav
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Program, subject, or school"
-              className="w-full rounded-md border border-mk-line px-3 py-2.5 text-[14px] text-mk-slate outline-none placeholder:text-mk-body/60 focus:border-mk-teal-600"
+              className="w-full rounded-md border border-mk-line px-3 py-2.5 text-[15px] text-mk-slate outline-none placeholder:text-mk-body/60 focus:border-mk-teal-600"
             />
           </label>
           {/* Custom picker, kept from the gate-flow explorations (2026-08-19):

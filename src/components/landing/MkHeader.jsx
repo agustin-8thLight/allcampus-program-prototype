@@ -35,7 +35,7 @@ export default function MkHeader({ partner, onNavigate, joined = false, onGate }
             </>
           )}
         </button>
-        <nav className="flex items-center gap-4 font-display text-[13.5px] font-bold text-mk-body">
+        <nav className="flex items-center gap-4 font-display text-[13px] font-bold text-mk-body">
           {/* 2026-08-19 session: search belongs in the nav, not the hero —
               logged out, recognition beats searching. Routes to the gated
               results, which prompt the account. */}
@@ -69,7 +69,7 @@ export default function MkHeader({ partner, onNavigate, joined = false, onGate }
               <button
                 type="button"
                 onClick={() => onGate?.('catalog')}
-                className="rounded-md bg-mk-teal-600 px-4 py-2 text-[13.5px] font-bold text-white transition hover:bg-mk-teal-700"
+                className="rounded-md bg-mk-teal-600 px-4 py-2 text-[13px] font-bold text-white transition hover:bg-mk-teal-700"
               >
                 Sign up
               </button>

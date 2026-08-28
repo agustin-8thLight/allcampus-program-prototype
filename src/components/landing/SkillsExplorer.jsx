@@ -38,7 +38,7 @@ export default function SkillsExplorer({ partner, onSelectSkill }) {
           <button
             type="button"
             onClick={() => setAreaId(null)}
-            className={`rounded-full px-4 py-2 font-display text-[13.5px] font-bold transition ${
+            className={`rounded-full px-4 py-2 font-display text-[13px] font-bold transition ${
               areaId === null
                 ? 'bg-mk-teal-600 text-white'
                 : 'border border-mk-line bg-white text-mk-slate hover:border-mk-teal-600'
@@ -51,7 +51,7 @@ export default function SkillsExplorer({ partner, onSelectSkill }) {
               key={a.id}
               type="button"
               onClick={() => setAreaId(a.id === areaId ? null : a.id)}
-              className={`rounded-full px-4 py-2 font-display text-[13.5px] font-bold transition ${
+              className={`rounded-full px-4 py-2 font-display text-[13px] font-bold transition ${
                 areaId === a.id
                   ? 'bg-mk-teal-600 text-white'
                   : 'border border-mk-line bg-white text-mk-slate hover:border-mk-teal-600'
@@ -71,13 +71,13 @@ export default function SkillsExplorer({ partner, onSelectSkill }) {
                 key={s.id}
                 type="button"
                 onClick={() => onSelectSkill(s)}
-                className="group flex items-center justify-between gap-3 rounded-xl border border-mk-line bg-white px-5 py-4 text-left transition hover:border-mk-teal-600 hover:shadow-[0_4px_16px_rgba(69,120,140,0.12)]"
+                className="group flex items-center justify-between gap-3 rounded-[var(--radius-card)] border border-mk-line bg-white px-5 py-4 text-left transition hover:border-mk-teal-600 hover:shadow-[0_4px_16px_rgba(69,120,140,0.12)]"
               >
                 <span>
                   <span className="block font-display text-[15px] font-extrabold text-mk-slate">
                     {s.label}
                   </span>
-                  <span className="mt-0.5 block font-display text-[12.5px] text-mk-body">
+                  <span className="mt-0.5 block font-display text-[13px] text-mk-body">
                     {getArea(s.areaId)?.label}
                     {n > 0 ? ` · ${n} program${n > 1 ? 's' : ''}` : ' · programs coming to catalog'}
                   </span>

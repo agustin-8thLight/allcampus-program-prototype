@@ -1,4 +1,5 @@
 import Img from '../Img.jsx'
+import { MkButton } from './Section.jsx'
 import { heroImage } from '../../data/images.js'
 import { PROGRAMS, money } from '../../data/model.js'
 import { bestDiscountPercent } from '../../data/benefit.js'
@@ -60,14 +61,21 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
           {!profile && (
             <>
               <div className="mt-9">
-                <button
-                  type="button"
-                  onClick={() => (joined ? onBrowse?.() : onSignup?.())}
-                  className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-3.5 text-[16px] font-bold text-mk-teal-700 shadow-[0_14px_36px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:bg-mk-band"
-                >
-                  {joined ? 'Browse all programs' : 'Create an account'}
-                  <span aria-hidden>→</span>
-                </button>
+                {/* Paired CTAs (hubspot.com): filled + outlined, identical
+                    heights because both carry a 2px border. */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <MkButton
+                    tone="light"
+                    size="lg"
+                    onClick={() => (joined ? onBrowse?.() : onSignup?.())}
+                  >
+                    {joined ? 'Browse all programs' : 'Create an account'}
+                    <span aria-hidden>→</span>
+                  </MkButton>
+                  <MkButton tone="ghostLight" size="lg" onClick={() => onBrowse?.()}>
+                    Browse programs
+                  </MkButton>
+                </div>
               </div>
 
               {/* Stat row: James's four-card layout and labels, Brigid's
@@ -87,7 +95,7 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
                     key={st.l}
                     className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm"
                   >
-                    <dt className="text-[20px] font-black leading-none text-white">{st.v}</dt>
+                    <dt className="text-[22px] font-black leading-none text-white">{st.v}</dt>
                     <dd className="mt-1 text-[12px] font-semibold leading-snug text-white/75">
                       {st.l}
                     </dd>
@@ -157,7 +165,7 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
                 <button
                   type="button"
                   onClick={() => onSignup?.()}
-                  className="inline-flex items-center gap-2 rounded-lg bg-mk-teal-600 px-4 py-2.5 text-[13.5px] font-bold text-white transition hover:bg-mk-teal-700"
+                  className="inline-flex items-center gap-2 rounded-lg bg-mk-teal-600 px-4 py-2.5 text-[13px] font-bold text-white transition hover:bg-mk-teal-700"
                 >
                   Save this to your account
                   <span aria-hidden>&rarr;</span>
@@ -174,9 +182,9 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
 function ProfileCell({ label, value, onEdit }) {
   return (
     <div className="rounded-lg border border-mk-line bg-white px-3.5 py-2.5">
-      <p className="text-[11px] font-bold uppercase tracking-wide text-mk-body/70">{label}</p>
+      <p className="text-[12px] font-bold uppercase tracking-wide text-mk-body/70">{label}</p>
       <div className="mt-0.5 flex items-center justify-between gap-2">
-        <p className="min-w-0 truncate text-[13.5px] font-extrabold text-mk-slate">{value}</p>
+        <p className="min-w-0 truncate text-[13px] font-extrabold text-mk-slate">{value}</p>
         <button
           type="button"
           onClick={onEdit}

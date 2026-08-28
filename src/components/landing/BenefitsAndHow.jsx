@@ -6,6 +6,7 @@ import { SCHOOLS } from '../../data/schools.js'
 import { bestDiscountPercent } from '../../data/benefit.js'
 import { hasBenefitAdmin, policyOwner } from '../../data/corporatePartners.js'
 import { WHY_IMAGE } from '../../data/images.js'
+import { WHY_COUNTS } from '../../data/landingCopy.js'
 import Img from '../Img.jsx'
 
 /*
@@ -57,12 +58,30 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
     <section className="bg-white py-20">
       <div className="mx-auto max-w-6xl px-5">
         {/* Brigid's WHY ALLCAMPUS headline (content doc, 2026-08-20), Version
-            A for TR audiences / Version B general. */}
+            A for TR audiences / Version B general.
+
+            2026-08-28: her FIGURES, in her placement. This was rendering the
+            catalog's computed 24/135 while James's hero carried 50+/1,100+,
+            so the page had two number sets and neither was hers (she says
+            1,200+). Her doc does sanction computed mock counts, so reverting
+            is a one-line swap back to schoolCount/PROGRAMS.length. */}
         <Eyebrow>Why AllCampus</Eyebrow>
         <Heading className="mt-2 max-w-3xl">
-          {schoolCount} schools. {PROGRAMS.length} programs.{' '}
+          {WHY_COUNTS.schools} schools. {WHY_COUNTS.programs} programs.{' '}
           {reimburses ? 'Discounts already negotiated.' : `Up to ${maxPct}% off tuition.`}
         </Heading>
+
+        {/* Her headline dek, restored. I cut it on 2026-08-25 because it
+            duplicated the cap callout's bold line below; the callout's
+            headline is dropped instead, so her sentence appears once, where
+            she put it. Version A for TR, Version B general. */}
+        {cappedSchools.length > 0 && (
+          <Body className="mt-3 max-w-2xl">
+            {reimburses
+              ? `And at select schools, your out-of-pocket cost is $0 \u2014 tuition capped to match ${/^your /i.test(partner.name) ? 'your employer' : `your ${partner.name}`} benefit.`
+              : `At select schools, you\u2019ll never pay more than ${money(5250)} a year.`}
+          </Body>
+        )}
 
         {/* 2026-08-27, James's note 3: nothing on the page said outright what
             kind of company AllCampus is, or that the employer chose it. That
@@ -133,14 +152,10 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
 
             {cappedSchools.length > 0 && (
               <div className="mt-5 rounded-xl bg-mk-band/70 p-5">
-                <p className="font-display text-[16px] font-extrabold leading-snug text-mk-slate">
-                  {reimburses
-                    ? `Your out-of-pocket at ${cappedSchools.length} schools: $0.`
-                    : noTr
-                      ? `Never pay more than ${money(5250)} a year at ${cappedSchools.length} schools.`
-                      : `${cappedSchools.length} schools cap tuition at ${money(5250)} a year.`}
-                </p>
-                <p className="mt-1.5 font-display text-[13.5px] leading-relaxed text-mk-body">
+                {/* 2026-08-28: the bold headline here duplicated Brigid's
+                    dek, which now runs under the section heading where her
+                    doc puts it. Support line and school links stay. */}
+                <p className="font-display text-[13.5px] leading-relaxed text-mk-body">
                   {reimburses
                     ? 'The cap matches your reimbursement, so your benefit covers it entirely.'
                     : noTr

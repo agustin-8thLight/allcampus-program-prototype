@@ -4,6 +4,7 @@ import { PROGRAMS, money } from '../../data/model.js'
 import { bestDiscountPercent } from '../../data/benefit.js'
 import { getArea } from '../../data/taxonomy.js'
 import { SCHOOLS } from '../../data/schools.js'
+import { WHY_COUNTS } from '../../data/landingCopy.js'
 import { startLabel, matchPrograms } from '../../data/pathfinder.js'
 
 /*
@@ -69,15 +70,16 @@ export default function PathfinderHero({ partner, profile, joined = false, onSig
                 </button>
               </div>
 
-              {/* Stat row, James's figures and labels verbatim. He flags the
-                  mismatch himself: these are production network numbers while
-                  Why AllCampus and the logo strip below report the 24/135 mock
-                  catalog. Two different scopes on one page, unreconciled and
-                  needing a real number before this goes anywhere external. */}
+              {/* Stat row: James's four-card layout and labels, Brigid's
+                  figures. His mockup had 1,100+ programs, which matches no
+                  document; hers says 1,200+. One set of numbers now governs
+                  both here and the Why AllCampus headline. The logo strip
+                  still counts the mock catalog (24 schools), which is a
+                  different scope and still worth reconciling. */}
               <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
                 {[
-                  { v: '50+', l: 'Partner schools' },
-                  { v: '1,100+', l: 'Programs' },
+                  { v: WHY_COUNTS.schools, l: 'Partner schools' },
+                  { v: WHY_COUNTS.programs, l: 'Programs' },
                   { v: 'Tuition', l: 'Discounts' },
                   { v: 'Education', l: 'Support' },
                 ].map((st) => (

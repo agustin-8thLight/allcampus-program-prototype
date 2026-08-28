@@ -1,6 +1,12 @@
 import { Eyebrow, Heading } from './Section.jsx'
 import { partnerState } from './BenefitsAndHow.jsx'
 import { hasBenefitAdmin } from '../../data/corporatePartners.js'
+import {
+  ALLCAMPUS_BASE,
+  ALLCAMPUS_SEQUENCING,
+  SCHOOLS_BOX,
+  employerBox,
+} from '../../data/landingCopy.js'
 
 /*
  * JourneySteps (2026-08-27) — James Guajardo's design notes, "Journey &
@@ -28,17 +34,24 @@ import { hasBenefitAdmin } from '../../data/corporatePartners.js'
  * part of the step label, and load-bearing in a five-step sequence.
  *
  * COPY IS JAMES'S, VERBATIM (2026-08-27), em dashes and ampersands included.
- * 2026-08-28: step 04 is the one exception, because his copy is written for a
- * direct partner WITH reimbursement — the scenario his mockup shows. "Confirm
- * your employer tuition benefit" asks a no-TR employee to confirm a benefit
- * that doesn't exist, and names the wrong party when an administrator runs it.
+ * BODIES ARE BRIGID'S (2026-08-28). James's merge deleted the section that
+ * carried her box model, so her boxes rendered nowhere and her verbatim
+ * In-Network Schools string sat in dead code. His titles and his 01-05
+ * numbering stay; the bodies now carry her language from
+ * src/data/landingCopy.js:
  *
- * The variants are NOT new writing. Each reuses the language already approved
- * for that partner type in EcosystemStrip's employerBox (Brigid's strings) and
- * the partner records' own policy copy: "eligibility depends on your role, so
- * check with HR" for mixed, and "discounts still apply to every program" for
- * no-TR. His sentence stands verbatim wherever there is a benefit the employer
- * itself approves.
+ *   03  ALLCAMPUS_BASE (+ ALLCAMPUS_SEQUENCING for TR types)
+ *   04  employerBox(partner) — her per-type employer copy
+ *   05  SCHOOLS_BOX, the box her doc says is "reused verbatim everywhere"
+ *
+ * Steps 01 and 02 keep James's sentences: her model has no "You" box, so
+ * there is nothing of hers to use there.
+ *
+ * HER 4-BOX RULE survives as a sixth step. Her doc: 3 boxes for all direct
+ * types and Benefit Partner No TR, 4 when an administrator runs the benefit,
+ * because "the administrator becomes its own box." For benefit-admin partners
+ * the administrator gets its own step between 04 and 05. Numbering follows the
+ * array, so it renumbers itself.
  * His mockup carries no driver pills and no per-step buttons: the driver is
  * inside the sentence ("with your employer", "through AllCampus"), which is a
  * lighter way to do it than the chips I had. Client language of record, not
@@ -90,6 +103,9 @@ const ART = {
 export default function JourneySteps({ partner, bare = false }) {
   const { reimburses, noTr } = partnerState(partner)
   const admin = hasBenefitAdmin(partner) ? partner.benefitAdmin?.name : null
+  // The mock admin name is lowercase ("your benefit administrator"), which
+  // reads as a typo when it opens a sentence. Real names are unaffected.
+  const Admin = admin ? admin.charAt(0).toUpperCase() + admin.slice(1) : null
   const steps = [
     {
       icon: 'account',
@@ -104,37 +120,41 @@ export default function JourneySteps({ partner, bare = false }) {
     {
       icon: 'connect',
       title: 'Connect to schools through AllCampus',
-      body: 'Request information through AllCampus \u2014 that\u2019s what unlocks your discount and support.',
+      // Her AllCampus box. The sequencing clause is appended only when there
+      // is a reimbursement process to sequence against, which is her rule.
+      body: ALLCAMPUS_BASE + (reimburses ? ALLCAMPUS_SEQUENCING : ''),
       highlight: true,
     },
-    noTr
-      ? {
-          icon: 'confirm',
-          title: 'Confirm your price',
-          body: 'Partner discounts apply to every program \u2014 a specialist can confirm your price.',
-        }
-      : reimburses
-        ? {
+    {
+      icon: 'confirm',
+      title: noTr
+        ? 'Confirm your price'
+        : reimburses
+          ? 'Confirm your employer tuition benefit'
+          : 'Check your employer tuition benefit',
+      // Her employer box, per partner type.
+      body: employerBox(partner),
+    },
+    // Her 4-box case: the administrator is its own box, so its own step.
+    ...(admin
+      ? [
+          {
             icon: 'confirm',
-            title: 'Confirm your employer tuition benefit',
-            body: admin
-              ? `Confirm eligibility and complete approvals with ${admin} \u2014 a specialist can help.`
-              : 'Confirm eligibility and complete approvals with your employer \u2014 a specialist can help.',
-          }
-        : {
-            icon: 'confirm',
-            title: 'Check your employer tuition benefit',
-            body: 'Eligibility depends on your role, so check with HR \u2014 a specialist can help.',
+            title: `Work with ${admin}`,
+            body: `${Admin} manages your reimbursement, including eligibility, filings, and funds. Their pre-approval process requires a school and a program already be selected.`,
           },
+        ]
+      : []),
     {
       icon: 'start',
       title: 'Start your program & earn new skills',
-      body: 'Enroll, finalize funding and your schedule, and start building new skills.',
+      // Her In-Network Schools box, verbatim.
+      body: SCHOOLS_BOX,
     },
   ]
 
   const strip = (
-    <ol className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3">
+    <ol className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {steps.map((s, i) => {
             const Art = ART[s.icon]
             const on = !!s.highlight

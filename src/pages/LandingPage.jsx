@@ -78,7 +78,7 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
           anyone is asked to follow five steps. */}
       <WhyAllCampus partner={partner} onNavigate={onNavigate} onSpecialist={scrollToHelp} />
 
-      <JourneySteps partner={partner} onGate={onGate} onSpecialist={scrollToHelp} />
+      <JourneySteps partner={partner} />
 
       <HelpPair partner={partner} />
 

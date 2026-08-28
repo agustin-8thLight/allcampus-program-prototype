@@ -186,7 +186,7 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
           </div>
 
           <div className="mt-8">
-            <JourneySteps bare />
+            <JourneySteps partner={partner} bare />
           </div>
         </div>
       </section>

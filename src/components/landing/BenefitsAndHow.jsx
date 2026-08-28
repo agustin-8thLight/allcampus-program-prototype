@@ -23,76 +23,32 @@ import Img from '../Img.jsx'
  * quoted verbatim, em dashes included. Counts and dollars are mock.
  */
 
-function partnerState(partner) {
+export function partnerState(partner) {
   const reimburses = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
   // 'perks' = Brigid's Benefit Partner No TR: definitely no reimbursement.
-  // Only a truly unknown employer gets the "may be available" framing.
+  //
+  // 2026-08-28: 'direct-mixed' was falling into noTr, because it carries
+  // benefitKnown with employerReimbursement 0. That is wrong. Per Brigid
+  // (2026-08-19, quoted in the Texas Roadhouse record) mixed means SOME
+  // employees have reimbursement and some don't — so it belongs in the
+  // "possible, go check" bucket, which is what EcosystemStrip's own
+  // direct-mixed copy has always said. Only 'perks' and 'direct-no-tr' are
+  // definitely-no.
   const noTr =
     !reimburses &&
-    (partner?.partnerType === 'perks' ||
-      partner?.partnerType === 'direct-no-tr' ||
-      (partner?.benefitKnown && !reimburses))
+    (partner?.partnerType === 'perks' || partner?.partnerType === 'direct-no-tr')
   return { reimburses, noTr, trPossible: !reimburses && !noTr }
 }
 
-export function HowItWorks({ partner, onGate }) {
-  const { reimburses, trPossible } = partnerState(partner)
-  const owner = policyOwner(partner)
-
-  const steps = [
-    {
-      icon: 'find',
-      title: 'Select a school and a program',
-      body: 'Answer 3 questions, or browse the catalog. Nothing needs approving yet.',
-    },
-    {
-      icon: 'account',
-      title: 'Save your profile',
-      body: 'Keeps your matches and your pricing with you. Nothing goes to your employer.',
-      cta: { label: 'Create your free account', onClick: () => onGate?.('catalog') },
-    },
-    {
-      icon: 'confirm',
-      title: 'Confirm your benefit',
-      body: reimburses
-        ? `${owner || 'Your employer'} approves the funding, not AllCampus. A free specialist call walks you through it.`
-        : trPossible
-          ? 'If your employer reimburses tuition, they own eligibility. A free call helps you check.'
-          : 'A free specialist call confirms your pricing and next steps. No obligation.',
-    },
-    {
-      icon: 'apply',
-      title: 'Connect with a school through AllCampus',
-      // 2026-08-27: the emphasis sits here, on the goal. Connecting through
-      // AllCampus is what activates the discount, so it is the thing the whole
-      // path exists to reach — not the account step, which is a means.
-      highlight: true,
-      body: 'The school then handles admissions, enrollment, billing, and your discounted tuition.',
-    },
-  ]
-
-  return (
-    <section className="bg-white pb-12 pt-20">
-      <div className="mx-auto max-w-6xl px-5">
-        {/* No eyebrow: "HOW IT WORKS" over "One path, start to finish" was a
-            label restating the heading under it. "Clear" also went — a page
-            that claims to be clear is not the same as one that is. */}
-        <Heading>One path, start to finish</Heading>
-
-        {/* 2026-08-25: "Who does what along the way" moved out of this
-            section and into Why AllCampus. This section answers what YOU do;
-            the cast of parties is an argument for the platform, not a step
-            in the journey, and having both here made one long explainer. */}
-        <div className="mt-8">
-          <StepsStrip steps={steps} />
-        </div>
-      </div>
-    </section>
-  )
-}
+/* HowItWorks was removed 2026-08-27: James's merge replaced it with
+ * JourneySteps. StepsStrip and EcosystemStrip stay in the tree, unused. */
 
 export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
   const { reimburses, noTr, trPossible } = partnerState(partner)
+  const possessive =
+    partner?.benefitKnown && !/^your /i.test(partner.name || '')
+      ? `${partner.name}\u2019s`
+      : 'your employer\u2019s'
   const maxPct = bestDiscountPercent(PROGRAMS)
   const schoolCount = Object.keys(SCHOOLS).length
   const cappedSchools = Object.values(SCHOOLS).filter((s) => s.tuitionCap)
@@ -110,13 +66,24 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
 
         {/* 2026-08-27, James's note 3: nothing on the page said outright what
             kind of company AllCampus is, or that the employer chose it. That
-            matters to anyone wary of a third party touching their benefit. */}
+            matters to anyone wary of a third party touching their benefit.
+
+            2026-08-28: his wording is written for a direct partner WITH
+            reimbursement, which is the scenario his mockup shows. Said to a
+            no-TR employer it promises a reimbursement that does not exist, so
+            those two scenarios get an honest variant. His sentence is
+            untouched wherever there is actually a benefit. */}
         <p className="mt-3 max-w-2xl font-display text-[15px] leading-relaxed text-mk-body">
           <strong className="font-extrabold text-mk-slate">
-            AllCampus is {partner?.benefitKnown && !/^your /i.test(partner.name) ? `${partner.name}\u2019s` : 'your employer\u2019s'}{' '}
-            tuition benefit partner
+            AllCampus is {possessive}{' '}
+            {noTr ? 'education benefits partner' : 'tuition benefit partner'}
           </strong>{' '}
-          &mdash; built to help you use your discount and your reimbursement without the runaround.
+          &mdash; built to help you use your{' '}
+          {noTr
+            ? 'tuition discount without the runaround.'
+            : reimburses
+              ? 'discount and your reimbursement without the runaround.'
+              : 'discount, and any reimbursement you qualify for, without the runaround.'}
         </p>
 
         {/* 2026-08-25: the stat tiles came out (the headline already carries

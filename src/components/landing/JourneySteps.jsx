@@ -1,4 +1,5 @@
 import { Eyebrow, Heading } from './Section.jsx'
+import { partnerState } from './BenefitsAndHow.jsx'
 
 /*
  * JourneySteps (2026-08-27) — James Guajardo's design notes, "Journey &
@@ -26,6 +27,12 @@ import { Eyebrow, Heading } from './Section.jsx'
  * part of the step label, and load-bearing in a five-step sequence.
  *
  * COPY IS JAMES'S, VERBATIM (2026-08-27), em dashes and ampersands included.
+ * 2026-08-28: step 04 is the one exception. His copy is written for a direct
+ * partner WITH reimbursement, which is the scenario his mockup shows. "Confirm
+ * your employer tuition benefit" said to a no-TR employer asks someone to
+ * confirm a benefit that does not exist, and to an unknown employer it asserts
+ * one we have not established. His sentence stands wherever there IS a
+ * benefit; the other two cases get honest variants.
  * His mockup carries no driver pills and no per-step buttons: the driver is
  * inside the sentence ("with your employer", "through AllCampus"), which is a
  * lighter way to do it than the chips I had. Client language of record, not
@@ -74,7 +81,8 @@ const ART = {
  * supplies its own school-scoped heading and the discount-lives-here banner
  * above the strip. Without it the header rendered twice.
  */
-export default function JourneySteps({ bare = false }) {
+export default function JourneySteps({ partner, bare = false }) {
+  const { reimburses, noTr } = partnerState(partner)
   const steps = [
     {
       icon: 'account',
@@ -92,11 +100,23 @@ export default function JourneySteps({ bare = false }) {
       body: 'Request information through AllCampus \u2014 that\u2019s what unlocks your discount and support.',
       highlight: true,
     },
-    {
-      icon: 'confirm',
-      title: 'Confirm your employer tuition benefit',
-      body: 'Confirm eligibility and complete approvals with your employer \u2014 a specialist can help.',
-    },
+    noTr
+      ? {
+          icon: 'confirm',
+          title: 'Confirm your price',
+          body: 'A specialist confirms your discounted price and next steps \u2014 no employer approval needed.',
+        }
+      : reimburses
+        ? {
+            icon: 'confirm',
+            title: 'Confirm your employer tuition benefit',
+            body: 'Confirm eligibility and complete approvals with your employer \u2014 a specialist can help.',
+          }
+        : {
+            icon: 'confirm',
+            title: 'Check your employer tuition benefit',
+            body: 'Many employers put money toward tuition \u2014 a specialist can help you find out.',
+          },
     {
       icon: 'start',
       title: 'Start your program & earn new skills',

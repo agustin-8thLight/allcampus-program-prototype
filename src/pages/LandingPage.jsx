@@ -163,7 +163,7 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
       <button
         type="button"
         onClick={() => setAllyOpen({})}
-        className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-mk-purple px-5 py-3 font-display text-[15px] font-bold text-white shadow-[0_10px_30px_rgba(123,97,196,0.45)] transition hover:opacity-95"
+        className="fixed bottom-[calc(1.25rem+var(--coach-inset,0px))] right-5 z-40 inline-flex items-center gap-2 rounded-full bg-mk-purple px-5 py-3 font-display text-[15px] font-bold text-white shadow-[0_10px_30px_rgba(123,97,196,0.45)] transition-[bottom,opacity] duration-200 hover:opacity-95"
       >
         <span aria-hidden>&#10022;</span>
         Ask Ally

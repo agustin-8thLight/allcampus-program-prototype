@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { personaImage } from '../data/images.js'
 import Img from './Img.jsx'
 
@@ -10,6 +10,7 @@ import Img from './Img.jsx'
  */
 export default function StoryCoach({ story, routePath, onExit, onDrive }) {
   const [i, setI] = useState(0)
+  const barRef = useRef(null)
   // Discoverability: the bar pulses once on first render so reviewers notice it.
   const [fresh, setFresh] = useState(true)
   const step = story.steps[Math.min(i, story.steps.length - 1)]
@@ -42,8 +43,35 @@ export default function StoryCoach({ story, routePath, onExit, onDrive }) {
     return () => window.removeEventListener('story-event', onEvent)
   }, [story])
 
+  /*
+   * Publish this bar's height as --coach-inset so anything anchored to the
+   * bottom of the viewport can sit above it.
+   *
+   * A reviewer reported the Ally launcher missing and then found it hidden
+   * behind this bar. Raising the launcher's z-index would have been the wrong
+   * fix: this bar deliberately outranks product UI (see below), so the launcher
+   * has to move, not stack. Measured rather than hardcoded, because the bar
+   * wraps to two lines on narrow viewports.
+   */
+  useEffect(() => {
+    const el = barRef.current
+    if (!el) return
+    const root = document.documentElement
+    const publish = () => root.style.setProperty('--coach-inset', `${el.offsetHeight}px`)
+    publish()
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(publish) : null
+    if (ro) ro.observe(el)
+    window.addEventListener('resize', publish)
+    return () => {
+      if (ro) ro.disconnect()
+      window.removeEventListener('resize', publish)
+      root.style.removeProperty('--coach-inset')
+    }
+  }, [])
+
   return (
     <div
+      ref={barRef}
       /* z-[80]: review chrome outranks every product overlay (GateModal z-65,
          IntentStep z-66, AllyOverlay z-75) — "Show me" must stay clickable
          while a product modal is open, or the story stalls on it. */

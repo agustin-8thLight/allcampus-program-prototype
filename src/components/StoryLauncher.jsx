@@ -61,8 +61,11 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {USE_CASES.map((u) => (
+        <p className="mt-10 text-[13px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
+          Ordered by value to the business · channel first
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-5 md:grid-cols-2">
+          {USE_CASES.map((u, i) => (
             <button
               key={u.id}
               onClick={() => onStart(u)}
@@ -70,12 +73,22 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
             >
               {/* Scenario first (Brigid's type title is the anchor); the
                   persona rides along as supporting context. */}
-              <div className="text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
-                Scenario
+              {/* 2026-08-31: the rank and share are on the card because the
+                  array was reordered by business value, and a reorder nobody
+                  can see is not a decision anyone can argue with. Figures are
+                  the 2026-08-28 review's channel-vs-direct split; the review
+                  did not break the direct side down further, so both direct
+                  types share one figure. */}
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="text-[11.5px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
+                  Scenario {i + 1} of {USE_CASES.length}
+                </div>
+                <div className="font-display text-[13px] font-black text-mk-slate">{u.share}</div>
               </div>
               <div className="mt-1 font-display text-[22px] font-black leading-snug text-mk-slate">
                 {u.archetype}
               </div>
+              <div className="mt-1.5 text-[13px] leading-relaxed text-mk-body">{u.valueNote}</div>
               <div className="mt-3 flex items-center gap-2.5 border-t border-mk-line pt-3">
                 <Img
                   src={personaImage(u.id)}

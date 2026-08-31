@@ -25,8 +25,82 @@
  */
 
 export const USE_CASES = [
+  /*
+   * ORDER IS BUSINESS VALUE, HIGHEST FIRST (2026-08-31).
+   *
+   * This array used to run direct-first, which is precisely the bias Brigid
+   * named in the 2026-08-28 review: "it's so easy to go to direct partners
+   * because we have all the information when we're solving these problems.
+   * But the volume and the revenue are coming from the channel partners."
+   *
+   * The numbers behind the order, from that review:
+   *   - Channel (benefit) partners are ~70-80% of traffic. James: "the vast
+   *     majority of our traffic is from channel partners."
+   *   - They also convert best: "there's two of them that convert at the
+   *     highest."
+   *   - And they are the stated revenue priority: "the biggest opportunity for
+   *     us to drive revenue is converting more of those."
+   *   - They are simultaneously the most confused, having passed through three
+   *     sites before arriving, which is why they are also the hardest.
+   *
+   * So: both channel types first, then the two direct types. Brigid's
+   * corollary is the reason this ordering is not just reporting reality but
+   * driving the work: "if we solve for the complex ones, it's going to be that
+   * much easier and clearer for the direct partner ones."
+   */
+  {
+    id: 'carl',
+    share: '~80% of traffic',
+    valueNote: 'Channel, with reimbursement. Highest volume, best converting, most confused.',
+    archetype: 'Benefit Partner with TR',
+    name: 'Carl',
+    employerId: 'boeing',
+    title: 'A niche skill through BenefitHub',
+    who: 'Boeing technician · channel partner · ~$10,000/yr benefit',
+    personas: 'Upskiller · Career Advancer',
+    entry: '/school/franklin',
+    intentSuggestion: 'benefits',
+    color: 214,
+    blurb:
+      'Carl clicked through from BenefitHub and landed on a school page — not a homepage. He wants welding credit toward an engineering role, and he has ten thousand Boeing dollars a year to spend.',
+    steps: [
+      { advanceOn: { route: '/school/' }, hint: 'Carl lands where channel visitors actually land: a school page. Notice it’s browsable now — filters, real prices, his Boeing benefit named.', drive: { nav: '/school/franklin' } },
+      { advanceOn: { event: 'search' }, hint: 'Search “welding” — Carl’s actual skill. The catalog doesn’t have it…', drive: { nav: '/browse?school=franklin&q=welding' } },
+      { advanceOn: { event: 'empty-state' }, hint: '…and this is the payoff: the empty state tells the truth, suggests nearby fields, offers to request the program — and Ally steps in carrying his exact words.', drive: { nav: '/browse?school=franklin&q=welding' } },
+      { advanceOn: { event: 'ally-related' }, hint: 'Take Ally’s suggestion: Industrial & systems engineering — welding-adjacent, credit for trade experience.', drive: { nav: '/browse?area=engineering' } },
+      { advanceOn: { event: 'drawer' }, hint: 'Open the Engineering Technology program. Boeing’s $10,000 turns a $12,300 year into a real number Carl can say out loud.', drive: { nav: '/browse?program=franklin-bs-engtech' } },
+      { advanceOn: null, hint: 'Carl’s dead end became a conversation, and a conversation became a plan. Move 4, plus the school page and the math.' },
+    ],
+  },
+  {
+    id: 'tina',
+    share: '~80% of traffic',
+    valueNote: 'Channel, no reimbursement. Same door, no financial hook.',
+    archetype: 'Benefit Partner No TR',
+    name: 'Tina',
+    employerId: 'lowes',
+    title: 'Just looking, on a phone',
+    who: 'Lowe’s associate · channel partner · no reimbursement',
+    personas: 'The Explorer · New Learner',
+    entry: '/',
+    intentSuggestion: 'benefits',
+    color: 32,
+    mobile: true,
+    blurb:
+      'Tina opened the link from a benefits portal on her phone, on a break. She isn’t sure school is for her. The first screen decides whether there’s a second one.',
+    steps: [
+      { advanceOn: { route: '/' }, hint: 'Narrow your window (or open devtools mobile view). Tina’s first screen is content — headline, search, a story — not blank space.', drive: { do: 'phone' } },
+      { advanceOn: { event: 'ally-entry' }, hint: 'She pokes the helper — same name, same voice it will have after she joins. It helps first; it never opens with an account question.', drive: { do: 'ally' } },
+      { advanceOn: { event: 'gate-join' }, hint: 'Search something affordable, then tap Save on a program — the join ask appears only now. Join as Tina.', drive: { do: 'gate' } },
+      { advanceOn: { event: 'intent' }, hint: 'The benefit explainer is honest: Lowe’s doesn’t reimburse — so it pivots to partner discounts and low-cost, self-paced options.', drive: { do: 'intent', intent: 'benefits' } },
+      { advanceOn: { event: 'drawer' }, hint: 'Browse the affordable certificates it suggests and open one. Total cost, plain language, no pressure.', drive: { nav: '/browse?filter=mostAffordable&program=state-online-pm-cert' } },
+      { advanceOn: null, hint: 'Tina never hit a wall, a blank screen, or a stranger. Move 1 on mobile, and the one-assistant story, paid off.' },
+    ],
+  },
   {
     id: 'devon',
+    share: '~20–30% direct',
+    valueNote: 'Direct, with reimbursement. The best-served path today.',
     archetype: 'Direct Partner with TR',
     name: 'Devon',
     employerId: 'sheetz',
@@ -51,6 +125,8 @@ export const USE_CASES = [
   },
   {
     id: 'samir',
+    share: '~20–30% direct',
+    valueNote: 'Direct, mixed eligibility. Cannot self-verify his benefit.',
     archetype: 'Direct Partner with Mixed Eligibility',
     name: 'Samir',
     employerId: 'texas-roadhouse',
@@ -70,51 +146,6 @@ export const USE_CASES = [
       { advanceOn: { event: 'intent' }, hint: 'He’s “exploring options for down the road.” Pick that intent: the guided start, not a hard sell.', drive: { do: 'intent', intent: 'exploring' } },
       { advanceOn: { event: 'drawer' }, hint: 'Open a certificate. Total cost up front — no per-credit puzzle, no benefit that doesn’t exist.', drive: { nav: '/browse?program=state-online-pm-cert' } },
       { advanceOn: null, hint: 'Samir’s path proves the experience works without a benefit: honesty, cost-first ordering, and a gentle start. Moves 2, 3 and 5.' },
-    ],
-  },
-  {
-    id: 'carl',
-    archetype: 'Benefit Partner with TR',
-    name: 'Carl',
-    employerId: 'boeing',
-    title: 'A niche skill through BenefitHub',
-    who: 'Boeing technician · channel partner · ~$10,000/yr benefit',
-    personas: 'Upskiller · Career Advancer',
-    entry: '/school/franklin',
-    intentSuggestion: 'benefits',
-    color: 214,
-    blurb:
-      'Carl clicked through from BenefitHub and landed on a school page — not a homepage. He wants welding credit toward an engineering role, and he has ten thousand Boeing dollars a year to spend.',
-    steps: [
-      { advanceOn: { route: '/school/' }, hint: 'Carl lands where channel visitors actually land: a school page. Notice it’s browsable now — filters, real prices, his Boeing benefit named.', drive: { nav: '/school/franklin' } },
-      { advanceOn: { event: 'search' }, hint: 'Search “welding” — Carl’s actual skill. The catalog doesn’t have it…', drive: { nav: '/browse?school=franklin&q=welding' } },
-      { advanceOn: { event: 'empty-state' }, hint: '…and this is the payoff: the empty state tells the truth, suggests nearby fields, offers to request the program — and Ally steps in carrying his exact words.', drive: { nav: '/browse?school=franklin&q=welding' } },
-      { advanceOn: { event: 'ally-related' }, hint: 'Take Ally’s suggestion: Industrial & systems engineering — welding-adjacent, credit for trade experience.', drive: { nav: '/browse?area=engineering' } },
-      { advanceOn: { event: 'drawer' }, hint: 'Open the Engineering Technology program. Boeing’s $10,000 turns a $12,300 year into a real number Carl can say out loud.', drive: { nav: '/browse?program=franklin-bs-engtech' } },
-      { advanceOn: null, hint: 'Carl’s dead end became a conversation, and a conversation became a plan. Move 4, plus the school page and the math.' },
-    ],
-  },
-  {
-    id: 'tina',
-    archetype: 'Benefit Partner No TR',
-    name: 'Tina',
-    employerId: 'lowes',
-    title: 'Just looking, on a phone',
-    who: 'Lowe’s associate · channel partner · no reimbursement',
-    personas: 'The Explorer · New Learner',
-    entry: '/',
-    intentSuggestion: 'benefits',
-    color: 32,
-    mobile: true,
-    blurb:
-      'Tina opened the link from a benefits portal on her phone, on a break. She isn’t sure school is for her. The first screen decides whether there’s a second one.',
-    steps: [
-      { advanceOn: { route: '/' }, hint: 'Narrow your window (or open devtools mobile view). Tina’s first screen is content — headline, search, a story — not blank space.', drive: { do: 'phone' } },
-      { advanceOn: { event: 'ally-entry' }, hint: 'She pokes the helper — same name, same voice it will have after she joins. It helps first; it never opens with an account question.', drive: { do: 'ally' } },
-      { advanceOn: { event: 'gate-join' }, hint: 'Search something affordable, then tap Save on a program — the join ask appears only now. Join as Tina.', drive: { do: 'gate' } },
-      { advanceOn: { event: 'intent' }, hint: 'The benefit explainer is honest: Lowe’s doesn’t reimburse — so it pivots to partner discounts and low-cost, self-paced options.', drive: { do: 'intent', intent: 'benefits' } },
-      { advanceOn: { event: 'drawer' }, hint: 'Browse the affordable certificates it suggests and open one. Total cost, plain language, no pressure.', drive: { nav: '/browse?filter=mostAffordable&program=state-online-pm-cert' } },
-      { advanceOn: null, hint: 'Tina never hit a wall, a blank screen, or a stranger. Move 1 on mobile, and the one-assistant story, paid off.' },
     ],
   },
 ]

@@ -5,6 +5,9 @@ import AllyEntry from '../components/landing/AllyEntry.jsx'
 import { Eyebrow, Heading, Body, MkButton } from '../components/landing/Section.jsx'
 import { PROGRAMS, money, resolveCost, startDateDisplay } from '../data/model.js'
 import { estimatedOutOfPocket, bestDiscountPercent, discountLabel } from '../data/benefit.js'
+import { partnerState } from '../components/landing/BenefitsAndHow.jsx'
+import { hasBenefitAdmin } from '../data/corporatePartners.js'
+import { ALLCAMPUS_BASE, ALLCAMPUS_SEQUENCING, SCHOOLS_BOX } from '../data/landingCopy.js'
 import { getSchool } from '../data/schools.js'
 import { schoolImage } from '../data/images.js'
 import Img from '../components/Img.jsx'
@@ -37,6 +40,114 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
   const benefitKnown = partner?.benefitKnown && (partner?.employerReimbursement ?? 0) > 0
   const programs = PROGRAMS.filter((p) => p.schoolId === school.id)
   const firstWord = school.name.split(' ')[0]
+
+  /*
+   * CHANNEL ARRIVAL (2026-08-28 client review: Brigid, James, Terrence).
+   *
+   * James asked Brigid outright whether benefit-partner traffic always lands
+   * on a school page — "Brigid, is EdAssist, are they always landing on a
+   * school page? Is that right?" — and her answer was yes. That makes THIS
+   * page the first screen for the 70-80% of traffic that arrives via a work
+   * intranet, then a benefit administrator (EdAssist, Tuition.io,
+   * BenefitHub), then us. The page was written for someone who came from the
+   * landing page and already knew what AllCampus is. Those users didn't.
+   *
+   * Brigid on why they are the hard case: "they've already been through their
+   * work portal to a benefit partner, to us, and they've lost connection
+   * along the way about who does what or what does what or what qualifies for
+   * what... although they're the highest intent... they're the most confused."
+   *
+   * Two failures this fixes.
+   *
+   * IDENTITY. James: "I used to talk to people when I was on the phones that
+   * always thought I was EdAssist and didn't realize that I wasn't EdAssist.
+   * They thought the platform was still EdAssist's website because we
+   * co-brand with them." MkHeader's co-brand lockup makes that worse, not
+   * better, so the administrator is named in words and separated from us in
+   * the same sentence.
+   *
+   * LEAKAGE. Brigid's worked example: "I see that there's a 25% discount at
+   * [X] University — I could Google search them, get more information about
+   * the school and the program, and request information from them," and the
+   * lead never reaches AllCampus. James: "that's all lost revenue." The
+   * agreed counter-message is "Activate your discount through AllCampus" —
+   * his gloss: "it's just telling them, 'You got to go through us to get this
+   * going.'"
+   *
+   * SHORT ON PURPOSE. A confused arrival gets three rows and one sentence,
+   * not a second copy of the journey. The full per-type boxes stay in
+   * JourneySteps below; this only has to answer "who are you and why am I
+   * here" before the reader scrolls.
+   *
+   * CONDITIONAL. Only partners with a benefit administrator (Brigid's
+   * "Benefit Partner with TR" type, her 4-box case) see it. Direct partners
+   * have no fourth party to disambiguate and keep the page they had.
+   */
+  const admin = hasBenefitAdmin(partner) ? partner.benefitAdmin : null
+  const { reimburses, noTr } = partnerState(partner)
+  // Mock admin records use a generic lowercase name ("your benefit
+  // administrator") because the review dropdown shows Brigid's type titles,
+  // not companies. Fine mid-sentence, reads as a typo as a card label.
+  const adminLabel = admin ? admin.name.charAt(0).toUpperCase() + admin.name.slice(1) : null
+
+  /*
+   * What kind of company AllCampus is, in one sentence — James's note 3 from
+   * 2026-08-27, reused verbatim from WhyAllCampus so the two surfaces cannot
+   * drift. It renders exactly once per page: inside the arrival card when
+   * there is an administrator to be told apart from, under "How AllCampus
+   * works" otherwise. Every visitor to this page gets it either way, which
+   * was not true before 2026-08-28.
+   *
+   * The noTr / reimburses branches are the honesty guard: said to a partner
+   * with no reimbursement program, the "tuition benefit partner" wording
+   * promises money that does not exist.
+   */
+  const possessive =
+    partner?.benefitKnown && !/^your /i.test(partner.name || '')
+      ? `${partner.name}’s`
+      : 'your employer’s'
+  const identityLine = (
+    <>
+      <strong className="font-extrabold text-mk-slate">
+        AllCampus is {possessive} {noTr ? 'discount network partner' : 'tuition benefit partner'}
+      </strong>{' '}
+      &mdash;{' '}
+      {noTr
+        ? 'built to reduce the cost of tuition for you.'
+        : reimburses
+          ? 'built to help you use your discount and your reimbursement without the runaround.'
+          : 'built to help you use your discount, guaranteed for everyone, and your reimbursement if your role qualifies.'}
+    </>
+  )
+
+  // Three parties, three jobs. The administrator row never mentions money
+  // unless `reimburses` is true — see the partnerState note in
+  // BenefitsAndHow.jsx for why 'perks' and 'direct-no-tr' are the only
+  // definitely-no types.
+  const parties = admin
+    ? [
+        {
+          role: 'Your benefit',
+          name: adminLabel,
+          does: reimburses
+            ? 'Decides who qualifies, runs pre-approval, and pays the reimbursement.'
+            : 'Decides who qualifies and runs pre-approval.',
+        },
+        {
+          role: 'Your discount',
+          name: 'AllCampus',
+          does: 'Holds the negotiated discount and connects you to the school.',
+          on: true,
+        },
+        {
+          role: 'Your degree',
+          name: school.name,
+          // Brigid's In-Network Schools box, verbatim. Her doc: reused
+          // verbatim everywhere.
+          does: SCHOOLS_BOX,
+        },
+      ]
+    : []
 
   // 2026-08-19 session: lead with the discount. The best percent across this
   // school's catalog is the headline, not a footnote.
@@ -164,6 +275,80 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
         </div>
       </section>
 
+      {/* Channel-arrival card — see the CHANNEL ARRIVAL note above for the
+          review record behind it. It sits directly under the hero because it
+          is orientation, not explanation: it has to land before the reader
+          decides whether this page is their benefit portal, their school, or
+          neither. */}
+      {admin && (
+        <section className="border-b border-mk-line bg-mk-surface py-10">
+          <div className="mx-auto max-w-6xl px-5">
+            <div className="rounded-[var(--radius-card)] border border-mk-line bg-white p-6 font-display sm:p-8">
+              <Eyebrow>Who does what</Eyebrow>
+              <Heading size="sm" className="mt-2 max-w-3xl">
+                Your tuition benefit is administered by {admin.name}, not by AllCampus.
+              </Heading>
+              <Body className="mt-2 max-w-3xl">{identityLine}</Body>
+
+              {/* Three rows on mobile, three columns from 640px. The rule
+                  above each name is the only weight change: teal on the
+                  AllCampus row, hairline on the other two, so the party the
+                  reader has to act with reads first without a second card
+                  treatment. */}
+              <div className="mt-7 grid grid-cols-1 items-start gap-5 sm:grid-cols-3 sm:gap-6">
+                {parties.map((p) => (
+                  <div
+                    key={p.name}
+                    className={`border-t-2 pt-3 ${p.on ? 'border-mk-teal-600' : 'border-mk-line'}`}
+                  >
+                    <p
+                      className={`text-mk-caption font-bold uppercase tracking-[0.14em] ${
+                        p.on ? 'text-mk-teal-text' : 'text-mk-body/70'
+                      }`}
+                    >
+                      {p.role}
+                    </p>
+                    <p className="mt-1 text-mk-cardtitle font-extrabold leading-snug text-mk-slate">
+                      {p.name}
+                    </p>
+                    <p className="mt-1.5 text-mk-meta leading-relaxed text-mk-body">{p.does}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* The activation line, James's words as the label.
+                  ALLCAMPUS_BASE is deliberately NOT repeated here: the journey
+                  strip one screen down already carries it (JourneySteps step
+                  02), and saying "AllCampus already secured your discount"
+                  twice on the same page blunts the one sentence the
+                  2026-08-28 review wants to land. What a channel arrival does
+                  not already know is the ORDER, so the sequencing clause
+                  carries this block on its own. Her rule still holds: the
+                  clause appears only when there is a reimbursement process to
+                  sequence against, so a no-reimbursement learner is never told
+                  to start here for a pre-approval they will never file. */}
+              <div className="mt-7 flex flex-col gap-4 border-t border-mk-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <Eyebrow>Activate your discount through AllCampus</Eyebrow>
+                  <Body className="mt-1.5 max-w-2xl">
+                    {reimburses
+                      ? `Connecting through AllCampus is what activates it.${ALLCAMPUS_SEQUENCING}`
+                      : 'Connecting through AllCampus is what activates it.'}
+                  </Body>
+                </div>
+                <MkButton
+                  tone="teal"
+                  className="shrink-0"
+                  onClick={() => goBrowse({ school: school.id })}
+                >
+                  View {firstWord} programs
+                </MkButton>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* 2026-08-27, James's merge applied here too: this page ran the same
           two redundant explainers (a step strip AND the who-does-what rail).
           Now one journey, with the driver inside each sentence. The
@@ -175,6 +360,14 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
           <Heading className="mt-2 max-w-2xl">
             Your path at {firstWord}, guided support, start to finish
           </Heading>
+
+          {/* 2026-08-28 review: nothing on this page said what kind of
+              company AllCampus is. The landing page carries that sentence and
+              this page assumed the reader had already read it, which is wrong
+              for the majority of traffic — most of it arrives here first, not
+              there. Rendered here only when the arrival card above is absent,
+              so it appears exactly once. */}
+          {!admin && <Body className="mt-3 max-w-2xl">{identityLine}</Body>}
 
           <div className="mt-6 rounded-xl border border-mk-teal-600/30 bg-mk-band px-5 py-4 font-display">
             <p className="text-[15px] font-bold text-mk-slate">

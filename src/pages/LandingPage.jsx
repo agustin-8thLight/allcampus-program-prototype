@@ -54,6 +54,8 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
   // 2026-08-27: the three questions are TABLED, so nothing on this page opens
   // the pathfinder any more. It stays mounted and reachable by prop so the
   // profile path can come back without a rebuild.
+  const [askedSchool, setAskedSchool] = useState(null)
+
   const scrollToHelp = () =>
     document.getElementById('get-help')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
@@ -70,7 +72,11 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
         partner={partner}
         onSearch={(params) => goBrowse(params)}
         onNavigate={onNavigate}
-        onAskSchool={() => scrollToHelp()}
+        // onAskSchool carries the school they typed. Discarding it meant someone
+        // searched "Metro State", got scrolled to a help block, and had to type
+        // it again — the abandonment Brigid described on 2026-08-31. Caught in
+        // the handoff inventory.
+        onAskSchool={(name) => { setAskedSchool(name || null); scrollToHelp() }}
       />
 
       {profile && <ProfileResults profile={profile} partner={partner} onGate={onGate} onNavigate={onNavigate} />}
@@ -83,7 +89,7 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
 
       <JourneySteps partner={partner} />
 
-      <HelpPair partner={partner} />
+      <HelpPair partner={partner} askedSchool={askedSchool} joined={joined} onGate={onGate} />
 
       <StoryCards partner={partner} />
 

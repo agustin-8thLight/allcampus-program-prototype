@@ -28,13 +28,26 @@ import { MkButton } from './Section.jsx'
  * and three chips; all three are gone.
  */
 
-export default function HelpPair({ partner, onSpecialistRef }) {
+export default function HelpPair({ partner, onSpecialistRef, askedSchool, joined, onGate, onBookCall }) {
   const [overlay, setOverlay] = useState(null)
   const open = (seed = null) => setOverlay({ seed })
 
   return (
     <section id="get-help" className="bg-white pb-20">
       <div className="mx-auto max-w-6xl px-5">
+        {/* The school-picker no-match state scrolls here. Naming what they typed
+            is the difference between an answer and a shrug. */}
+        {askedSchool && (
+          <div className="mb-6 rounded-[var(--radius-card)] border border-mk-line bg-mk-band p-6">
+            <p className="font-display text-[17px] font-extrabold text-mk-slate">
+              {'\u201C'}{askedSchool}{'\u201D'} is not in the AllCampus network yet.
+            </p>
+            <p className="mt-1.5 text-[15px] leading-relaxed text-mk-body">
+              There is no discount to activate there. A specialist can tell you whether a partner
+              school has a comparable program, and what it would actually cost you.
+            </p>
+          </div>
+        )}
         <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-2">
           {/* ALLY: self-serve scope */}
           <div className="flex flex-col rounded-[var(--radius-card)] border border-mk-line bg-white p-8">
@@ -95,11 +108,25 @@ export default function HelpPair({ partner, onSpecialistRef }) {
               Get support from an AllCampus Education Benefits Specialist. If you have questions, or
               need guidance on education or tuition benefits, please book a call.
             </p>
+            {/* 2026-08-31 review: this was a button with no handler at all —
+                the only human-support CTA on the page, and it did nothing.
+                Brigid's ask was that the click route through account creation
+                first: "I just don't have enough information to have a
+                productive phone call... I would rather them just be forced to
+                create an account." Terrence then redirects to her HubSpot
+                calendar after signup via a temporary flag. Already-joined users
+                go straight through. */}
             <div className="mt-auto pt-5">
-              <MkButton tone="teal">
-                Book a call
+              <MkButton tone="teal" onClick={() => (joined ? onBookCall?.() : onGate?.('specialist'))}>
+                {joined ? 'Book a call' : 'Create an account to book a call'}
                 <span aria-hidden>&rarr;</span>
               </MkButton>
+              {!joined && (
+                <p className="mt-2.5 text-[13px] leading-relaxed text-mk-body">
+                  Your account is what lets a specialist see your employer, your benefit, and the
+                  programs you are looking at before the call starts.
+                </p>
+              )}
             </div>
           </div>
         </div>

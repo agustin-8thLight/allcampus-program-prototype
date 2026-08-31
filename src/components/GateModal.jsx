@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { emitStoryEvent } from '../data/useCases.js'
 
 /*
@@ -7,11 +8,33 @@ import { emitStoryEvent } from '../data/useCases.js'
  * longer true and a broken promise is worse than none.
  */
 export default function GateModal({ open, partner, onJoin, onDismiss }) {
+  /*
+   * Escape closes it, and the backdrop does too (2026-08-31). Neither worked
+   * before, which mattered less when the gate only fired on Save; the
+   * 2026-08-31 decision moves it in front of Book a call and, next, the
+   * program-card click, so a modal with no way out becomes a trap. Same
+   * pattern as Drawer.jsx:15-24 so there is one way to dismiss a modal here.
+   */
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => e.key === 'Escape' && onDismiss?.()
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [open, onDismiss])
+
   if (!open) return null
   const benefit = partner?.benefitKnown && partner.employerReimbursement > 0
   return (
-    <div className="fixed inset-0 z-[65] flex items-end justify-center bg-ink-900/40 p-4 sm:items-center">
-      <div className="w-full max-w-md rounded-2xl bg-surface-0 p-6 shadow-xl">
+    <div
+      className="fixed inset-0 z-[65] flex items-end justify-center bg-ink-900/40 p-4 sm:items-center"
+      onClick={onDismiss}
+      role="presentation"
+    >
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-2xl bg-surface-0 p-6 shadow-xl">
         {benefit && (
           <div className="mb-3 flex items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-600 text-[11px] font-black text-white">

@@ -204,12 +204,17 @@ export default function SchoolPicker({ value, onChange, onRequestSchool }) {
                 That school isn’t in the AllCampus network yet, so there’s no discount to activate there.
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
+                {/* Was labelled "See all schools", which promised navigation it
+                    never did — it only cleared the query. Clearing IS the right
+                    behaviour here (it keeps the person in the picker rather than
+                    throwing them onto another page), so the label now says what
+                    happens. Caught in the 2026-08-31 handoff inventory. */}
                 <button
                   type="button"
                   onMouseDown={(e) => { e.preventDefault(); setQ(''); inputRef.current?.focus() }}
                   className="rounded-lg border-2 border-mk-teal-600 bg-white px-4 py-2 font-display text-[13px] font-bold text-mk-teal-700 outline-offset-2 transition hover:bg-mk-band focus-visible:outline-2 focus-visible:outline-mk-teal-600"
                 >
-                  See all schools
+                  Show all {ALL.length} partner schools
                 </button>
                 {onRequestSchool && (
                   <button

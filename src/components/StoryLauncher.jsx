@@ -108,11 +108,7 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
               <div className="mt-4 flex items-center justify-between">
                 <span className="text-[12px] font-bold uppercase tracking-wide text-mk-body/70">
                   {u.personas}
-                  {u.mobile && (
-                    <span className="ml-2 rounded-full bg-mk-slate/10 px-2 py-0.5 text-[10.5px] text-mk-slate">
-                      opens in phone view
-                    </span>
-                  )}
+
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-sm font-bold text-mk-teal-text group-hover:text-mk-teal-700">
                   Start the walk

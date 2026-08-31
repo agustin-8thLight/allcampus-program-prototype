@@ -92,7 +92,12 @@ export default function PrototypeFrame() {
     setEmployerId(u.employerId)
     setJoined(false)
     setIntent(null)
-    setPhone(!!u.mobile)
+    // 2026-08-31 review: never auto-switch the viewport. Tina's story used to
+    // flip the whole prototype into a 390px frame on start, which confused a
+    // group review — people could not tell whether the narrow layout was the
+    // design or the harness. Phone view stays available as the manual toggle in
+    // the reviewer bar, so it is opt-in rather than a surprise.
+    setPhone(false)
     navigate(u.entry)
   }
 

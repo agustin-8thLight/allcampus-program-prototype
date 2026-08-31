@@ -85,11 +85,13 @@ export const USE_CASES = [
     entry: '/',
     intentSuggestion: 'benefits',
     color: 32,
+    // A fact about Tina, not an instruction to the harness. As of 2026-08-31
+    // this no longer flips the viewport; Phone view is a manual toggle.
     mobile: true,
     blurb:
       'Tina opened the link from a benefits portal on her phone, on a break. She isn’t sure school is for her. The first screen decides whether there’s a second one.',
     steps: [
-      { advanceOn: { route: '/' }, hint: 'Narrow your window (or open devtools mobile view). Tina’s first screen is content — headline, search, a story — not blank space.', drive: { do: 'phone' } },
+      { advanceOn: { route: '/' }, hint: 'Tina’s first screen is content — headline, search, a story — not blank space. She is on a phone; hit Phone view in the bar above if you want to see it at 390px.', drive: { nav: '/' } },
       { advanceOn: { event: 'ally-entry' }, hint: 'She pokes the helper — same name, same voice it will have after she joins. It helps first; it never opens with an account question.', drive: { do: 'ally' } },
       { advanceOn: { event: 'gate-join' }, hint: 'Search something affordable, then tap Save on a program — the join ask appears only now. Join as Tina.', drive: { do: 'gate' } },
       { advanceOn: { event: 'intent' }, hint: 'The benefit explainer is honest: Lowe’s doesn’t reimburse — so it pivots to partner discounts and low-cost, self-paced options.', drive: { do: 'intent', intent: 'benefits' } },

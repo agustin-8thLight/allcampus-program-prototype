@@ -56,16 +56,41 @@ import {
  * inside the sentence ("with your employer", "through AllCampus"), which is a
  * lighter way to do it than the chips I had. Client language of record, not
  * ours to restyle.
+ *
+ * CLIENT REVIEW 2026-08-28 (Brigid, James, Terrence, Agustin). Two changes,
+ * and they renumber everything described above. This is a 4-to-6 step
+ * journey now, not a fixed five, so the "01/02" references in these notes
+ * mean the old positions, not the current ones.
+ *
+ * FIRST TWO STEPS MERGED. Brigid, on the account step: "I think we just nix
+ * create an account. Again, so many people create accounts. That's not our
+ * problem." James, on his own titles: "if we can combine those, create an
+ * account, then shop for schools and programs in the one card, great." So the
+ * merged title is still his and the body is still hers, and the account is a
+ * clause inside a sentence instead of a step of its own. Connect to schools
+ * through AllCampus moves up a slot and keeps its highlight. It is the
+ * anti-leakage step and the reason the section exists.
+ *
+ * REIMBURSEMENT STEP ADDED, CONDITIONAL. Brigid: "what they want to know is
+ * when do I file for reimbursement... that's way more customer-centered than
+ * create an account, which is AllCampus-centered," and on fitting it in, "if
+ * we could fit it all, then I would say, 'Complete your class and file for
+ * reimbursement.'" It is gated on `reimburses`, the same flag that decides
+ * whether ALLCAMPUS_SEQUENCING is appended to the Connect step. If that card
+ * promises the learner a reimbursement process, the journey has to say when
+ * it happens. No reimbursement, no card, which is why noTr and perks partners
+ * never see it. Benefit-admin partners file with the administrator rather
+ * than the employer, so the body names whoever actually pays.
  */
 
+/*
+ * The person-plus "account" glyph went out with the 2026-08-28 merge. The
+ * merged card carries both actions and Brigid's whole point is that the
+ * account is not the interesting half, so the search glyph leads it. Left as
+ * dead code the glyph would be one more stranded string like the ones
+ * landingCopy.js was written to clear out.
+ */
 const ART = {
-  account: (props) => (
-    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <circle cx="19" cy="17" r="7" />
-      <path d="M7 40c0-7 5.4-11 12-11s12 4 12 11" />
-      <path d="M36 15v11M30.5 20.5h11" />
-    </svg>
-  ),
   shop: (props) => (
     <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
       <circle cx="21" cy="21" r="11" />
@@ -93,6 +118,15 @@ const ART = {
       <path d="M28 10h12v24H28" />
     </svg>
   ),
+  // A receipt, for the filing step. The clipboard-check already belongs to
+  // the two employer steps, and three identical glyphs in one strip would
+  // read as a rendering bug rather than a sequence.
+  reimburse: (props) => (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M12 7h24v34l-6-4-6 4-6-4-6 4z" />
+      <path d="M19 18h10M19 26h6" />
+    </svg>
+  ),
 }
 
 /*
@@ -106,16 +140,18 @@ export default function JourneySteps({ partner, bare = false }) {
   // The mock admin name is lowercase ("your benefit administrator"), which
   // reads as a typo when it opens a sentence. Real names are unaffected.
   const Admin = admin ? admin.charAt(0).toUpperCase() + admin.slice(1) : null
+  // Who the learner actually files with. Both halves are already capitalized
+  // for the sentence-initial position they land in: Admin above, and partner
+  // names that read as names ("Sheetz", "Your employer").
+  const filer = Admin || partner?.name || 'Your employer'
   const steps = [
     {
-      icon: 'account',
-      title: 'Create an AllCampus account',
-      body: 'Create your free profile to search programs, save favorites, and get guided support.',
-    },
-    {
       icon: 'shop',
-      title: 'Shop for schools & programs',
-      body: 'Compare accredited schools and programs matched to your goals, funding, and schedule.',
+      // James's merged title (2026-08-28), Brigid's body. Her register, so
+      // the account is the short half of the sentence and the shopping is
+      // the rest of it.
+      title: 'Create your account and shop programs',
+      body: 'Set up an account, then search schools and programs, save the ones you are considering, and compare them on price and schedule.',
     },
     {
       icon: 'connect',
@@ -151,17 +187,43 @@ export default function JourneySteps({ partner, bare = false }) {
       // Her In-Network Schools box, verbatim.
       body: SCHOOLS_BOX,
     },
+    // Brigid's filing step (2026-08-28). Reimbursement partners only:
+    // `reimburses` is the same test that appends her sequencing clause to
+    // the AllCampus step, so the two cards can never disagree about whether
+    // there is a reimbursement process at all.
+    ...(reimburses
+      ? [
+          {
+            icon: 'reimburse',
+            title: 'Finish your class and file for reimbursement',
+            body: `Reimbursement comes after the class, not before. ${filer} needs your final grade and what you paid, so file as soon as the term closes.`,
+          },
+        ]
+      : []),
   ]
 
+  /*
+   * Flex, not the 3-up grid it was until 2026-08-28. The merge took one step
+   * out and the filing step puts one back only for reimbursement partners, so
+   * the count is 4 (no reimbursement), 5, or 6 (reimbursement plus an
+   * administrator). On a grid, 4 strands a single card alone at the left of
+   * the last row and it reads as a dropped card. Fixed column widths keep
+   * every card the same size as before, and justify-center centers whatever
+   * is left over on the last row. One column at 390px, two from sm, three
+   * from lg, same as the grid did.
+   */
   const strip = (
-    <ol className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ol className="flex flex-wrap justify-center gap-4">
       {steps.map((s, i) => {
             const Art = ART[s.icon]
             const on = !!s.highlight
             return (
-              <li key={s.title} className="h-full">
+              <li
+                key={s.title}
+                className="flex w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]"
+              >
                 <div
-                  className={`flex h-full flex-col rounded-[var(--radius-card)] p-6 transition ${
+                  className={`flex w-full flex-col rounded-[var(--radius-card)] p-6 transition ${
                     on
                       ? 'bg-gradient-to-br from-mk-teal-600 to-mk-slate text-white shadow-[0_18px_40px_rgba(51,71,91,0.35)]'
                       : 'border border-mk-line bg-gradient-to-b from-white to-mk-band/50'

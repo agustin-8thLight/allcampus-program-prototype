@@ -4,9 +4,21 @@
  * lockup: "allcampus + {partner}").
  */
 
+import { MkButton } from './Section.jsx'
+
 export default function MkHeader({ partner, onNavigate, joined = false, onGate }) {
   const cobrand = partner?.benefitKnown ? partner.name : null
   const mark = partner?.name?.trim()?.[0] || ''
+  /*
+   * 2026-08-28 client review: create-account is demoted to a secondary text
+   * link. Brigid's reason was that account creation is not the failure point
+   * ("so many people create accounts, that's not our problem") — what breaks
+   * is the step after, so the header should stop spending its loudest slot
+   * pushing signup. Same focus treatment as the secondary text links in
+   * SchoolPicker so the link is still keyboard-visible without a button box.
+   */
+  const secondaryLink =
+    'rounded-sm outline-offset-2 transition hover:text-mk-slate focus-visible:outline-2 focus-visible:outline-mk-teal-600'
   return (
     <header className="sticky top-12 z-40 border-b border-mk-line bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
@@ -50,28 +62,33 @@ export default function MkHeader({ partner, onNavigate, joined = false, onGate }
             </svg>
             Search
           </button>
-          <button type="button" onClick={() => onNavigate('/browse')} className="hover:text-mk-slate">
+          {/* 2026-08-28 client review: browse is the header's primary action
+              now, in the treatment signup used to hold. Agustin: "I would
+              actually probably have browse programs or put the search back
+              in"; Brigid and James both agreed. -my-0.5 absorbs MkButton's
+              2px border so the header keeps the height it had when signup
+              was the filled element. */}
+          <MkButton tone="teal" size="sm" onClick={() => onNavigate('/browse')} className="-my-0.5">
             Browse programs
-          </button>
+          </MkButton>
           {/* 2026-08-25 direction: the account lives up here, so the page body
               can drive one action (the survey) without competing with it. */}
           {joined ? (
             <div className="h-8 w-8 rounded-full bg-mk-band" aria-hidden />
           ) : (
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => onGate?.('catalog')}
-                className="hover:text-mk-slate"
-              >
+              <button type="button" onClick={() => onGate?.('catalog')} className={secondaryLink}>
                 Log in
               </button>
+              {/* 2026-08-28 client review: was a filled teal button labelled
+                  "Sign up". Now an underlined text link, and named for what it
+                  does. The gate behaviour is untouched. */}
               <button
                 type="button"
                 onClick={() => onGate?.('catalog')}
-                className="rounded-md bg-mk-teal-600 px-4 py-2 text-[13px] font-bold text-white transition hover:bg-mk-teal-700"
+                className={`underline decoration-1 underline-offset-4 ${secondaryLink}`}
               >
-                Sign up
+                Create account
               </button>
             </div>
           )}

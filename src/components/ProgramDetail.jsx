@@ -209,14 +209,31 @@ export default function ProgramDetail({
 
 /* ------------------------------------------------------------------ */
 
+/*
+ * 2026-08-31 review: "Activate your discount through AllCampus" becomes the
+ * button here. James: "we probably can't say that enough... I would rather
+ * over-communicate that than under-communicate that." Brigid raised it twice.
+ *
+ * This is the one click where the phrase is literally true — it opens the
+ * chooser, which creates the HubSpot deal (Change-and-Dependency-Map.md:62).
+ * "Get Program Details" described OUR process; this describes their benefit,
+ * and it is the answer to Brigid's complaint that the program card "doesn't
+ * tell you that you have to take this step to get the discount."
+ *
+ * EXCEPTION — direct-handoff schools. SNHU and Metro Tech skip the chooser and
+ * hand the user to the school's own funnel (schools.js:8-9), so nothing is
+ * activated through AllCampus and the label would be a lie. They keep
+ * process language.
+ */
 export function PrimaryCta({ program, onPrimaryCta }) {
+  const activates = !program?.isDirectHandoff
   return (
     <button
       type="button"
       onClick={() => onPrimaryCta?.(program)}
       className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-4 text-[17px] font-bold text-white transition hover:bg-brand-700"
     >
-      Get Program Details
+      {activates ? 'Activate your discount' : 'Get program details'}
       <ArrowRightIcon className="text-lg" />
     </button>
   )

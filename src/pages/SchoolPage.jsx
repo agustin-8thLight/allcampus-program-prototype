@@ -393,7 +393,7 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
                   className="shrink-0"
                   onClick={() => goBrowse({ school: school.id })}
                 >
-                  View {firstWord} programs
+                  Activate your discount
                 </MkButton>
               </div>
             </div>

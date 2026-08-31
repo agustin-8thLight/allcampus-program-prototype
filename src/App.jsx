@@ -71,6 +71,17 @@ export default function App({
   const [schoolId] = useState(() => initialParams?.get('school') || profile?.schoolId || null)
   const [degreeLevel, setDegreeLevel] = useState(() => initialParams?.get('degree') || null)
   const [coveredOnly, setCoveredOnly] = useState(() => initialParams?.get('covered') === '1')
+  /*
+   * ?capped=1 — programs at schools with an annual tuition cap.
+   *
+   * Deliberately NOT the same as ?covered=1. Covered runs
+   * isFullyCoveredEstimate, which needs a known employer benefit, so it goes
+   * empty for anyone whose TR we cannot see. The cap is a property of the
+   * SCHOOL, so it holds regardless of what we know about the person
+   * (2026-08-31: "5250 schools are always the highest value no matter what we
+   * know about the TR").
+   */
+  const [cappedOnly, setCappedOnly] = useState(() => initialParams?.get('capped') === '1')
   const [areaMenuOpen, setAreaMenuOpen] = useState(false)
   const [degreeMenuOpen, setDegreeMenuOpen] = useState(false)
   // Profile scope: only the starting points that actually constrain results.
@@ -201,6 +212,7 @@ export default function App({
     if (schoolId) matched = matched.filter((p) => p.schoolId === schoolId)
     if (degreeLevel) matched = matched.filter((p) => p.degreeLevel === degreeLevel)
     if (coveredOnly && partner) matched = matched.filter((p) => isFullyCoveredEstimate(p, partner))
+    if (cappedOnly) matched = matched.filter((p) => getSchool(p.schoolId)?.tuitionCap)
     if (startScope) matched = matchPrograms({ start: startScope }, matched)
     // 'Fully covered for you' is a dynamic lens: filter + affordability order.
     if (activeFilter === 'fullyCovered' && partner) {
@@ -208,7 +220,7 @@ export default function App({
       return applyQuickFilter(matched, 'mostAffordable')
     }
     return applyQuickFilter(matched, activeFilter)
-  }, [query, activeFilter, areaId, skillId, goalId, categoryId, schoolId, degreeLevel, coveredOnly, startScope, partner])
+  }, [query, activeFilter, areaId, skillId, goalId, categoryId, schoolId, degreeLevel, coveredOnly, cappedOnly, startScope, partner])
 
   // Applied-filter chips (taxonomy + landing handoffs), each clearable.
   const appliedFilters = [
@@ -220,6 +232,7 @@ export default function App({
     schoolId && { key: 'school', label: getSchool(schoolId)?.name, clear: null }, // school scope comes from the school page
     degreeLevel && { key: 'degree', label: degreeLevel, clear: () => setDegreeLevel(null) },
     coveredOnly && { key: 'covered', label: 'Fully covered (est.)', clear: () => setCoveredOnly(false) },
+    cappedOnly && { key: 'capped', label: 'Tuition capped at $5,250/yr', clear: () => setCappedOnly(false) },
   ].filter(Boolean)
 
   return (

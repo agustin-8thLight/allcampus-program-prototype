@@ -138,8 +138,11 @@ export default function SearchHero({
               hero; here the white search card is the primary action, so these
               sit at card-title weight on a translucent ground and read as hero
               furniture rather than a second CTA. 2x2 on phones, 4-up from sm.
-              max-w-2xl keeps them from spanning wider than the dek above. */}
-          <dl className="mt-8 grid max-w-2xl grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+              max-w-2xl keeps them from spanning wider than the dek above.
+              auto-rows-fr because the 2x2 phone layout puts a one-line label
+              beside a wrapping one, and independent row heights made the four
+              boxes read as two different components. */}
+          <dl className="mt-8 grid max-w-2xl auto-rows-fr grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
             {HERO_FACTS.map((f) => (
               <div
                 key={f.l}
@@ -183,7 +186,7 @@ export default function SearchHero({
               opens on a Popular tab of outcome labels, area tabs beside it —
               the one piece retained from that branch after client review. */}
           <AreaSkillSelect value={field} onChange={setField} />
-          <SchoolPicker value={school} onChange={setSchool} onRequestSchool={onAskSchool} />
+          <SchoolPicker value={school} onChange={setSchool} onRequestSchool={onAskSchool} onExploreValue={onExploreValue} />
           <MkButton tone="green" onClick={submit} className="h-[42px] px-7">
             Search
           </MkButton>

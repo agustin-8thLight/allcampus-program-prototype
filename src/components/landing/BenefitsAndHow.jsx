@@ -46,10 +46,16 @@ export function partnerState(partner) {
 
 export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
   const { reimburses, noTr, trPossible } = partnerState(partner)
-  const possessive =
-    partner?.benefitKnown && !/^your /i.test(partner.name || '')
-      ? `${partner.name}’s`
-      : 'your employer’s'
+  /*
+   * 2026-08-31: this was a possessive ("Lowe's" + "’s" = "Lowe's’s"), which was
+   * survivable in 15px body copy and is not survivable in an h2 now that
+   * James's partner-identity line IS the heading. Named partners take the
+   * "chose" form instead, which also states the thing his 2026-08-27 note
+   * actually asked for: that the employer picked AllCampus. Partners with no
+   * name on file keep the generic possessive.
+   */
+  const namedPartner = partner?.benefitKnown && !/^your /i.test(partner.name || '')
+  const partnerRole = noTr ? 'discount network partner' : 'tuition benefit partner'
   const maxPct = bestDiscountPercent(PROGRAMS)
   const cappedSchools = Object.values(SCHOOLS).filter((s) => s.tuitionCap)
   /*
@@ -101,8 +107,9 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
         */}
         <Eyebrow>Why AllCampus</Eyebrow>
         <Heading className="mt-2 max-w-3xl">
-          AllCampus is {possessive}{' '}
-          {noTr ? 'discount network partner' : 'tuition benefit partner'}
+          {namedPartner
+            ? `AllCampus is the ${partnerRole} ${partner.name} chose`
+            : `AllCampus is your employer’s ${partnerRole}`}
         </Heading>
         <Body className="mt-3 max-w-2xl">
           {noTr
@@ -173,7 +180,7 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
                 */}
                 <Body className="mt-2">
                   {coversCap
-                    ? `Your out-of-pocket cost is $0 — tuition capped to match ${employerLabel} benefit.`
+                    ? `Your out-of-pocket cost is $0. Tuition is capped to match ${employerLabel} benefit.`
                     : reimburses
                       ? `${money(reimbursement)} a year from ${employerLabel} benefit comes off that capped amount, so you would cover the difference at most.`
                       : noTr

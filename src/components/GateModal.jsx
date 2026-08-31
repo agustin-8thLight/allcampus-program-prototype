@@ -45,6 +45,13 @@ const COPY = {
     body: () => 'Your specialist sees your benefit before the call starts.',
     dismiss: 'Not now',
   },
+  // They asked Ally to find them something. Ally is behind the account, so the
+  // gate has to name what they just asked for or the click reads as bait.
+  explore: {
+    title: 'Create a free account to ask Ally',
+    body: () => 'Ally looks across all 24 partner schools for what fits you.',
+    dismiss: 'Not now',
+  },
   catalog: {
     title: 'Create your free account',
     body: (who) =>

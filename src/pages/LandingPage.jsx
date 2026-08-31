@@ -77,6 +77,10 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
         // it again — the abandonment Brigid described on 2026-08-31. Caught in
         // the handoff inventory.
         onAskSchool={(name) => { setAskedSchool(name || null); scrollToHelp() }}
+        // Ally sits behind login, so "explore with Ally" routes to the account
+        // gate rather than opening Ally. James, 2026-08-31: "we don't want to be
+        // burning tokens for people who will never create an account."
+        onExploreValue={() => onGate?.('explore')}
       />
 
       {profile && <ProfileResults profile={profile} partner={partner} onGate={onGate} onNavigate={onNavigate} />}

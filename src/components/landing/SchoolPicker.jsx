@@ -65,11 +65,10 @@ const SUGGESTED = ALL.filter((s) => s.tuitionCap)
 
 const usd = (n) => `$${n.toLocaleString('en-US')}`
 
-// The few words that say WHY this school is being suggested. Both facts are
-// structured fields, so the line stays true if the catalog changes.
+// Why this school is here, in three words. The cap is the whole reason; the
+// accreditation line that used to ride along was noise at this moment.
 function whyValuable(s) {
-  const cap = `Tuition capped at ${usd(s.tuitionCap)} a year`
-  return s.accreditation ? `${cap} · ${s.accreditation}` : cap
+  return `${usd(s.tuitionCap)}/yr cap`
 }
 
 export default function SchoolPicker({ value, onChange, onRequestSchool, onExploreValue }) {
@@ -321,7 +320,7 @@ export default function SchoolPicker({ value, onChange, onRequestSchool, onExplo
                         Don’t see your school?
                       </span>
                       <span className="block text-[12px] text-mk-body">
-                        Explore what we can offer with Ally, across all {ALL.length} partner schools.
+                        Ally can search all {ALL.length}.
                       </span>
                     </span>
                     <span className="shrink-0 font-display text-[13px] font-bold text-mk-purple" aria-hidden>→</span>
@@ -345,9 +344,11 @@ export default function SchoolPicker({ value, onChange, onRequestSchool, onExplo
               <p className="font-display text-[15px] font-bold text-mk-slate">
                 No partner school matches “{q.trim()}”.
               </p>
+              {/* 2026-08-31: cut from two sentences to one. The suggestion rows
+                  below say what the value is; the body only has to say the
+                  school is not here. "Clarify, not confuse." */}
               <p className="mt-1 text-[13px] text-mk-body">
-                That school isn’t in the AllCampus network yet, so there’s no discount to activate
-                there. What we can do is find you something of equal or better value for less.
+                Not in the network yet. These two cap what you pay.
               </p>
 
               {/* Guarded: if no school in the catalog carries a tuitionCap the
@@ -386,11 +387,6 @@ export default function SchoolPicker({ value, onChange, onRequestSchool, onExplo
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-2 text-[12px] text-mk-body">
-                    {SUGGESTED.length === 2 ? 'These two are the only' : 'The only'} partner schools
-                    that cap what you pay out of pocket at {usd(SUGGESTED[0].tuitionCap)} a year,
-                    whatever your employer covers.
-                  </p>
                 </div>
               )}
 
@@ -403,15 +399,13 @@ export default function SchoolPicker({ value, onChange, onRequestSchool, onExplo
                     ✦
                   </span>
                   <div className="min-w-0 flex-1">
+                    {/* 2026-08-31: was a heading plus a 24-word explainer. One
+                        line and a button. The button says what it does. */}
                     <p className="font-display text-[13px] font-bold text-mk-slate">
-                      Your school isn’t the only way in.
-                    </p>
-                    <p className="mt-0.5 text-[12px] text-mk-body">
-                      Tell Ally what you want to do for work and it will look across all {ALL.length}{' '}
-                      partner schools for something of equal or better value.
+                      Ally can search all {ALL.length} schools for a closer match.
                     </p>
                     <MkButton tone="purple" size="sm" className="mt-2.5" onClick={() => exploreValue('no-match')}>
-                      Explore what fits me
+                      Explore with Ally
                     </MkButton>
                   </div>
                 </div>

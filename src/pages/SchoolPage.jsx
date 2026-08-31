@@ -10,6 +10,7 @@ import { hasBenefitAdmin } from '../data/corporatePartners.js'
 import { ALLCAMPUS_BASE, ALLCAMPUS_SEQUENCING, SCHOOLS_BOX } from '../data/landingCopy.js'
 import { getSchool } from '../data/schools.js'
 import { schoolImage } from '../data/images.js'
+import { BuildingIcon } from '../components/icons.jsx'
 import Img from '../components/Img.jsx'
 import AllyOverlay from '../components/AllyOverlay.jsx'
 
@@ -124,11 +125,40 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
   // unless `reimburses` is true — see the partnerState note in
   // BenefitsAndHow.jsx for why 'perks' and 'direct-no-tr' are the only
   // definitely-no types.
+  /*
+   * Each party carries its own mark (2026-08-31). The whole point of this card
+   * is that these are THREE SEPARATE COMPANIES, and three identical text
+   * columns do not say that — three different marks do, before anyone reads a
+   * word. James's phone anecdote is people failing to tell two of them apart.
+   *
+   * Marks use real data only:
+   *   - AllCampus reuses the exact 'ac' teal roundel from MkHeader, so the two
+   *     surfaces cannot drift.
+   *   - The school uses its own logoMonogram and logoColor from schools.js.
+   *   - Administrators have NO brand data in the fixtures, and inventing a
+   *     colour for a third party would be a lie, so it gets initials derived
+   *     from its name on neutral slate — and falls back to a building glyph
+   *     when the name is a generic placeholder ("your benefit administrator")
+   *     where initials would read as nonsense.
+   */
+  // `admin` is the benefitAdmin object, so read .name. A real administrator
+  // name starts with a capital ("BenefitHub", "EdAssist"); the generic
+  // placeholder does not ("your benefit administrator"), and initials of that
+  // would read as nonsense, so it falls through to the glyph.
+  // Capitals inside the name are the initials people recognise: BenefitHub ->
+  // BH, EdAssist -> EA. Single-capital names fall back to the first two letters.
+  const adminName = admin?.name || ''
+  const adminCaps = adminName.replace(/[^A-Z]/g, '')
+  const adminInitials = /^[A-Z]/.test(adminName)
+    ? (adminCaps.length >= 2 ? adminCaps.slice(0, 2) : adminName.slice(0, 2).toUpperCase())
+    : null
+
   const parties = admin
     ? [
         {
           role: 'Your benefit',
           name: adminLabel,
+          mark: { kind: adminInitials ? 'initials' : 'glyph', text: adminInitials, color: '#33475b' },
           does: reimburses
             ? 'Decides who qualifies, runs pre-approval, and pays the reimbursement.'
             : 'Decides who qualifies and runs pre-approval.',
@@ -136,12 +166,14 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
         {
           role: 'Your discount',
           name: 'AllCampus',
+          mark: { kind: 'allcampus' },
           does: 'Holds the negotiated discount and connects you to the school.',
           on: true,
         },
         {
           role: 'Your degree',
           name: school.name,
+          mark: { kind: 'initials', text: school.logoMonogram, color: school.logoColor },
           // Brigid's In-Network Schools box, verbatim. Her doc: reused
           // verbatim everywhere.
           does: SCHOOLS_BOX,
@@ -301,6 +333,26 @@ export default function SchoolPage({ schoolId, partner, joined = false, onGate, 
                     key={p.name}
                     className={`border-t-2 pt-3 ${p.on ? 'border-mk-teal-600' : 'border-mk-line'}`}
                   >
+                    {p.mark && (
+                      <div className="mb-2.5" aria-hidden>
+                        {p.mark.kind === 'allcampus' ? (
+                          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-mk-teal-600 text-mk-meta font-black text-white">
+                            ac
+                          </span>
+                        ) : p.mark.kind === 'initials' ? (
+                          <span
+                            className="flex h-9 w-9 items-center justify-center rounded-md text-mk-meta font-black text-white"
+                            style={{ background: p.mark.color }}
+                          >
+                            {p.mark.text}
+                          </span>
+                        ) : (
+                          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-mk-slate text-white">
+                            <BuildingIcon className="h-4.5 w-4.5" />
+                          </span>
+                        )}
+                      </div>
+                    )}
                     <p
                       className={`text-mk-caption font-bold uppercase tracking-[0.14em] ${
                         p.on ? 'text-mk-teal-text' : 'text-mk-body/70'

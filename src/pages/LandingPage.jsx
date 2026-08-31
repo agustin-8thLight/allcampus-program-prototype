@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import MkHeader from '../components/landing/MkHeader.jsx'
-import PathfinderHero from '../components/landing/PathfinderHero.jsx'
+import SearchHero from '../components/landing/SearchHero.jsx'
 import DiscoveryBand from '../components/landing/DiscoveryBand.jsx'
 import ProfileResults from '../components/landing/ProfileResults.jsx'
 import Pathfinder from '../components/Pathfinder.jsx'
@@ -61,13 +61,16 @@ export default function LandingPage({ partner, profile, onProfile, joined = fals
     <div className="min-h-screen bg-white">
       <MkHeader partner={partner} onNavigate={onNavigate} joined={joined} onGate={onGate} />
 
-      <PathfinderHero
+      {/* 2026-08-28 review: profile capture is cut from v1 ("it introduces a
+          little bit more complexity in this first version… revisit and come
+          back later") and the search returns to the hero. PathfinderHero and
+          ProfileResults stay in the tree, unmounted, so the profile path can
+          come back without a rebuild. */}
+      <SearchHero
         partner={partner}
-        profile={profile}
-        joined={joined}
-        onSignup={() => onGate?.('catalog')}
-        onBrowse={() => goBrowse({})}
-        onEdit={(step) => openPathfinder(step)}
+        onSearch={(params) => goBrowse(params)}
+        onNavigate={onNavigate}
+        onAskSchool={() => scrollToHelp()}
       />
 
       {profile && <ProfileResults profile={profile} partner={partner} onGate={onGate} onNavigate={onNavigate} />}

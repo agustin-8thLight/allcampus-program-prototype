@@ -2,44 +2,62 @@ import { useState } from 'react'
 import { MkButton } from './Section.jsx'
 import AreaSkillSelect from './AreaSkillSelect.jsx'
 import SkillsNavigator from './SkillsNavigator.jsx'
+import SchoolPicker from './SchoolPicker.jsx'
 import { heroImage } from '../../data/images.js'
 import Img from '../Img.jsx'
 
 /*
- * Landing hero: search front and center with degree-level and modality
- * selectors (2026-08-11 meeting; modality stays — some programs are
- * on-campus). Pattern mirrors the live BenefitEd template: dimmed hero with
+ * Landing hero: search front and center. Three controls as of the 2026-08-28
+ * review — keyword, area/skill, and school. Degree level and modality are both
+ * gone; the stated goal was less to think about, not more to filter by.
+ * Pattern mirrors the live BenefitEd template: dimmed hero with
  * white display heading, floating white search card with labeled fields and
  * a green Search action. Hero photography is stock (Unsplash) standing in
  * until licensed imagery is supplied.
  */
 
-// Format filter REMOVED (Aug 14 meeting: "Replace Format filter entirely;
-// badge the platform as 100% online"). courseModality stays in the data.
-const DEGREE_LEVELS = ['Any degree level', 'Certificate', 'Associate', "Bachelor's", "Master's"]
 
-export default function SearchHero({ partner, onSearch, navigator = false, onNavigate }) {
+export default function SearchHero({ partner, onSearch, navigator = false, onNavigate, onAskSchool }) {
   const [q, setQ] = useState('')
-  const [degree, setDegree] = useState(DEGREE_LEVELS[0])
+  // Degree level gave up its slot to the school picker (2026-08-28 review).
+  // Brigid: "most people probably already have a school in mind and are
+  // looking for a discount." Four controls also fought the stated goal of
+  // reducing cognitive load, so the hero carries three.
+  const [school, setSchool] = useState(null)
   // Field selector covers areas of study AND their skills in one control:
   // value is 'area:<id>' or 'skill:<id>' so people can pick either
   // granularity without choosing between two menus.
   const [field, setField] = useState('')
 
+  /*
+   * Routing agreed in the 2026-08-28 review, verbatim:
+   *   school only            -> the school homepage, where the discounts and
+   *                             programs for that school are explained
+   *   skill or keyword only  -> filtered browse, lowest tuition surfaced first
+   *   both                   -> filtered browse scoped to that school
+   */
   const submit = (e) => {
     e?.preventDefault()
     const [kind, id] = field ? field.split(':') : []
+    const term = q.trim()
+    const hasCriteria = Boolean(term || field)
+
+    if (school && !hasCriteria) {
+      onNavigate?.(`/school/${school}`)
+      return
+    }
     onSearch({
-      q: q.trim(),
+      q: term,
       area: kind === 'area' ? id : null,
       skill: kind === 'skill' ? id : null,
       goal: kind === 'goal' ? id : null,
-      degree: degree === DEGREE_LEVELS[0] ? null : degree,
+      school: school || null,
+      // Cost order IS relevance when someone has narrowed by field but not by
+      // program (Samir's case, useCases.js:68).
+      filter: hasCriteria && !school ? 'mostAffordable' : null,
     })
   }
 
-  const selectCls =
-    'w-full appearance-none rounded-md border border-mk-line bg-white px-3 py-2.5 font-display text-[15px] text-mk-slate outline-none focus:border-mk-teal-600'
 
   return (
     <section className="relative font-display">
@@ -90,7 +108,7 @@ export default function SearchHero({ partner, onSearch, navigator = false, onNav
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Program, subject, or school"
+              placeholder="Program or subject"
               className="w-full rounded-md border border-mk-line px-3 py-2.5 text-[15px] text-mk-slate outline-none placeholder:text-mk-body/60 focus:border-mk-teal-600"
             />
           </label>
@@ -98,14 +116,7 @@ export default function SearchHero({ partner, onSearch, navigator = false, onNav
               opens on a Popular tab of outcome labels, area tabs beside it —
               the one piece retained from that branch after client review. */}
           <AreaSkillSelect value={field} onChange={setField} />
-          <label className="block">
-            <span className="mb-1.5 block text-[13px] font-bold text-mk-slate">Degree level</span>
-            <select value={degree} onChange={(e) => setDegree(e.target.value)} className={selectCls}>
-              {DEGREE_LEVELS.map((d) => (
-                <option key={d}>{d}</option>
-              ))}
-            </select>
-          </label>
+          <SchoolPicker value={school} onChange={setSchool} onRequestSchool={onAskSchool} />
           <MkButton tone="green" onClick={submit} className="h-[42px] px-7">
             Search
           </MkButton>

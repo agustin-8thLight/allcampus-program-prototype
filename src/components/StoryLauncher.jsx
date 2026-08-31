@@ -55,7 +55,22 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
               </li>
             ))}
           </ul>
+          {/* 2026-08-31 handoff: Terrence said his first day would go to
+              "identifying all the different things that need to click... and all
+              the conditions associated with them." That document exists, so the
+              front door should point at it rather than making him ask. */}
           <p className="mt-5 border-t border-mk-line pt-4 text-[13px] leading-relaxed text-mk-body">
+            <span className="font-bold text-mk-slate">Building this?</span>{' '}
+            <a
+              href="handoff/index.html"
+              className="font-bold text-mk-teal-700 underline underline-offset-2 outline-offset-2 focus-visible:outline-2 focus-visible:outline-mk-teal-600"
+            >
+              Route and action map
+            </a>{' '}
+            lists every route, every click, where it goes, and what gates it. Conditions and
+            blockers are in TICKETS.md beside it.
+          </p>
+          <p className="mt-3 text-[13px] leading-relaxed text-mk-body">
             <span className="font-bold text-mk-slate">Still open:</span> a green Search button next to a
             teal primary. And degree level came out of the hero to make room for school.</p>
         </div>

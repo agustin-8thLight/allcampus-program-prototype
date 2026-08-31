@@ -424,8 +424,14 @@ export default function App({
                 return ctx ? <span className="font-semibold text-ink-500"> in {ctx}</span> : null
               })()}
             </p>
+            {/* 2026-08-31: one line, and it adapts. Arriving from the
+                landing page's capped CTA, the reason they came is the cap, so
+                say that; otherwise say the general thing. A second line here
+                would have repeated this one. */}
             <p className="mt-0.5 text-[13.5px] font-bold text-brand-700">
-              Every discount here is already negotiated. Connect through AllCampus to activate it.
+              {cappedOnly
+                ? 'These cap what you pay at $5,250 a year. Open one to activate your discount.'
+                : 'Every discount here is already negotiated. Connect through AllCampus to activate it.'}
             </p>
           </div>
           {/* Value lenses instead of a generic sort: same framing as the

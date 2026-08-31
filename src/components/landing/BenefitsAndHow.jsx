@@ -188,12 +188,20 @@ export function WhyAllCampus({ partner, onNavigate, onSpecialist }) {
                         : 'If your employer reimburses tuition, that cap can mean $0 out of pocket.'}
                 </Body>
                 <MkButton
+                  size="lg"
                   className="mt-4"
                   onClick={() => onNavigate?.('/browse?capped=1')}
                 >
                   See the {cappedProgramCount} programs capped at {money(tuitionCap)}/yr
                   <span aria-hidden>&rarr;</span>
                 </MkButton>
+                {/* 2026-08-31: the button goes to the options; the account is
+                    what turns an option into a price you keep. Naming that here
+                    means the funnel does not go silent between the click and the
+                    gate. One line, because the button already made the promise. */}
+                <p className="mt-2.5 font-display text-mk-caption font-bold text-mk-teal-text">
+                  Free account needed to activate a discount.
+                </p>
                 {/* The two schools stay reachable, but as one sentence under
                     the action instead of a row of pills competing with it
                     (2026-08-31: "make this more of the action right here"). */}

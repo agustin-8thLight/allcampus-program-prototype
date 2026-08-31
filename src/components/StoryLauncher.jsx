@@ -43,11 +43,12 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
           </p>
           <ul className="mt-4 space-y-3">
             {[
-              ['Profile capture is gone from the hero.', 'Search is back in its place, with skills/outcome and school pickers.'],
-              ['The school picker routes three ways.', 'School only goes to that school’s page; a skill goes to browse, cheapest first; both go to browse scoped to the school.'],
-              ['Create account is a secondary link.', 'Browse programs takes the primary button.'],
-              ['Account and shop are one step now.', 'And a reimbursement step was added for partners that actually reimburse.'],
-              ['The school page answers “who does what”.', 'For anyone arriving through a benefit administrator — see the Benefit Partner with TR scenario.'],
+              ['Profile capture is out of the hero.', 'Search is back, with skills and school pickers.'],
+              ['The school picker routes three ways.', 'School only, a skill, or both.'],
+              ['Create account is a secondary link.', 'Browse programs is the primary button.'],
+              ['Account and shop are one step.', 'Plus a reimbursement step where it applies.'],
+              ['The school page says who does what.', 'See the Benefit Partner with TR scenario.'],
+              ['Activate your discount is now a button.', 'On the program card, where it is true.'],
             ].map(([lead, rest]) => (
               <li key={lead} className="text-[15px] leading-relaxed text-mk-body">
                 <span className="font-bold text-mk-slate">{lead}</span> {rest}
@@ -55,10 +56,8 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
             ))}
           </ul>
           <p className="mt-5 border-t border-mk-line pt-4 text-[13px] leading-relaxed text-mk-body">
-            <span className="font-bold text-mk-slate">Still open:</span> the green Search button now
-            sits beside a teal primary — one screen, two primary colours. And degree level came out
-            of the hero to make room for school.
-          </p>
+            <span className="font-bold text-mk-slate">Still open:</span> a green Search button next to a
+            teal primary. And degree level came out of the hero to make room for school.</p>
         </div>
 
         <p className="mt-10 text-[13px] font-bold uppercase tracking-[0.14em] text-mk-teal-text">
@@ -127,7 +126,7 @@ export default function StoryLauncher({ onStart, onFreeExplore }) {
             Free explore, no coach
           </button>
           <p className="text-[13px] text-mk-body/80">
-            Employer benefits shown are estimates from the research record — verify before anything
+            Employer benefits shown are estimates from the research record. Verify before anything
             client-facing ships.
           </p>
         </div>

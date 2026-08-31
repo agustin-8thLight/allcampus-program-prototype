@@ -4,6 +4,10 @@ import AreaSkillSelect from './AreaSkillSelect.jsx'
 import SkillsNavigator from './SkillsNavigator.jsx'
 import SchoolPicker from './SchoolPicker.jsx'
 import { heroImage } from '../../data/images.js'
+import { PROGRAMS, money } from '../../data/model.js'
+import { SCHOOLS } from '../../data/schools.js'
+import { bestDiscountPercent } from '../../data/benefit.js'
+import { WHY_COUNTS } from '../../data/landingCopy.js'
 import Img from '../Img.jsx'
 
 /*
@@ -16,8 +20,51 @@ import Img from '../Img.jsx'
  * until licensed imagery is supplied.
  */
 
+/*
+ * Fact boxes, restored 2026-08-31 review. James: "you guys need a way for
+ * people to land on this page and visually see right away who you are and what
+ * you do... even without having to scroll," and "that's not what we talked
+ * about last week, keeping some of the high-level value props at the top there.
+ * Like, they had the little boxes."
+ *
+ * They came out because the page was text-heavy and these duplicated the Why
+ * AllCampus block. The resolution in the meeting was not to pick one: keep both
+ * and let them divide the labor. So these four are FACTOIDS — the size and
+ * shape of the offer, no sentences — and Why AllCampus keeps the argument.
+ * Same figures in both places, so the two cannot contradict each other.
+ *
+ * Counts are Brigid's literals via landingCopy.js (WHY_COUNTS), which is the
+ * standing convention: her doc sanctions mock counts, and the 2026-08-28
+ * direction was to use her figures wherever they appear. The catalog's own
+ * 24 schools / 135 programs is a different scope (see LogoStrip). The discount
+ * and the cap are computed off the catalog instead of typed in, so neither box
+ * can promise something a visitor will not actually find.
+ */
+const MAX_PCT = bestDiscountPercent(PROGRAMS)
+const TUITION_CAPS = Object.values(SCHOOLS)
+  .map((s) => s.tuitionCap)
+  .filter(Boolean)
+const TUITION_CAP = TUITION_CAPS.length ? Math.min(...TUITION_CAPS) : null
 
-export default function SearchHero({ partner, onSearch, navigator = false, onNavigate, onAskSchool }) {
+const HERO_FACTS = [
+  { v: WHY_COUNTS.schools, l: 'Partner schools' },
+  { v: WHY_COUNTS.programs, l: 'Online programs' },
+  MAX_PCT ? { v: `Up to ${MAX_PCT}%`, l: 'Off tuition' } : null,
+  TUITION_CAP ? { v: `${money(TUITION_CAP)}/yr`, l: 'Tuition cap, select schools' } : null,
+].filter(Boolean)
+
+export default function SearchHero({
+  partner,
+  onSearch,
+  navigator = false,
+  onNavigate,
+  onAskSchool,
+  // 2026-08-31: routes the outlet-valve nudge to the account gate, NOT to
+  // Ally. James: "we don't want to be burning tokens for people who will never
+  // create an account." Undefined by default, and the action below is omitted
+  // entirely when it is, so the copy still does its job with no handler wired.
+  onExploreValue,
+}) {
   const [q, setQ] = useState('')
   // Degree level gave up its slot to the school picker (2026-08-28 review).
   // Brigid: "most people probably already have a school in mind and are
@@ -85,6 +132,26 @@ export default function SearchHero({ partner, onSearch, navigator = false, onNav
               <> through AllCampus&rsquo;s university partnerships.</>
             )}
           </p>
+
+          {/* Four facts, sized DOWN on purpose. PathfinderHero runs the same
+              row at 22px/font-black because stats are the only thing on that
+              hero; here the white search card is the primary action, so these
+              sit at card-title weight on a translucent ground and read as hero
+              furniture rather than a second CTA. 2x2 on phones, 4-up from sm.
+              max-w-2xl keeps them from spanning wider than the dek above. */}
+          <dl className="mt-8 grid max-w-2xl grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+            {HERO_FACTS.map((f) => (
+              <div
+                key={f.l}
+                className="rounded-xl border border-white/20 bg-white/10 px-3.5 py-3 backdrop-blur-sm"
+              >
+                <dt className="text-mk-cardtitle font-extrabold leading-none text-white">{f.v}</dt>
+                <dd className="mt-1 text-mk-caption font-semibold leading-snug text-white/75">
+                  {f.l}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
 
@@ -123,13 +190,46 @@ export default function SearchHero({ partner, onSearch, navigator = false, onNav
         </form>
         )}
 
-        {/* Replaces the Format filter: one platform property, not a choice. */}
-        <p className="mt-3 flex items-center gap-2 text-[13px] font-bold text-mk-body">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-mk-band px-3 py-1 text-mk-teal-text">
-            <span aria-hidden>●</span> 100% online
+        {/* Outlet valve, reframed 2026-08-31. This was the Format filter's
+            replacement — one platform property, not a choice — and it still is,
+            but it now does a second job.
+
+            Brigid kept the idea and rejected the wording: "that actual content
+            isn't totally accurate, but I do want it somewhere. I do want that
+            somewhere. Getting that across is important." So the absolute claim
+            ("Every program in the catalog is online") is gone and the online /
+            fits-around-work idea stays.
+
+            The second job is her real worry: someone types their local
+            community college, does not find it, "and then they just leave... I
+            want them to be curious about what we could offer, even if their one
+            school isn't here." A dead end after one search is the leak. So the
+            line now says out loud that a missing school is not a missing offer.
+
+            This is CONTENT, not a chat launcher. Ally stays behind login
+            (James, on tokens) and Brigid agreed: "I think it's a content
+            thing." The optional action goes to onExploreValue, which the call
+            site points at the account gate. */}
+        <div className="mt-3.5 flex flex-col gap-2.5 sm:flex-row sm:items-start sm:gap-3">
+          <span className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-full bg-mk-band px-3 py-1 text-mk-meta font-bold text-mk-teal-text">
+            <span aria-hidden>●</span> Online, around work
           </span>
-          Every program in the catalog is online and built to fit around a full-time job.
-        </p>
+          <div className="min-w-0">
+            <p className="text-mk-meta font-bold leading-relaxed text-mk-slate">
+              These are online programs, built to fit around a full-time job.
+            </p>
+            <p className="mt-1 text-mk-meta leading-relaxed text-mk-body">
+              Don&rsquo;t see your school or your program? You may still have options. Ally can find
+              the closest match across {WHY_COUNTS.schools} partner universities and show you what it
+              would cost.
+            </p>
+            {onExploreValue && (
+              <MkButton tone="outline" size="sm" onClick={onExploreValue} className="mt-2.5">
+                Explore with Ally
+              </MkButton>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   )

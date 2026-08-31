@@ -296,6 +296,7 @@ export default function PrototypeFrame() {
 
       {/* The account gate + intent question (product surfaces) */}
       <GateModal
+        trigger={gate?.trigger}
         open={!!gate && !joined}
         partner={partner}
         onJoin={join}

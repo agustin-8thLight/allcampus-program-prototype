@@ -81,6 +81,19 @@ import {
  * it happens. No reimbursement, no card, which is why noTr and perks partners
  * never see it. Benefit-admin partners file with the administrator rather
  * than the employer, so the body names whoever actually pays.
+ *
+ * CLIENT REVIEW 2026-08-31 (Brigid, James, Terrence, Agustin). Layout only.
+ * No copy, no conditional logic, no ordering, and no change to the
+ * highlighted Connect step. Agustin, on this section: "How AllCampus works —
+ * this looks great when there are 6, but looks bad when 4 or 5. Please update
+ * layout depending on what the scenario is that we're highlighting."
+ *
+ * He is right, and the justify-center fix described further down was the wrong
+ * answer. Centering the leftovers does not stop them reading as leftovers, it
+ * only moves the orphan from the left edge to the middle where it is more
+ * conspicuous. The step count is known at render time, so the column count
+ * should be a function of it rather than one rule the browser has to make the
+ * best of. The per-count rule is in the STRIP LAYOUT note below.
  */
 
 /*
@@ -203,15 +216,71 @@ export default function JourneySteps({ partner, bare = false }) {
   ]
 
   /*
+   * STRIP LAYOUT (2026-08-31, per Agustin's review note in the header).
+   *
    * Flex, not the 3-up grid it was until 2026-08-28. The merge took one step
    * out and the filing step puts one back only for reimbursement partners, so
    * the count is 4 (no reimbursement), 5, or 6 (reimbursement plus an
-   * administrator). On a grid, 4 strands a single card alone at the left of
-   * the last row and it reads as a dropped card. Fixed column widths keep
-   * every card the same size as before, and justify-center centers whatever
-   * is left over on the last row. One column at 390px, two from sm, three
-   * from lg, same as the grid did.
+   * administrator). One column at 390px and two from sm, same as the grid did.
+   * What changed today is the third stage: the column count at lg is now
+   * chosen per step count, so every row fills its line in all three cases.
+   *
+   *   4 steps   lowes, perks, no admin              one row of four
+   *   5 steps   sheetz, direct-tr, no admin         three, then two widened
+   *   6 steps   boeing, benefit-admin plus TR       two rows of three
+   *
+   * SIX IS UNTOUCHED. It is the case the client called out as working, so the
+   * third-width it already had is the width it still gets.
+   *
+   * FOUR GOES ON ONE LINE, not 2x2. Two reasons. House precedent: StepsStrip
+   * and EcosystemStrip, the sibling strips on this same page, both already
+   * branch to lg:grid-cols-4 at exactly four items, and StepsStrip is this
+   * component's predecessor. And proportion: in this 1112px container a 2x2
+   * card is about 548px wide, which turns the approved card into a 2.9:1
+   * banner with a two-line body and stops looking like the same component.
+   * Four across is about 266px, far closer to the ~360px of the six-step
+   * layout the client likes, and a four-step journey read straight across is
+   * one sequence rather than one the reader has to wrap through for no reason.
+   *
+   * FIVE IS 3 + 2, second row widened to half each so it fills its line. Five
+   * across is about 206px, too narrow for bodies this long. 2 + 3 would open
+   * the section on two wide banners and leave the second row looking like the
+   * remainder. 3 + 2 sets the rhythm at the same third-width as the six-step
+   * layout and then closes on a wider pair, which reads as an ending.
+   *
+   * TWO-UP AT sm HAS THE SAME PROBLEM AT FIVE: 2 + 2 + 1 strands the last
+   * card at tablet. There it goes full width instead, so that row fills too.
+   *
+   * justify-center is now a no-op, every row fills exactly. It stays as the
+   * fallback if a seventh step ever appears before this rule is extended.
+   *
+   * TAILWIND v4 WIDTHS. Every width below is the pre-divided, no-space form,
+   * and every one is a whole literal in the source so the class scanner can
+   * see it. Do not refactor these into string concatenation, and do not divide
+   * inside the calc: the standing note on this project is that an arbitrary
+   * value carrying a forward slash can be dropped from the bundle silently,
+   * with no build error, because Tailwind also uses the slash as its modifier
+   * separator. Pre-computing the subtraction sidesteps the question entirely.
+   *
+   * Write no example of the slash form here. On 2026-08-31 an earlier draft of
+   * this note quoted one, and the class scanner read it out of the comment and
+   * emitted a real, unreferenced width utility into the bundle. Tailwind scans
+   * comments too, so any class-shaped string in prose becomes dead CSS.
+   *
+   * The gap is 1rem, so each card gives back gap * (cols - 1) / cols:
+   * 0.5rem at two-up, 0.667rem at three-up, 0.75rem at four-up.
    */
+  const count = steps.length
+  const smWidth = (i) =>
+    count === 5 && i === 4 ? 'sm:w-full' : 'sm:w-[calc(50%-0.5rem)]'
+  const lgWidth = (i) => {
+    if (count === 4) return 'lg:w-[calc(25%-0.75rem)]'
+    if (count === 5)
+      return i < 3
+        ? 'lg:w-[calc(33.333%-0.667rem)]'
+        : 'lg:w-[calc(50%-0.5rem)]'
+    return 'lg:w-[calc(33.333%-0.667rem)]'
+  }
   const strip = (
     <ol className="flex flex-wrap justify-center gap-4">
       {steps.map((s, i) => {
@@ -220,7 +289,7 @@ export default function JourneySteps({ partner, bare = false }) {
             return (
               <li
                 key={s.title}
-                className="flex w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]"
+                className={`flex w-full ${smWidth(i)} ${lgWidth(i)}`}
               >
                 <div
                   className={`flex w-full flex-col rounded-[var(--radius-card)] p-6 transition ${

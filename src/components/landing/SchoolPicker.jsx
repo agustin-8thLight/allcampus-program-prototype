@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { SCHOOLS } from '../../data/schools.js'
 import { PROGRAMS } from '../../data/model.js'
+import { Eyebrow, MkButton } from './Section.jsx'
 
 /*
  * School picker for the hero (2026-08-28 review: "we have a dropdown that
@@ -17,6 +18,18 @@ import { PROGRAMS } from '../../data/model.js'
  *
  * The no-match state follows the same three jobs as EmptyStateAlly (§8, and
  * pain point P5): tell the truth, offer a way forward, never dead-end.
+ *
+ * 2026-08-31 client review — Brigid's find, and the highest-value change on the
+ * page. The old no-match state told the truth and then sat there. Brigid: "I
+ * don't want them to come in here and type in, you know, Metro State
+ * University and have it not be here, and then they just leave. I want them to
+ * be curious about what we could offer, even if their one school isn't here."
+ * Two answers, because there are two ways to arrive at nothing:
+ *   1. The typist gets a no-match state that sells (suggestions + a push).
+ *   2. The scroller gets a line item at the end of the list, because Brigid's
+ *      follow-up was "the only way that my fear might happen is if they don't
+ *      type in it, but they just scroll the schools from there."
+ * Neither one opens Ally. See the exploreValue comment below.
  */
 
 // Best percentage off across a school's catalog. Representative mock data.
@@ -33,7 +46,33 @@ const ALL = Object.values(SCHOOLS)
   .map((s) => ({ ...s, off: bestDiscount(s.id) }))
   .sort((a, b) => a.name.localeCompare(b.name))
 
-export default function SchoolPicker({ value, onChange, onRequestSchool }) {
+/*
+ * "High value" is read off the catalog, not hand-picked (2026-08-31 review).
+ * Agustin asked for "some of the high-performing schools that we know have a
+ * lot of value for people in this spot"; James offered "or trending schools or
+ * something like that". Trending is a claim nothing in the data can support.
+ * An annual out-of-pocket tuition cap can be: it is the strongest value claim
+ * in the product, and unlike a discount percentage it holds whatever we do or
+ * don't know about the person's employer benefit. So the suggestions are
+ * simply the schools carrying a cap, lowest cap first. Today that is exactly
+ * two — Franklin ($5,250) and SNHU ($5,250), schools.js :59 and :118. Give a
+ * third school a tuitionCap and it competes here on its own; nothing in this
+ * component needs to change.
+ */
+const SUGGESTED = ALL.filter((s) => s.tuitionCap)
+  .sort((a, b) => a.tuitionCap - b.tuitionCap)
+  .slice(0, 2)
+
+const usd = (n) => `$${n.toLocaleString('en-US')}`
+
+// The few words that say WHY this school is being suggested. Both facts are
+// structured fields, so the line stays true if the catalog changes.
+function whyValuable(s) {
+  const cap = `Tuition capped at ${usd(s.tuitionCap)} a year`
+  return s.accreditation ? `${cap} · ${s.accreditation}` : cap
+}
+
+export default function SchoolPicker({ value, onChange, onRequestSchool, onExploreValue }) {
   const [open, setOpen] = useState(false)
   const [q, setQ] = useState('')
   const [active, setActive] = useState(0)
@@ -83,17 +122,63 @@ export default function SchoolPicker({ value, onChange, onRequestSchool }) {
     inputRef.current?.focus()
   }
 
+  /*
+   * Every "explore" affordance in here routes to the caller, never to Ally
+   * (2026-08-31 review). James: "right now, we have Ally behind the login...
+   * we don't want to be burning tokens for people who will never create an
+   * account." Brigid on what the affordance is actually selling: "I think it's
+   * a content thing... the chat with Ally to see if we have something of
+   * better value or that's equal but more affordable." So the copy does the
+   * persuading and the click goes to the account gate; Ally comes after it.
+   * Nothing Ally-shaped is imported or rendered here. The caller wires
+   * onExploreValue to the gate; leaving it undefined removes both affordances.
+   * source tells the caller which one fired, query carries what was typed
+   * (empty when they scrolled instead of typing).
+   */
+  const exploreValue = (source) => {
+    if (!onExploreValue) return
+    setOpen(false)
+    onExploreValue({ source, query: q.trim() })
+  }
+
+  /*
+   * Keyboard model for the new "Don't see your school?" row: it is a real
+   * listbox option, parked one index past the last school.
+   *
+   * The row exists for the person who scrolls instead of typing, and a
+   * keyboard user scrolls this list with ArrowDown. A row sitting outside the
+   * listbox would be unreachable that way — findable only by Tab, which leaves
+   * the combobox entirely — which is exactly the audience the row was added
+   * for. As an option it inherits the whole existing model: ArrowDown and End
+   * reach it, aria-activedescendant can point at it, Enter activates it, and
+   * the scroll-into-view effect already handles it by id.
+   *
+   * -1 means there is no such row: either no onExploreValue, or the no-match
+   * state, which renders a panel instead of a listbox and so has zero options.
+   */
+  const exploreIndex = onExploreValue && results.length > 0 ? results.length : -1
+  const lastIndex = exploreIndex >= 0 ? exploreIndex : results.length - 1
+  // lastIndex is -1 with zero options, so this pins active at 0 there.
+  const clamp = (i) => Math.max(0, Math.min(lastIndex, i))
+
   const onKeyDown = (e) => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault()
       if (!open) { setOpen(true); return }
       const d = e.key === 'ArrowDown' ? 1 : -1
-      setActive((i) => Math.min(results.length - 1, Math.max(0, i + d)))
+      setActive((i) => clamp(i + d))
       return
     }
     if (e.key === 'Home' && open) { e.preventDefault(); setActive(0); return }
-    if (e.key === 'End' && open) { e.preventDefault(); setActive(results.length - 1); return }
-    if (e.key === 'Enter' && open && results[active]) { e.preventDefault(); choose(results[active]); return }
+    if (e.key === 'End' && open) { e.preventDefault(); setActive(clamp(lastIndex)); return }
+    if (e.key === 'Enter' && open) {
+      if (active === exploreIndex) { e.preventDefault(); exploreValue('list-row'); return }
+      if (results[active]) { e.preventDefault(); choose(results[active]); return }
+      // No-match state: no options, so Enter stays inert (and keeps its old
+      // behaviour of not swallowing the event); the buttons in the panel are
+      // reached by Tab.
+      return
+    }
     if (e.key === 'Escape' && open) { e.preventDefault(); setOpen(false) }
   }
 
@@ -129,7 +214,9 @@ export default function SchoolPicker({ value, onChange, onRequestSchool }) {
             aria-controls={listboxId}
             aria-autocomplete="list"
             aria-labelledby={`${uid}-label`}
-            aria-activedescendant={open && results[active] ? `${uid}-opt-${active}` : undefined}
+            aria-activedescendant={
+              open && (results[active] || active === exploreIndex) ? `${uid}-opt-${active}` : undefined
+            }
             autoComplete="off"
             value={open ? q : selected ? selected.name : q}
             placeholder={selected ? '' : 'Any school'}
@@ -171,7 +258,9 @@ export default function SchoolPicker({ value, onChange, onRequestSchool }) {
                   aria-selected={value === s.id}
                   onMouseEnter={() => setActive(i)}
                   onMouseDown={(e) => { e.preventDefault(); choose(s) }}
-                  className={`flex cursor-pointer items-center gap-3 px-4 py-2.5 ${
+                  /* scroll-mb keeps the sticky last row from parking on top of
+                     the row the keyboard just moved to. */
+                  className={`flex cursor-pointer scroll-mb-16 items-center gap-3 px-4 py-2.5 ${
                     i === active ? 'bg-mk-band' : ''
                   }`}
                 >
@@ -193,17 +282,142 @@ export default function SchoolPicker({ value, onChange, onRequestSchool }) {
                   )}
                 </li>
               ))}
+
+              {/*
+                CHANGE 2 (2026-08-31): the line item for the scroller. Agustin:
+                "it just becomes a line item. Like, looking for something else?
+                And then it has like a little AI badge, and then Ally prompts
+                you." James's phrasing was "Looking for a different school or
+                school not listed?"
+
+                It is sticky rather than merely last, because a row 24 schools
+                down that you only meet if you scroll all the way is no answer
+                to "they just scroll the schools from there". The white li is
+                the opaque layer the rows slide under; the tint lives on the
+                inner div so nothing shows through it.
+              */}
+              {exploreIndex >= 0 && (
+                <li
+                  id={`${uid}-opt-${exploreIndex}`}
+                  role="option"
+                  aria-selected={false}
+                  onMouseEnter={() => setActive(exploreIndex)}
+                  onMouseDown={(e) => { e.preventDefault(); exploreValue('list-row') }}
+                  className="sticky bottom-0 cursor-pointer bg-white"
+                >
+                  <span
+                    className={`flex items-center gap-3 border-t border-mk-line px-4 py-2.5 transition ${
+                      active === exploreIndex ? 'bg-mk-purple/10' : 'bg-mk-purple/5'
+                    }`}
+                  >
+                    <span
+                      className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-mk-purple text-[12px] text-white"
+                      aria-hidden
+                    >
+                      ✦
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-display text-[13px] font-bold text-mk-purple">
+                        Don’t see your school?
+                      </span>
+                      <span className="block text-[12px] text-mk-body">
+                        Explore what we can offer with Ally, across all {ALL.length} partner schools.
+                      </span>
+                    </span>
+                    <span className="shrink-0 font-display text-[13px] font-bold text-mk-purple" aria-hidden>→</span>
+                  </span>
+                </li>
+              )}
             </ul>
           ) : (
-            /* Tell the truth, then offer a way forward. Never a dead end. */
-            <div className="px-4 py-5">
+            /*
+              CHANGE 1 (2026-08-31): tell the truth, then sell the value. The
+              truth lines are unchanged; what follows them is new. Order is
+              deliberate — two named schools with the reason they are worth a
+              look, then the push to explore, then the two escapes. A person
+              who came for Metro State should be able to leave this panel
+              having selected Franklin, so the suggestion rows select the
+              school outright rather than routing anywhere.
+              max-h because the panel itself never scrolled and this state is
+              now taller than a phone in landscape.
+            */
+            <div className="max-h-[min(70vh,460px)] overflow-y-auto px-4 py-5">
               <p className="font-display text-[15px] font-bold text-mk-slate">
                 No partner school matches “{q.trim()}”.
               </p>
               <p className="mt-1 text-[13px] text-mk-body">
-                That school isn’t in the AllCampus network yet, so there’s no discount to activate there.
+                That school isn’t in the AllCampus network yet, so there’s no discount to activate
+                there. What we can do is find you something of equal or better value for less.
               </p>
-              <div className="mt-3 flex flex-wrap gap-2">
+
+              {/* Guarded: if no school in the catalog carries a tuitionCap the
+                  block has nothing defensible to claim, so it disappears
+                  rather than inventing a reason. */}
+              {SUGGESTED.length > 0 && (
+                <div className="mt-4">
+                  <Eyebrow>Where the money goes furthest</Eyebrow>
+                  <ul className="-mx-2 mt-2">
+                    {SUGGESTED.map((s) => (
+                      <li key={s.id}>
+                        <button
+                          type="button"
+                          onClick={() => choose(s)}
+                          className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left outline-offset-2 transition hover:bg-mk-band focus-visible:outline-2 focus-visible:outline-mk-teal-600"
+                        >
+                          <span
+                            className="grid h-8 w-8 shrink-0 place-items-center rounded font-display text-[12px] font-bold text-white"
+                            style={{ background: s.logoColor }}
+                            aria-hidden
+                          >
+                            {s.logoMonogram}
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate font-display text-[13px] font-bold text-mk-slate">
+                              {s.name}
+                            </span>
+                            <span className="block truncate text-[12px] text-mk-body">{whyValuable(s)}</span>
+                          </span>
+                          {s.off > 0 && (
+                            <span className="shrink-0 rounded-full bg-mk-blue-50 px-2.5 py-1 font-display text-[12px] font-bold text-mk-teal-700">
+                              Up to {s.off}% off
+                            </span>
+                          )}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-2 text-[12px] text-mk-body">
+                    {SUGGESTED.length === 2 ? 'These two are the only' : 'The only'} partner schools
+                    that cap what you pay out of pocket at {usd(SUGGESTED[0].tuitionCap)} a year,
+                    whatever your employer covers.
+                  </p>
+                </div>
+              )}
+
+              {onExploreValue && (
+                <div className="mt-4 flex items-start gap-3 rounded-lg border border-mk-purple/40 bg-mk-purple/5 p-3">
+                  <span
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-mk-purple text-[12px] text-white"
+                    aria-hidden
+                  >
+                    ✦
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-display text-[13px] font-bold text-mk-slate">
+                      Your school isn’t the only way in.
+                    </p>
+                    <p className="mt-0.5 text-[12px] text-mk-body">
+                      Tell Ally what you want to do for work and it will look across all {ALL.length}{' '}
+                      partner schools for something of equal or better value.
+                    </p>
+                    <MkButton tone="purple" size="sm" className="mt-2.5" onClick={() => exploreValue('no-match')}>
+                      Explore what fits me
+                    </MkButton>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-4 flex flex-wrap gap-2">
                 {/* Was labelled "See all schools", which promised navigation it
                     never did — it only cleared the query. Clearing IS the right
                     behaviour here (it keeps the person in the picker rather than
